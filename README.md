@@ -14,28 +14,30 @@ These are all *recommended* settings, you don't *need* to follow those, but that
 
 ## ProstegeSQL
 
-First create a `.env` file in the root directory with the following content:
+To configure ProstegeSQL, follow these steps:
 
-```env
-POSTGRES_USER=bussard_user
-POSTGRES_PASSWORD=changeme
-POSTGRES_DB=bussard_db
-```
+1. Create a `.env` file in the root directory with the following content:
 
-__**Important**__: Replace `changeme` with a strong password!
+    ```env
+    POSTGRES_USER=bussard_user
+    POSTGRES_PASSWORD=changeme
+    POSTGRES_DB=bussard_db
+    ```
 
+    > [!IMPORTANT]
+    > Replace `changeme` with a strong password!
 
-Run the database with:
+1. Run the database with:
 
-```bash
-docker-compose up -d
-```
+    ```bash
+    docker-compose up -d
+    ```
 
-Connect to the database with the following settings:
+1. Connect to the database with the following settings:
 
-- Host: `localhost`
-- Port: `5432`
-- User: `bussard_user`
-- Password: `changeme` (Generate a new one and save it in .env)
-- Database: `bussard_db`
-- SSL: `disable`
+    - Host: `localhost`
+    - Port: `5432`
+    - User: `bussard_user`
+    - Password: The password from step 1
+    - Database: `bussard_db`
+    - SSL: `disable`
