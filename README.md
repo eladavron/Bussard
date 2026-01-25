@@ -1,6 +1,6 @@
 # Codename "Bussard"
 
-A [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) collection library.
+A [free and open source](https://en.wikipedia.org/wiki/Free_and_open-source_software) physical collection management software.
 
 ## Development
 
@@ -9,7 +9,7 @@ These are all *recommended* settings, you don't *need* to follow those, but that
 ### Prerequisites
 
 1. Linux (or WSL) with:
-    1. Node 22.0 or above with NPM
+    1. Node 22.0 or above with NPM (install with [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating))
     1. Docker (see [this guide](https://daniel.es/blog/how-to-install-docker-in-wsl-without-docker-desktop/) for installation in WSL)
 1. VSCode with a ProstegeSQL extension
 
