@@ -82,7 +82,10 @@ SELECT
   m.*,
   COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pd.id, 'name', pd.name)) FILTER (WHERE pd.id IS NOT NULL), '[]') AS directors,
   COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pa.id, 'name', pa.name, 'character', ma.character_name)) FILTER (WHERE pa.id IS NOT NULL), '[]') AS actors,
-  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pw.id, 'name', pw.name)) FILTER (WHERE pw.id IS NOT NULL), '[]') AS writers
+  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pw.id, 'name', pw.name)) FILTER (WHERE pw.id IS NOT NULL), '[]') AS writers,
+  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', f.id, 'name', f.name)) FILTER (WHERE f.id IS NOT NULL), '[]') AS formats,
+  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', r.id, 'name', r.name)) FILTER (WHERE r.id IS NOT NULL), '[]') AS regions
+
 FROM movies m
 LEFT JOIN movie_directors md ON m.id = md.movie_id
 LEFT JOIN people pd ON md.person_id = pd.id
@@ -90,5 +93,8 @@ LEFT JOIN movie_actors ma ON m.id = ma.movie_id
 LEFT JOIN people pa ON ma.person_id = pa.id
 LEFT JOIN movie_writers mw ON m.id = mw.movie_id
 LEFT JOIN people pw ON mw.person_id = pw.id
+LEFT JOIN movie_formats mf ON m.id = mf.movie_id
+LEFT JOIN formats f ON mf.format_id = f.id
+LEFT JOIN movie_regions mr ON m.id = mr.movie_id
+LEFT JOIN regions r ON mr.region_id = r.id
 GROUP BY m.id;
-SELECT * FROM movie_overview;
