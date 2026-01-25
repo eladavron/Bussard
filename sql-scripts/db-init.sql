@@ -80,9 +80,9 @@ CREATE TABLE movie_actors ( -- Many-to-many relationship between movies and peop
 CREATE VIEW movie_overview AS
 SELECT
   m.*,
-  string_agg(DISTINCT pd.name, ', ') AS directors,
-  string_agg(DISTINCT pa.name, ', ') AS actors,
-  string_agg(DISTINCT pw.name, ', ') AS writers
+  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pd.id, 'name', pd.name)) FILTER (WHERE pd.id IS NOT NULL), '[]') AS directors,
+  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pa.id, 'name', pa.name, 'character', ma.character_name)) FILTER (WHERE pa.id IS NOT NULL), '[]') AS actors,
+  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pw.id, 'name', pw.name)) FILTER (WHERE pw.id IS NOT NULL), '[]') AS writers
 FROM movies m
 LEFT JOIN movie_directors md ON m.id = md.movie_id
 LEFT JOIN people pd ON md.person_id = pd.id
