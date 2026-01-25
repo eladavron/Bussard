@@ -9,7 +9,7 @@ CREATE TABLE movies (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   series        TEXT, -- In the future convert to a table
   aspect_ratio  TEXT, -- In the future convert to a table
-  studio        TEXT, -- In the future convert to a table
+  studio        TEXT -- In the future convert to a table
 );
 
 -- Formats --
