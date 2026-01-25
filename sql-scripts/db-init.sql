@@ -1,12 +1,15 @@
 -- Main Table --
 CREATE TABLE movies (
-  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title        TEXT NOT NULL,
-  description  TEXT,
-  year         SMALLINT,
-  runtime_min  SMALLINT,
-  imdb_id      TEXT UNIQUE,
-  created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title         TEXT NOT NULL,
+  description   TEXT,
+  year          SMALLINT,
+  runtime_min   SMALLINT,
+  imdb_id       TEXT,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  series        TEXT, -- In the future convert to a table
+  aspect_ratio  TEXT, -- In the future convert to a table
+  studio        TEXT, -- In the future convert to a table
 );
 
 -- Formats --
@@ -26,6 +29,8 @@ INSERT INTO formats (name) VALUES
 ('Blu-Ray'),
 ('4K Ultra HD'),
 ('Digital');
+REVOKE ALL ON formats FROM PUBLIC;
+
 
 -- Regions --
 CREATE TABLE regions (
@@ -50,6 +55,7 @@ INSERT INTO regions (name) VALUES
 ('Region A'),
 ('Region B'),
 ('Region C');
+REVOKE ALL ON formats FROM PUBLIC;
 
 -- Disks --
 CREATE TABLE movie_disks (
