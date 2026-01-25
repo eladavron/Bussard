@@ -8,11 +8,12 @@ These are all *recommended* settings, you don't *need* to follow those, but that
 
 ### Prerequisites
 
-1. Docker
-1. Linux (or WSL)
+1. Linux (or WSL) with:
+    1. Node 22.0 or above with NPM
+    1. Docker (see [this guide](https://daniel.es/blog/how-to-install-docker-in-wsl-without-docker-desktop/) for installation in WSL)
 1. VSCode with a ProstegeSQL extension
 
-## ProstegeSQL
+### ProstegeSQL
 
 To configure ProstegeSQL, follow these steps:
 
@@ -25,7 +26,8 @@ To configure ProstegeSQL, follow these steps:
     ```
 
     > [!IMPORTANT]
-    > Replace `changeme` with a strong password!
+    > Replace `changeme` with a strong password!  
+    For local development, avoid special characters (like `@`) to prevent connection string encoding issues.
 
 1. Run the database with:
 
