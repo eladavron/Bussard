@@ -12,10 +12,10 @@ CREATE TABLE movies (
 -- Formats --
 CREATE TABLE formats (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL UNIQUE  -- e.g., DVD, BluRay, 4K, Digital
+  name TEXT NOT NULL UNIQUE  -- e.g., DVD, Blu-Ray, 4K, Digital
 );
 
-CREATE TABLE movie_formats (
+CREATE TABLE disk_format (
   movie_id UUID REFERENCES movies(id) ON DELETE CASCADE,
   format_id UUID REFERENCES formats(id) ON DELETE CASCADE,
   PRIMARY KEY (movie_id, format_id)
@@ -23,7 +23,7 @@ CREATE TABLE movie_formats (
 
 INSERT INTO formats (name) VALUES
 ('DVD'),
-('BluRay'),
+('Blu-Ray'),
 ('4K Ultra HD'),
 ('Digital');
 
@@ -33,7 +33,7 @@ CREATE TABLE regions (
     name TEXT NOT NULL UNIQUE  -- e.g., Region 1, Region 2, Region Free
 );
 
-CREATE TABLE movie_regions ( -- Many-to-many relationship between movies and regions
+CREATE TABLE disk_region ( -- Many-to-many relationship between movies and regions
   movie_id UUID REFERENCES movies(id) ON DELETE CASCADE,
   region_id UUID REFERENCES regions(id) ON DELETE CASCADE,
   PRIMARY KEY (movie_id, region_id)
@@ -50,6 +50,15 @@ INSERT INTO regions (name) VALUES
 ('Region A'),
 ('Region B'),
 ('Region C');
+
+-- Disks --
+CREATE TABLE movie_disks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  disk_number SMALLINT,
+  movie_id UUID REFERENCES movies(id) ON DELETE CASCADE,
+  disk_region UUID REFERENCES regions(id) ON DELETE CASCADE,
+  disk_format UUID REFERENCES formats(id) ON DELETE CASCADE
+);
 
 -- People --
 CREATE TABLE people (
@@ -83,8 +92,12 @@ SELECT
   COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pd.id, 'name', pd.name)) FILTER (WHERE pd.id IS NOT NULL), '[]') AS directors,
   COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pa.id, 'name', pa.name, 'character', ma.character_name)) FILTER (WHERE pa.id IS NOT NULL), '[]') AS actors,
   COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pw.id, 'name', pw.name)) FILTER (WHERE pw.id IS NOT NULL), '[]') AS writers,
-  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', f.id, 'name', f.name)) FILTER (WHERE f.id IS NOT NULL), '[]') AS formats,
-  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', r.id, 'name', r.name)) FILTER (WHERE r.id IS NOT NULL), '[]') AS regions
+  COALESCE(jsonb_agg(DISTINCT jsonb_build_object(
+    'id', disk.id,
+    'disk_number', disk.disk_number,
+    'format', jsonb_build_object('id', f.id, 'name', f.name),
+    'region', jsonb_build_object('id', r.id, 'name', r.name)
+  )) FILTER (WHERE disk.id IS NOT NULL), '[]') AS disks
 
 FROM movies m
 LEFT JOIN movie_directors md ON m.id = md.movie_id
@@ -93,8 +106,8 @@ LEFT JOIN movie_actors ma ON m.id = ma.movie_id
 LEFT JOIN people pa ON ma.person_id = pa.id
 LEFT JOIN movie_writers mw ON m.id = mw.movie_id
 LEFT JOIN people pw ON mw.person_id = pw.id
-LEFT JOIN movie_formats mf ON m.id = mf.movie_id
-LEFT JOIN formats f ON mf.format_id = f.id
-LEFT JOIN movie_regions mr ON m.id = mr.movie_id
-LEFT JOIN regions r ON mr.region_id = r.id
+LEFT JOIN movie_disks disk ON m.id = disk.movie_id
+LEFT JOIN formats f ON disk.disk_format = f.id
+LEFT JOIN regions r ON disk.disk_region = r.id
+
 GROUP BY m.id;
