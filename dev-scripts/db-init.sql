@@ -9,7 +9,8 @@ CREATE TABLE movies (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   series        TEXT, -- In the future convert to a table
   aspect_ratio  TEXT, -- In the future convert to a table
-  studio        TEXT -- In the future convert to a table
+  studio        TEXT, -- In the future convert to a table
+  poster_image  UUID REFERENCES images(id) ON DELETE SET NULL
 );
 
 -- Formats --
@@ -91,6 +92,23 @@ CREATE TABLE movie_actors ( -- Many-to-many relationship between movies and peop
   PRIMARY KEY (movie_id, person_id)
 );
 
+-- Images --
+
+CREATE TABLE images (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    mime_type TEXT NOT NULL CHECK (mime_type in ('image/jpeg', 'image/png', 'image/gif', 'image/webp')),
+    content BYTEA NOT NULL,
+    width INT NOT NULL CHECK (width > 0),
+    height INT NOT NULL CHECK (height > 0),
+    byte_size INT NOT NULL CHECK (byte_size > 0)
+);
+
+CREATE TABLE movie_images (
+    movie_id UUID REFERENCES movies(id) ON DELETE CASCADE,
+    image_id UUID REFERENCES images(id) ON DELETE CASCADE,
+    PRIMARY KEY (movie_id, image_id)
+);
+
 -- Main View --
 CREATE VIEW movie_overview AS
 SELECT
@@ -103,7 +121,8 @@ SELECT
     'disk_number', disk.disk_number,
     'format', jsonb_build_object('id', f.id, 'name', f.name),
     'region', jsonb_build_object('id', r.id, 'name', r.name)
-  )) FILTER (WHERE disk.id IS NOT NULL), '[]') AS disks
+  )) FILTER (WHERE disk.id IS NOT NULL), '[]') AS disks,
+  COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', img.id)) FILTER (WHERE img.id IS NOT NULL), '[]') AS images
 
 FROM movies m
 LEFT JOIN movie_directors md ON m.id = md.movie_id
