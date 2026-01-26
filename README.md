@@ -1,6 +1,13 @@
 # Codename "Bussard"
+<p align="center">
+    <img src="src/assets/Bussard.svg" alt="Project Bussard's logo - the Bussard Collector of a Constitution Class starship" width="150" align="left">
+</p>
 
 A [free and open source](https://en.wikipedia.org/wiki/Free_and_open-source_software) physical collection management software.
+
+This is a personal project I made to track my own collection - feel free to modify it however you like for your own collections.
+
+"Bussard" is a temporary code-name, named after the "[Bussard Collectors](https://memory-alpha.fandom.com/wiki/Bussard_collector)" at the front of Star Trek federation ship warp nacelles. 
 
 ## Development
 
