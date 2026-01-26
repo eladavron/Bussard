@@ -1,7 +1,16 @@
 import { db } from '../lib/db';
 import { Movie } from '../types/movie';
+import ErrorPage from './components/ErrorPage';
 
 export default async function Home() {
+  // Check if data is initialized
+  const isInitialized = (await db`SELECT to_regclass('public.movie_overview') IS NOT NULL AS exists`)[0].exists;
+  if (!isInitialized) {
+    return (
+      <ErrorPage title="Database is not initialized!" message="The view 'movie_overview' is not initialized!" />
+    );
+  }
+
   // Fetch data directly from the view
   const movies = await db<Movie[]>`SELECT * FROM movie_overview ORDER BY title ASC`;
 

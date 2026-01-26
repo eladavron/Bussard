@@ -33,12 +33,16 @@ body {
   @apply text-gray-500;
 }
 
-.main-header {
+header {
   @apply mb-8 flex justify-between items-center;
 }
 
 .main-header h1 {
   @apply text-3xl font-bold text-gray-900;
+}
+
+.error-header h1 {
+  @apply text-3xl font-bold text-red-500;
 }
 
 /* Tags */
