@@ -14,4 +14,5 @@ export interface Movie {
     format: { id: string; name: string };
     region: { id: string; name: string };
   }[];
+  poster_image: { id: string; mime_type: string; width: number; height: number; byte_size: number };
 }

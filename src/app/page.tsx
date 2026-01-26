@@ -1,5 +1,6 @@
 import { db } from '../lib/db';
 import { Movie } from '../types/movie';
+import ByteImageComp from './components/ByteImageComp';
 import ErrorPage from './components/ErrorPage';
 
 export default async function Home() {
@@ -35,6 +36,9 @@ export default async function Home() {
                   <span className="tag tag-gray font-mono p-0">
                     {movie.year}
                   </span>
+                </div>
+                <div>
+                  <ByteImageComp id={movie.poster_image.id} />
                 </div>
                 <div className="text-sm text-secondary mb-4 flex gap-2">
                   <span>{movie.runtime_min} min</span>
