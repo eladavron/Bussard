@@ -23,15 +23,16 @@
   },
   "homepage": "https://github.com/eladavron/Bussard#readme",
   "dependencies": {
+    "@types/node": "^25.0.10",
     "dotenv": "^17.2.3",
-    "postgres": "^3.4.8",
+    "exifreader": "^4.36.1",
     "next": "16.1.4",
+    "postgres": "^3.4.8",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",

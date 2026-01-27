@@ -1,7 +1,6 @@
 # Codename "Bussard"
-<p align="center">
-    <img src="src/assets/Bussard.svg" alt="Project Bussard's logo - the Bussard Collector of a Constitution Class starship" width="150" align="left">
-</p>
+
+<img src="src/assets/Bussard.svg" alt="Project Bussard's logo - the Bussard Collector of a Constitution Class starship" width="150" align="right"/>
 
 A [free and open source](https://en.wikipedia.org/wiki/Free_and_open-source_software) physical collection management software.
 
@@ -50,3 +49,8 @@ To configure ProstegeSQL, follow these steps:
     - Password: The password from step 1
     - Database: `bussard_db`
     - SSL: `disable`
+
+## Credits
+
+- Bussard Collector Logo: [Noel Rupenthal](https://ca.linkedin.com/in/noel-ruppenthal-4217628)
+- Movie Poster Placeholder: [Layerace](https://www.freepik.com/author/layerace) on Freepik

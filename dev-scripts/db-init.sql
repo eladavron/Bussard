@@ -66,17 +66,17 @@ CREATE TABLE images (
 --- Main Table ---
 
 CREATE TABLE movies (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title         TEXT NOT NULL,
-  description   TEXT,
-  year          SMALLINT,
-  runtime_min   SMALLINT,
-  imdb_id       TEXT,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  series        TEXT, -- In the future convert to a table
-  aspect_ratio  TEXT, -- In the future convert to a table
-  studio        TEXT, -- In the future convert to a table
-  poster_image  UUID REFERENCES images(id) ON DELETE SET NULL
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title             TEXT NOT NULL,
+  description       TEXT,
+  year              SMALLINT,
+  runtime_min       SMALLINT,
+  imdb_id           TEXT,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  series            TEXT, -- In the future convert to a table
+  aspect_ratio      TEXT, -- In the future convert to a table
+  studio            TEXT, -- In the future convert to a table
+  poster_image_id   UUID REFERENCES images(id) ON DELETE SET NULL
 );
 
 --- Many to Many Links ---
@@ -133,7 +133,7 @@ SELECT
   series,
   aspect_ratio,
   studio,
-  (CASE WHEN m.poster_image IS NOT NULL THEN
+  (CASE WHEN m.poster_image_id IS NOT NULL THEN
       jsonb_build_object(
           'id', pi.id,
           'mime_type', pi.mime_type,
@@ -164,6 +164,6 @@ LEFT JOIN people pw ON mw.person_id = pw.id
 LEFT JOIN movie_disks disk ON m.id = disk.movie_id
 LEFT JOIN formats f ON disk.disk_format = f.id
 LEFT JOIN regions r ON disk.disk_region = r.id
-LEFT JOIN images pi ON m.poster_image = pi.id
+LEFT JOIN images pi ON m.poster_image_id = pi.id
 
 GROUP BY m.id, pi.id;

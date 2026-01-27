@@ -1,7 +1,19 @@
 import { db } from '../lib/db';
 import { Movie } from '../types/movie';
-import ByteImageComp from './components/ByteImageComp';
-import ErrorPage from './components/ErrorPage';
+import ErrorPage from '../components/ErrorPage';
+import Image from 'next/image';
+import MovieImageUpload from '../components/MovieImageUpload'
+
+function getImage(id: string){
+  //Get image
+  //If it does't exist, use placeholder and uploader.
+  var src = "/movie_poster.jpg";
+  return (
+    <MovieImageUpload movieId={id}>
+      <Image src={src} alt="Poster Placeholder" width={300} height={450}/>
+    </MovieImageUpload>
+  );
+}
 
 export default async function Home() {
   // Check if data is initialized
@@ -37,8 +49,10 @@ export default async function Home() {
                     {movie.year}
                   </span>
                 </div>
-                <div>
-                  <ByteImageComp id={movie.poster_image.id} />
+                <div className="flex justify-center">
+
+                    {getImage(movie.id)}
+
                 </div>
                 <div className="text-sm text-secondary mb-4 flex gap-2">
                   <span>{movie.runtime_min} min</span>
