@@ -5,10 +5,11 @@ import { uploadMovieImage } from '../app/actions';
 
 interface MovieImageUploadProps {
     movieId: string;
+    replace: boolean;
     children: React.ReactNode;
 }
 
-export default function MovieImageUpload({ movieId, children }: MovieImageUploadProps) {
+export default function MovieImageUpload({ movieId, replace, children }: MovieImageUploadProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -21,7 +22,7 @@ export default function MovieImageUpload({ movieId, children }: MovieImageUpload
                 {children}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded">
                     <span className="text-white font-semibold bg-black/50 px-3 py-1 rounded backdrop-blur-sm">
-                        Upload Image
+                        {replace ? 'Replace' : 'Upload'} Image
                     </span>
                 </div>
             </div>
@@ -39,7 +40,7 @@ export default function MovieImageUpload({ movieId, children }: MovieImageUpload
                             ✕
                         </button>
 
-                        <h2 className="text-xl font-bold mb-4 text-gray-900">Upload Movie Poster</h2>
+                        <h2 className="text-xl font-bold mb-4 text-gray-900">{replace ? 'Replace' : 'Upload'} Movie Poster</h2>
 
                         <form action={async (formData) => {
                             await uploadMovieImage(movieId, formData);
@@ -49,7 +50,7 @@ export default function MovieImageUpload({ movieId, children }: MovieImageUpload
 
                             <div className="mb-6">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Select Image
+                                    {replace ? 'Replace' : 'Select'} Image
                                 </label>
                                 <input
                                     type="file"

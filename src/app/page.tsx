@@ -3,13 +3,32 @@ import { Movie } from '../types/movie';
 import ErrorPage from '../components/ErrorPage';
 import Image from 'next/image';
 import MovieImageUpload from '../components/MovieImageUpload'
+import { DBImage } from '../types/db_image';
 
-function getImage(id: string){
+async function getImage(id: string){
   //Get image
+  let image = await db<DBImage[]>`SELECT * FROM images WHERE id IN (SELECT poster_image_id FROM movies WHERE id = ${id}) LIMIT 1`;
+  let placeholder = false;
+  if(image.length > 0){
+    //If exists, convert to base64 and return
+    let img = image[0];
+
+    let width = 200;
+    let height = Math.floor((img.height / img.width) * width);
+
+    let base64String = Buffer.from(img.byte_data).toString('base64');
+    var src = `data:${img.mime_type};base64,${base64String}`;
+    placeholder = false;
+  }
+  else {
+     var src = "/movie_poster.jpg";
+     placeholder = true;
+  }
+
   //If it does't exist, use placeholder and uploader.
-  var src = "/movie_poster.jpg";
+
   return (
-    <MovieImageUpload movieId={id}>
+    <MovieImageUpload movieId={id} replace={!placeholder}>
       <Image src={src} alt="Poster Placeholder" width={300} height={450}/>
     </MovieImageUpload>
   );
@@ -49,7 +68,7 @@ export default async function Home() {
                     {movie.year}
                   </span>
                 </div>
-                <div className="flex justify-center">
+                <div className="flex justify-center pb-4">
 
                     {getImage(movie.id)}
 
