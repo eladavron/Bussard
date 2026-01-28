@@ -21,6 +21,10 @@ These are all *recommended* settings, you don't *need* to follow those, but that
 
 ### ProstegeSQL
 
+> [!IMPORTANT]
+> Replace `changeme` with a strong password and replace all instances of it below!  
+  For local development, avoid special characters (like `@` or `?`) to prevent connection string encoding issues.
+
 To configure ProstegeSQL, follow these steps:
 
 1. Create a `.env` file in the root directory with the following content:
@@ -30,10 +34,6 @@ To configure ProstegeSQL, follow these steps:
     POSTGRES_PASSWORD=changeme
     POSTGRES_DB=bussard_db
     ```
-
-    > [!IMPORTANT]
-    > Replace `changeme` with a strong password!  
-    For local development, avoid special characters (like `@`) to prevent connection string encoding issues.
 
 1. Run the database with:
 
