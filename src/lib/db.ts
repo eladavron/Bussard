@@ -1,3 +1,5 @@
+'use server';
+
 import postgres from 'postgres';
 
 const SQL_USER=process.env.POSTGRES_USER;

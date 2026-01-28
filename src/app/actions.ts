@@ -38,6 +38,15 @@ export async function uploadMovieImage(movieId: string, formData: FormData) {
     }
 }
 
+export async function deleteImage(movieId: string) {
+    const image = await db<{ id: string }[]>`SELECT poster_image_id AS id FROM movies WHERE id = ${movieId} LIMIT 1`;
+    if (image.length === 0) {
+        throw new Error('No image found for this movie');
+    }
+    const imageId = image[0].id;
+    await db`UPDATE movies SET poster_image_id = NULL WHERE id = ${movieId}`;
+    return await db`DELETE FROM images WHERE id = ${imageId}`;
+}
 
 /*
 CREATE TABLE images (
