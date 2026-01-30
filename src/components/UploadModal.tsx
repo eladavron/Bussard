@@ -1,8 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { uploadMovieImage } from '../app/actions';
-
 interface UploadModalProps {
     title: string;
     message: string;

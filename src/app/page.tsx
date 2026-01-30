@@ -1,15 +1,11 @@
 'use client';
 
 import MoviePoster from '../components/MoviePoster'
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { IoIosAddCircleOutline } from "react-icons/io";
 import { useState, useEffect } from 'react';
-import UploadModal from '../components/UploadModal';
-import { exportMetadataToFile, importMetadataFromFile } from './metadata/actions';
 import { Movie } from '../types/movie';
+import SettingsMenu from '../components/SettingsMenu';
 
 export default function Home() {
-  const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [movies, setMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
@@ -20,7 +16,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gray-50 p-8">
+    <main className="main-page">
       <div className="max-w-7xl mx-auto">
         <header className="main-header">
           <div className="flex flex-col gap-2 items-start">
@@ -30,33 +26,7 @@ export default function Home() {
             </span>
           </div>
           <span>
-            <Menu as="div" className="relative inline-block">
-              <MenuButton className="button-hollow flex items-center gap-1">
-                Options
-              </MenuButton>
-
-              <MenuItems transition className="menu-dropdown">
-                <MenuItem>
-                  <a href="#" className="menu-item-link" onClick={() => setUploadModalOpen(true)}>
-                    Import...
-                  </a>
-                </MenuItem>
-                                <MenuItem>
-                  <a href="#" className="menu-item-link" onClick={() => exportMetadataToFile().then((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'backup_metadata.json';
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    URL.revokeObjectURL(url);
-                  })}>
-                    Export...
-                  </a>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
+            <SettingsMenu />
           </span>
         </header>
 
@@ -65,7 +35,7 @@ export default function Home() {
             <article key={movie.id} className="movie-card">
               <div className="p-5 flex-1">
                 <div className="flex justify-between items-start mb-2">
-                  <h2 className="text-xl font-semibold text-gray-900 leading-tight">
+                  <h2 className="movie-title">
                     {movie.title}
                   </h2>
                   <span className="tag tag-gray font-mono p-0">
@@ -95,16 +65,6 @@ export default function Home() {
             </article>
           ))}
         </div>
-        <UploadModal
-          isOpen={isUploadModalOpen}
-          onClose={() => setUploadModalOpen(false)}
-          onUpload={async (formData) => {
-            importMetadataFromFile(formData);
-            setUploadModalOpen(false);
-          }}
-          title="Import Movie Metadata"
-          message="Select a metadata JSON file to import movie data."
-        />
       </div>
     </main>
   );
