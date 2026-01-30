@@ -1,29 +1,62 @@
-import { db } from '../lib/db';
-import { Movie } from '../types/movie';
-import ErrorPage from '../components/ErrorPage';
-import Image from 'next/image';
+'use client';
+
 import MoviePoster from '../components/MoviePoster'
-import { DBImage } from '../types/db_image';
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { useState, useEffect } from 'react';
+import UploadModal from '../components/UploadModal';
+import { exportMetadataToFile, importMetadataFromFile } from './metadata/actions';
+import { Movie } from '../types/movie';
 
-export default async function Home() {
-  // Check if data is initialized
-  const isInitialized = (await db`SELECT to_regclass('public.movie_overview') IS NOT NULL AS exists`)[0].exists;
-  if (!isInitialized) {
-    return (
-      <ErrorPage title="Database is not initialized!" message="The view 'movie_overview' is not initialized!" />
-    );
-  }
+export default function Home() {
+  const [isUploadModalOpen, setUploadModalOpen] = useState(false);
+  const [movies, setMovies] = useState<Movie[]>([]);
 
-  // Fetch data directly from the view
-  const movies = await db<Movie[]>`SELECT * FROM movie_overview ORDER BY title ASC`;
+  useEffect(() => {
+    fetch('/api/movies')
+      .then(res => res.json())
+      .then(data => setMovies(data.movies))
+      .catch(() => setMovies([]));
+  }, []);
 
   return (
     <main className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
         <header className="main-header">
-          <h1 className="">My Collection</h1>
-          <span className="tag tag-blue">
-            {movies.length} Movies
+          <div className="flex flex-col gap-2 items-start">
+            <h1 className="">My Collection</h1>
+            <span className="tag tag-blue">
+              {movies.length} Movies
+            </span>
+          </div>
+          <span>
+            <Menu as="div" className="relative inline-block">
+              <MenuButton className="button-hollow flex items-center gap-1">
+                Options
+              </MenuButton>
+
+              <MenuItems transition className="menu-dropdown">
+                <MenuItem>
+                  <a href="#" className="menu-item-link" onClick={() => setUploadModalOpen(true)}>
+                    Import...
+                  </a>
+                </MenuItem>
+                                <MenuItem>
+                  <a href="#" className="menu-item-link" onClick={() => exportMetadataToFile().then((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'backup_metadata.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                  })}>
+                    Export...
+                  </a>
+                </MenuItem>
+              </MenuItems>
+            </Menu>
           </span>
         </header>
 
@@ -40,7 +73,7 @@ export default async function Home() {
                   </span>
                 </div>
                 <div className="flex justify-center pb-4">
-                  <MoviePoster movieId={movie.id}/>
+                  <MoviePoster movieId={movie.id} />
                 </div>
                 <div className="text-sm text-secondary mb-4 flex gap-2">
                   <span>{movie.runtime_min} min</span>
@@ -62,6 +95,16 @@ export default async function Home() {
             </article>
           ))}
         </div>
+        <UploadModal
+          isOpen={isUploadModalOpen}
+          onClose={() => setUploadModalOpen(false)}
+          onUpload={async (formData) => {
+            importMetadataFromFile(formData);
+            setUploadModalOpen(false);
+          }}
+          title="Import Movie Metadata"
+          message="Select a metadata JSON file to import movie data."
+        />
       </div>
     </main>
   );

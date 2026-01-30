@@ -54,6 +54,13 @@ header {
   @apply bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition-colors;
 }
 
+.button-hover {
+  @apply size-7 hover:size-10 transition-all cursor-pointer;
+}
+
+.button-hollow {
+  @apply rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50
+}
 
 /* Tags */
 .tag {
@@ -87,6 +94,18 @@ header {
   @apply rounded shadow-md bg-gray-200 animate-pulse;
 }
 
-.button-hover {
-  @apply size-7 hover:size-10 transition-all cursor-pointer;
+
+
+/* Menus */
+.menu-button {
+  @apply inline-flex w-full justify-center gap-x-1.5;
+}
+
+.menu-dropdown {
+  @apply absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in;
+}
+
+.menu-item-link {
+  @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900;
+
 }

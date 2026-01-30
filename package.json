@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/eladavron/Bussard#readme",
   "dependencies": {
+    "@headlessui/react": "^2.2.9",
     "@types/node": "^25.0.10",
     "dotenv": "^17.2.3",
     "exifreader": "^4.36.1",
