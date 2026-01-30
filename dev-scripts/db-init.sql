@@ -80,19 +80,6 @@ CREATE TABLE movies (
 );
 
 --- Many to Many Links ---
-
-CREATE TABLE disk_format (
-  movie_id UUID REFERENCES movies(id) ON DELETE CASCADE,
-  format_id UUID REFERENCES formats(id) ON DELETE CASCADE,
-  PRIMARY KEY (movie_id, format_id)
-);
-
-CREATE TABLE disk_region (
-  movie_id UUID REFERENCES movies(id) ON DELETE CASCADE,
-  region_id UUID REFERENCES regions(id) ON DELETE CASCADE,
-  PRIMARY KEY (movie_id, region_id)
-);
-
 CREATE TABLE movie_disks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   disk_number SMALLINT,
