@@ -3,7 +3,7 @@
 import { Menu, MenuButton, MenuItem, MenuItems, MenuSeparator } from '@headlessui/react'
 import { useState } from 'react';
 import { exportMetadataToFile, importMetadataFromFile } from '../app/metadata/actions';
-import { IoCloudyNightSharp, IoSettingsOutline, IoSunnySharp } from "react-icons/io5";
+import { IoSettingsOutline, IoSunnySharp } from "react-icons/io5";
 import UploadModal from './UploadModal';
 import { Switch } from "@heroui/switch";
 import { MdModeNight } from 'react-icons/md';

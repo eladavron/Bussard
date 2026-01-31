@@ -25,7 +25,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@heroui/react": "^2.8.8",
-    "@heroui/switch": "^2.2.26",
+    "@heroui/theme": "^2.4.26",
     "@types/node": "^25.0.10",
     "dotenv": "^17.2.3",
     "exifreader": "^4.36.1",
