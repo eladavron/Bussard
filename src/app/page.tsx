@@ -3,6 +3,7 @@
 import MoviePoster from '../components/MoviePoster'
 import { useState, useEffect } from 'react';
 import { Movie } from '../types/movie';
+import { MovieInput, addMovie } from './actions/movies';
 import SettingsMenu from '../components/SettingsMenu';
 
 export default function Home() {
@@ -59,13 +60,29 @@ export default function Home() {
 
                 <div className="text-xs text-secondary space-y-1">
                   <p><strong className="text-primary">Director:</strong> {movie.directors.map(d => d.name).join(', ') || 'N/A'}</p>
-                  <p><strong className="text-primary">Starring:</strong> {movie.actors.slice(0, 3).map(a => a.name).join(', ')}{movie.actors.length > 3 ? '...' : ''}</p>
+                  <p><strong className="text-primary">Starring:</strong> {movie.actors.slice(0, 3).map(a => a.name + "(" + (a.character || '') + ")").join(', ')}{movie.actors.length > 3 ? '...' : ''}</p>
                 </div>
               </div>
             </article>
           ))}
         </div>
       </div>
+      <button onClick={() => {
+        let newMovie: MovieInput = {
+          title: "Test Movie",
+          description: "This is a test movie",
+          year: 2024,
+          runtime_min: 120,
+          imdb_id: null,
+          directors: ["Director One", "Director Two"],
+          actors: [
+            { name: "Actor One", character: "Character A" },
+            { name: "Actor Two", character: "Character B" }
+          ],
+          writers: ["Writer One"]
+        }
+        addMovie(newMovie);
+      }}>DEBUG</button>
     </main>
   );
 }
