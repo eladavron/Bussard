@@ -46,7 +46,7 @@ body {
 }
 
   .main-header {
-  @apply mb-8 flex justify-between items-start;
+  @apply mb-8 flex justify-between items-center;
 }
 
 .main-header h1 {

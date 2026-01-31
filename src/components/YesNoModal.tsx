@@ -1,8 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { uploadMovieImage } from '../app/actions/images';
-
 interface YesNoModalProps {
     title: string;
     message: string;

@@ -6,7 +6,6 @@ import { exportMetadataToFile, importMetadataFromFile } from '../app/metadata/ac
 import { IoSettingsOutline, IoSunnySharp } from "react-icons/io5";
 import UploadModal from './UploadModal';
 import { Switch } from "@heroui/switch";
-import { MdModeNight } from 'react-icons/md';
 import { FaMoon } from 'react-icons/fa';
 import { useTheme } from 'next-themes';
 import { Tooltip } from '@heroui/react';

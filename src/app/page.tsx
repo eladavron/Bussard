@@ -58,7 +58,7 @@ export default function Home() {
 
                 <div className="text-xs text-secondary space-y-1">
                   <p><strong className="text-primary">Director:</strong> {movie.directors.map(d => d.name).join(', ') || 'N/A'}</p>
-                  <p><strong className="text-primary">Starring:</strong> {movie.actors.slice(0, 3).map(a => a.name + "(" + (a.character || '') + ")").join(', ')}{movie.actors.length > 3 ? '...' : ''}</p>
+                  <p><strong className="text-primary">Starring:</strong> {movie.actors.slice(0, 3).map(a => a.name + " (" + (a.character || '') + ")").join(', ')}{movie.actors.length > 3 ? '...' : ''}</p>
                 </div>
               </div>
             </article>
