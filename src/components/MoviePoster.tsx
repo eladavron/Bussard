@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { deleteImage, uploadMovieImage } from '../app/actions';
+import { deleteImage, uploadMovieImage } from '../app/actions/images';
 import UploadModal from './UploadModal';
 
 import { IoTrashBinOutline } from "react-icons/io5";

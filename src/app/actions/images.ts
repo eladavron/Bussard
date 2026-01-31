@@ -1,7 +1,7 @@
 'use server';
 
 import ExifReader  from 'exifreader';
-import { db } from '../lib/db';
+import { db } from '../../lib/db';
 
 export async function uploadMovieImage(movieId: string, formData: FormData) {
     //Check if movie already has a poster
