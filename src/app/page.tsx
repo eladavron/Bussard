@@ -3,10 +3,8 @@
 import MoviePoster from '../components/MoviePoster'
 import { useState, useEffect } from 'react';
 import { Movie } from '../types/movie';
-import { MovieInput, addMovie } from './actions/movies';
-import SettingsMenu from '../components/SettingsMenu';
 import { IoAddCircleOutline } from "react-icons/io5";
-import { Tooltip } from '@heroui/react';
+import { Link, Tooltip } from '@heroui/react';
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -19,26 +17,19 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="main-page">
-      <div className="max-w-7xl mx-auto">
-        <header className="main-header">
-          <div className="flex flex-col gap-2 items-start">
-            <h1 className="">My Collection</h1>
-            <div className="flex gap-2">
-              <span className="tag tag-blue">
-                {movies.length} Movies
-              </span>
-              <Tooltip color='foreground' content="Add Movie" placement='bottom' closeDelay={0}>
-                <a role='button' href="/new-movie" className="button-hollow tag cursor-pointer">
-                  <IoAddCircleOutline />
-                </a>
-              </Tooltip>
-            </div>
-          </div>
-          <SettingsMenu />
-        </header>
+    <>
+      <div className="flex gap-2 mb-6">
+        <span className="tag tag-blue">
+          {movies.length} Movies
+        </span>
+        <Tooltip color='foreground' content="Add Movie" placement='bottom' closeDelay={0}>
+          <Link role='button' href="/new-movie" className="button-hollow tag cursor-pointer">
+            <IoAddCircleOutline />
+          </Link>
+        </Tooltip>
+      </div>
 
-        <div className="main-grid">
+      <div className="main-grid">
           {movies.map((movie) => (
             <article key={movie.id} className="movie-card">
               <div className="p-5 flex-1">
@@ -72,32 +63,7 @@ export default function Home() {
               </div>
             </article>
           ))}
-        </div>
-
-        <footer>
-          <div className="mt-10 text-center text-sm text-secondary">
-            <button
-              className="button-primary float-end"
-              onClick={() => {
-                let newMovie: MovieInput = {
-                  title: "Test Movie",
-                  description: "This is a test movie",
-                  year: 2024,
-                  runtime_min: 120,
-                  imdb_id: null,
-                  directors: ["Director One", "Director Two"],
-                  actors: [
-                    { name: "Actor One", character: "Character A" },
-                    { name: "Actor Two", character: "Character B" }
-                  ],
-                  writers: ["Writer One"]
-                }
-                addMovie(newMovie);
-              }}>DEBUG</button>
-            <span>&copy; {new Date().getFullYear()} My Movie Collection</span>
-          </div>
-        </footer>
       </div>
-    </main>
+    </>
   );
 }

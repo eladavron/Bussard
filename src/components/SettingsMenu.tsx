@@ -9,6 +9,7 @@ import { Switch } from "@heroui/switch";
 import { MdModeNight } from 'react-icons/md';
 import { FaMoon } from 'react-icons/fa';
 import { useTheme } from 'next-themes';
+import { Tooltip } from '@heroui/react';
 
 export default function SettingsMenu() {
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
@@ -17,16 +18,18 @@ export default function SettingsMenu() {
     return (
         <>
             <Menu as="div" className="relative inline-block">
-                <MenuButton className="button-hollow flex items-center gap-1">
-                    <IoSettingsOutline size={18} />
-                </MenuButton>
+                <Tooltip color='foreground' content="Settings" placement='bottom' closeDelay={0}>
+                    <MenuButton className="button-hollow cursor-pointer">
+                        <IoSettingsOutline />
+                    </MenuButton>
+                </Tooltip>
 
                 <MenuItems transition className="menu-dropdown">
                     <MenuItem as="div" className="px-4 py-2">
                         <Switch
                             size="sm"
                             color="secondary"
-                            thumbIcon={({isSelected}) => isSelected ? <FaMoon className='text-purple-900'/> : <IoSunnySharp className="text-orange-400"/>}
+                            thumbIcon={({ isSelected }) => isSelected ? <FaMoon className='text-purple-900' /> : <IoSunnySharp className="text-orange-400" />}
                             isSelected={theme === 'dark'}
                             onValueChange={(checked) => {
                                 console.log('Toggle clicked, new value:', checked);
@@ -34,7 +37,7 @@ export default function SettingsMenu() {
                             }}
                         ><span className='text-primary'>Dark Mode</span></Switch>
                     </MenuItem>
-                    <MenuSeparator />
+                    <MenuSeparator className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
                     <MenuItem>
                         <a href="#" className="menu-item-link" onClick={() => setUploadModalOpen(true)}>
                             Import...
