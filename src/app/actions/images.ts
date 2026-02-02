@@ -1,40 +1,83 @@
 'use server';
 
-import ExifReader  from 'exifreader';
+import ExifReader from 'exifreader';
 import { db } from '../../lib/db';
 
-export async function uploadMovieImage(movieId: string, formData: FormData) {
-    //Check if movie already has a poster
-    const poster = await db`SELECT poster_image_id FROM movies WHERE id = ${movieId}`;
+export type ImageInput = {
+    mime_type: string;
+    byte_data: Buffer;
+    width?: number;
+    height?: number;
+    byte_size: number;
+}
 
+async function getImageFromURL(url: string): Promise<Buffer> {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error('Failed to fetch image from URL');
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+}
+
+async function getImageFromForm(formData: FormData): Promise<Buffer> {
     const file = formData.get('image') as File;
-
     if (!file || file.size === 0) {
         throw new Error('No file uploaded');
     }
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    return Buffer.from(arrayBuffer);
+}
+
+async function addImage(formData?: FormData, imageUrl?: string): Promise<string> {
+    var buffer: Buffer;
+
+    if (imageUrl) {
+        buffer = await getImageFromURL(imageUrl);
+    } else if (formData) {
+        buffer = await getImageFromForm(formData);
+    } else {
+        throw new Error('No image source provided');
+    }
 
     const tags = ExifReader.load(buffer);
 
-    const mimeType = file.type;
-    const width = Number(tags['Image Width']?.value ?? tags.ImageWidth?.value ?? 0);
-    const height = Number(tags['Image Height']?.value ?? tags.ImageHeight?.value ?? 0);
+    let width = Number(tags['Image Width']?.value ?? tags.ImageWidth?.value ?? 0);
+    let height = Number(tags['Image Height']?.value ?? tags.ImageHeight?.value ?? 0);
+    let mime_type = `image/${tags.FileType?.value || 'UNKNOWN'}`;
 
-    const result = await db<{ id: string }[]>`INSERT INTO images (mime_type, byte_data, width, height, byte_size) VALUES (
-        ${mimeType},
+    let newItem = await db`INSERT INTO images (mime_type, byte_data, width, height, byte_size) VALUES (
+        ${mime_type},
         ${buffer},
         ${width},
         ${height},
         ${buffer.length}
     ) RETURNING id`;
+    return newItem[0].id;
+}
 
-    const imageID = result[0].id;
+export async function uploadMovieImage(movieId: string, formData: FormData) {
+    //Check if movie already has a poster
+    const old_poster = await db`SELECT poster_image_id FROM movies WHERE id = ${movieId}`;
+
+    const imageID = await addImage(formData);
     await db`UPDATE movies SET poster_image_id = ${imageID} WHERE id = ${movieId}`
 
     //Delete old poster
-    if (poster.length > 0 ) {
-        await db`DELETE FROM images WHERE id = ${poster[0].poster_image_id}`;
+    if (old_poster.length > 0) {
+        await db`DELETE FROM images WHERE id = ${old_poster[0].poster_image_id}`;
+    }
+}
+
+export async function addMovieImageFromURL(movieId: string, imageUrl: string) {
+    //Check if movie already has a poster
+    const old_poster = await db`SELECT poster_image_id FROM movies WHERE id = ${movieId}`;
+
+    const imageID = await addImage(undefined, imageUrl);
+    await db`UPDATE movies SET poster_image_id = ${imageID} WHERE id = ${movieId}`
+    //Delete old poster
+    if (old_poster.length > 0) {
+        await db`DELETE FROM images WHERE id = ${old_poster[0].poster_image_id}`;
     }
 }
 

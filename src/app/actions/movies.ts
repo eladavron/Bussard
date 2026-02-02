@@ -2,6 +2,7 @@
 
 import { Movie } from "@/src/types/movie";
 import { db } from "@/src/lib/db";
+import { addMovieImageFromURL, uploadMovieImage } from "./images";
 
 export type MovieInput = {
     title: string;
@@ -12,6 +13,7 @@ export type MovieInput = {
     directors: string[];
     actors: { name: string; character: string | null }[];
     writers: string[];
+    poster_image_url: string | null;
 }
 
 async function insertPeople(movie_id: string, names: string[], table: string, extra_data?: {key: string, value: any}[]) {
@@ -48,6 +50,11 @@ export async function addMovie(movie: MovieInput): Promise<string> {
     await insertPeople(newID, movie.directors, 'directors');
     await insertPeople(newID, movie.writers, 'writers');
     await insertPeople(newID, movie.actors.map(actor => actor.name), 'actors', movie.actors.map(actor => ({ key: 'character_name', value: actor.character })));
+    if (movie.poster_image_url) {
+        //Upload poster image
+        await addMovieImageFromURL(newID, movie.poster_image_url);
+    }
+
     return newID;
 }
 
