@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { deleteImage, uploadMovieImage } from '../app/actions/images';
+import { addMovieImageFromURL, deleteImage, uploadMovieImage } from '../app/actions/images';
 import UploadModal from './UploadModal';
 
 import { IoTrashBinOutline } from "react-icons/io5";
@@ -75,6 +75,13 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                 isOpen={isUploadModalOpen}
                 onUpload={async (formData) => {
                     await uploadMovieImage(movieId, formData);
+                    // Reload image after upload
+                    const response = await fetch(`/api/movie-poster?id=${movieId}`);
+                    const data = await response.json();
+                    setImageMeta(data);
+                }}
+                onURL={async (url) => {
+                    await addMovieImageFromURL(movieId, url);
                     // Reload image after upload
                     const response = await fetch(`/api/movie-poster?id=${movieId}`);
                     const data = await response.json();
