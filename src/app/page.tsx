@@ -5,11 +5,11 @@ import { useState, useEffect } from 'react';
 import { Movie } from '../types/movie';
 import { IoAddCircleOutline } from "react-icons/io5";
 import { Link, Tooltip } from '@heroui/react';
-import AddModal from '../components/AddModal';
+import SearchModal from '../components/modals/SearchModal';
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     fetch('/api/movies')
@@ -25,7 +25,7 @@ export default function Home() {
           {movies.length} Movies
         </span>
         <Tooltip color='foreground' content="Add Movie" placement='bottom' closeDelay={0}>
-          <Link role='button' href="#" onClick={() => setIsAddModalOpen(true)} className="button-hollow tag cursor-pointer">
+          <Link role='button' href="#" onClick={() => setIsSearchModalOpen(true)} className="button-hollow tag cursor-pointer">
             <IoAddCircleOutline />
           </Link>
         </Tooltip>
@@ -67,7 +67,7 @@ export default function Home() {
           ))}
       </div>
 
-      <AddModal isOpen={isAddModalOpen} setIsOpen={setIsAddModalOpen} />
+      <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} />
     </>
   );
 }

@@ -16,9 +16,9 @@ export default function BaseModal({ title, isOpen, onClose, body, footer, fullWi
     return (
         <>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm overflow-auto">
                     <div
-                        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 relative flex flex-col w-full ${fullWidth ? 'md:max-w-[90vw] max-w-[calc(100vw-2rem)]' : 'max-w-md'}`}
+                        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 relative flex flex-col w-full max-h-[calc(100vh-6rem)] my-auto ${fullWidth ? 'md:max-w-[90vw] max-w-[calc(100vw-2rem)]' : 'max-w-md'}`}
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button
@@ -31,12 +31,12 @@ export default function BaseModal({ title, isOpen, onClose, body, footer, fullWi
 
                         <h2 className="text-xl font-bold mb-4 text-primary">{title}</h2>
 
-                        <div className="flex-1 mb-6">
+                        <div className="flex-1 overflow-y-auto min-h-0">
                             {body}
                         </div>
 
                         {footer && (
-                            <div className="flex justify-end gap-3">
+                            <div className="flex justify-end gap-3 mt-6">
                                 {footer}
                             </div>
                         )}

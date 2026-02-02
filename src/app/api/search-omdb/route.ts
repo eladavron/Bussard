@@ -1,5 +1,6 @@
 'use server';
 
+import { IMDBPattern } from '@/src/types/omdb';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -9,13 +10,14 @@ export async function GET(request: NextRequest) {
     }
 
     const params = new URLSearchParams();
-    params.append('s', query);
+
+    params.append(query.match(IMDBPattern) ? 'i' : 's', query);
     params.append('apikey', process.env.OMDB_API_KEY || '');
 
     try {
         const response = await fetch(`http://www.omdbapi.com/?${params.toString()}`);
         if (!response.ok) {
-            return NextResponse.json({ error: 'Failed to fetch from OMDB API' }, { status: 502 });
+            return response;
         }
         const data = await response.json();
         return NextResponse.json(data);

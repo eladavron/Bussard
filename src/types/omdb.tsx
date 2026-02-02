@@ -1,15 +1,25 @@
 export const IMDBPattern = /^tt\d{7,8}$/;
 
 export type OMDBResult = {
-    Search: OMDBMovie[];
+    Search: OMDBMovieExtended[];
     totalResults: string;
     Response: string;
 }
 
-export type OMDBMovie = {
+export type OMDBMovieBasic = {
     Title: string;
     Year: string;
     imdbID: string;
     Type: string;
+    Poster: string;
+}
+
+export type OMDBMovieExtended = OMDBMovieBasic & {
+    Rated: string;
+    Released: string;
+    Runtime: string;
+    Director: string;
+    Writer: string;
+    Actors: string;
     Poster: string;
 }

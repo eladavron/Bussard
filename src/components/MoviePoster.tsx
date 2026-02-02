@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { addMovieImageFromURL, deleteImage, uploadMovieImage } from '../app/actions/images';
-import UploadModal from './UploadModal';
+import UploadModal from './modals/UploadModal';
 
 import { IoTrashBinOutline } from "react-icons/io5";
 import { FiEdit3 } from "react-icons/fi";
-import YesNoModal from './YesNoModal';
+import YesNoModal from './modals/YesNoModal';
 
 interface MoviePosterProps {
     movieId: string;

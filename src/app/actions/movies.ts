@@ -16,7 +16,7 @@ export type MovieInput = {
     poster_image_url: string | null;
 }
 
-async function insertPeople(movie_id: string, names: string[], table: string, extra_data?: {key: string, value: any}[]) {
+async function addPeople(movie_id: string, names: string[], table: string, extra_data?: {key: string, value: any}[]) {
     for (const name of names) {
         const people = await db`SELECT id FROM people WHERE name = ${name as string}`;
         let personID: string;
@@ -47,9 +47,9 @@ export async function addMovie(movie: MovieInput): Promise<string> {
     ) RETURNING id`;
     const newID = newItem[0].id;
 
-    await insertPeople(newID, movie.directors, 'directors');
-    await insertPeople(newID, movie.writers, 'writers');
-    await insertPeople(newID, movie.actors.map(actor => actor.name), 'actors', movie.actors.map(actor => ({ key: 'character_name', value: actor.character })));
+    await addPeople(newID, movie.directors, 'directors');
+    await addPeople(newID, movie.writers, 'writers');
+    await addPeople(newID, movie.actors.map(actor => actor.name), 'actors', movie.actors.map(actor => ({ key: 'character_name', value: actor.character })));
     if (movie.poster_image_url) {
         //Upload poster image
         await addMovieImageFromURL(newID, movie.poster_image_url);

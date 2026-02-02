@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import BaseModal from './BaseModal';
-import InputWithValidation from './InputWithValidation';
+import InputWithValidation from '../InputWithValidation';
 
 interface UploadModalProps {
     title: string;

@@ -4,7 +4,7 @@ import { Menu, MenuButton, MenuItem, MenuItems, MenuSeparator } from '@headlessu
 import { useState } from 'react';
 import { exportMetadataToFile, importMetadataFromFile } from '../app/metadata/actions';
 import { IoSettingsOutline, IoSunnySharp } from "react-icons/io5";
-import UploadModal from './UploadModal';
+import UploadModal from './modals/UploadModal';
 import { Switch } from "@heroui/switch";
 import { FaMoon } from 'react-icons/fa';
 import { useTheme } from 'next-themes';
