@@ -12,15 +12,21 @@ interface YesNoModalProps {
 
 export default function YesNoModal({ title, message, onConfirm, onCancel, isOpen }: YesNoModalProps) {
     return (
-        <BaseModal title={title} message={message} isOpen={isOpen} onClose={onCancel}>
-            <div className="flex justify-end gap-3">
-                <button type="button" onClick={onCancel} className="button-secondary">
-                    No
-                </button>
-                <button type="button" onClick={onConfirm} className="button-primary">
-                    Yes
-                </button>
-            </div>
-        </BaseModal>
+        <BaseModal
+            title={title}
+            isOpen={isOpen}
+            onClose={onCancel}
+            body={<p className="text-primary">{message}</p>}
+            footer={
+                <>
+                    <button type="button" onClick={onCancel} className="button-secondary">
+                        No
+                    </button>
+                    <button type="button" onClick={onConfirm} className="button-primary">
+                        Yes
+                    </button>
+                </>
+            }
+        />
     );
 }

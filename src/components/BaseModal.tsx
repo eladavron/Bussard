@@ -4,19 +4,21 @@ import { ReactNode } from 'react';
 
 interface BaseModalProps {
     title: string;
-    message: string;
     isOpen: boolean;
     onClose: () => void;
-    children: ReactNode;
+    body: ReactNode;
+    footer?: ReactNode;
+    className?: string;
+    fullWidth?: boolean;
 }
 
-export default function BaseModal({ title, message, isOpen, onClose, children }: BaseModalProps) {
+export default function BaseModal({ title, isOpen, onClose, body, footer, fullWidth }: BaseModalProps) {
     return (
         <>
             {isOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
                     <div
-                        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 relative"
+                        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 relative flex flex-col w-full ${fullWidth ? 'md:max-w-[90vw] max-w-[calc(100vw-2rem)]' : 'max-w-md'}`}
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button
@@ -28,9 +30,16 @@ export default function BaseModal({ title, message, isOpen, onClose, children }:
                         </button>
 
                         <h2 className="text-xl font-bold mb-4 text-primary">{title}</h2>
-                        <p className="text-primary mb-6">{message}</p>
 
-                        {children}
+                        <div className="flex-1 mb-6">
+                            {body}
+                        </div>
+
+                        {footer && (
+                            <div className="flex justify-end gap-3">
+                                {footer}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

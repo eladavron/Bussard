@@ -171,7 +171,7 @@ h2 {
 }
 
 .label-secondary {
-  @apply font-medium;
+  @apply  text-gray-500 dark:text-gray-400 font-medium;
 }
 
 .label-muted {
