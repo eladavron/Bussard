@@ -47,13 +47,3 @@ export async function deleteImage(movieId: string) {
     await db`UPDATE movies SET poster_image_id = NULL WHERE id = ${movieId}`;
     return await db`DELETE FROM images WHERE id = ${imageId}`;
 }
-
-/*
-CREATE TABLE images (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    mime_type TEXT NOT NULL CHECK (mime_type in ('image/jpeg', 'image/png', 'image/gif', 'image/webp')),
-    byte_data BYTEA NOT NULL,
-    width INT NOT NULL CHECK (width > 0),
-    height INT NOT NULL CHECK (height > 0),
-    byte_size INT NOT NULL CHECK (byte_size > 0)
-);*/

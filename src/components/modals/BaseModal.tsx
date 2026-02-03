@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 interface BaseModalProps {
     title: string;
@@ -9,16 +9,34 @@ interface BaseModalProps {
     body: ReactNode;
     footer?: ReactNode;
     className?: string;
-    fullWidth?: boolean;
 }
 
-export default function BaseModal({ title, isOpen, onClose, body, footer, fullWidth }: BaseModalProps) {
+export default function BaseModal({ title, isOpen, onClose, body, footer, className }: BaseModalProps) {
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                onClose();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleEscape);
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [isOpen, onClose]);
+
     return (
         <>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm overflow-auto">
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm overflow-auto"
+                    onClick={onClose}
+                >
                     <div
-                        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 relative flex flex-col w-full max-h-[calc(100vh-6rem)] my-auto ${fullWidth ? 'md:max-w-[90vw] max-w-[calc(100vw-2rem)]' : 'max-w-md'}`}
+                        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 relative flex flex-col w-full max-h-[calc(100vh-6rem)] my-auto ${className || 'max-w-md'}`}
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button

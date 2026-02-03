@@ -178,6 +178,14 @@ h2 {
   @apply text-sm text-gray-600 dark:text-gray-400;
 }
 
+/* Borders */
+.border-default {
+  @apply border border-gray-300 dark:border-gray-600 rounded-md;
+}
+.border-highlight {
+  @apply border-2 border-blue-500 dark:border-blue-400 rounded-md;
+}
+
 /* Disabled State */
 .disabled {
   @apply opacity-50 cursor-not-allowed;
