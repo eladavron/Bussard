@@ -1,16 +1,12 @@
 'use server';
 
-let formats: string[] = [];
-let regions: string[] = [];
-let loaded = false;
-
-export async function loadDiskOptions() {
-  if (loaded) return;
-  const { getAllFormats, getAllRegions } = await import("@/src/app/actions/disks");
-  [formats, regions] = await Promise.all([getAllFormats(), getAllRegions()]);
-  loaded = true;
-}
+import { db } from './db';
 
 export async function getDiskOptions() {
-  return { formats, regions };
+    const formatResults = await db<{ name: string }[]>`SELECT name FROM formats`;
+    const regionResults = await db<{ name: string }[]>`SELECT name FROM regions`;
+    return {
+        formats: formatResults.map(f => f.name),
+        regions: regionResults.map(r => r.name),
+    };
 }

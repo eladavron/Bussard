@@ -42,7 +42,7 @@ export default function Home() {
       </div>
 
       <div className="main-grid">
-          {movies.map((movie) => MovieCard(movie) )}
+          {movies.map((movie) => <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />)}
       </div>
 
       <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} onMovieAdded={async () => {

@@ -4,7 +4,12 @@ import { Movie } from "../../types/movie";
 import DiskSpan from "./DiskSpan";
 import MoviePoster from "./MoviePoster";
 
-export default function MovieCard( movie: Movie ) {
+export interface MovieCardProps {
+    movie: Movie;
+    onRefresh: () => void;
+}
+
+export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
     return (
         < article key={movie.id} className="movie-card" >
             <div className="p-5 flex-1">
@@ -23,7 +28,7 @@ export default function MovieCard( movie: Movie ) {
                     <span>{movie.runtime_min} min</span>
                     <span>•</span>
                     <span className="grow">
-                        <DiskSpan {...movie} />
+                        <DiskSpan movie={movie} onRefresh={onRefresh} />
                     </span>
                 </div>
 
