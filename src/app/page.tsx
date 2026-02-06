@@ -6,7 +6,7 @@ import { IoAddCircleOutline,  IoReload } from "react-icons/io5";
 import { Link, Tooltip } from '@heroui/react';
 import SearchModal from '../components/modals/SearchModal';
 import { getMovies } from './actions/movies';
-import MovieCard from '../components/MovieCard';
+import MovieCard from '../components/movie-card/MovieCard';
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);

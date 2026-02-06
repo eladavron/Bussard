@@ -1,8 +1,8 @@
 'use client';
 
-import { clear } from "node:console";
 import { addMovie, MovieInput } from "../app/actions/movies";
 import { clearMetadata } from "../app/actions/debug";
+import { addDisk } from "../app/actions/disks";
 
 export default function Footer() {
   return (
@@ -29,7 +29,8 @@ export default function Footer() {
                 writers: ["Writer One"],
                 poster_image_url: "https://i.imgur.com/sm3qZl3.jpeg"
               }
-              await addMovie(newMovie);
+              let movie_id = await addMovie(newMovie);
+              await addDisk(movie_id, "Blu-Ray", "Region A");
               window.location.reload();
             }}
           >ADD</button>

@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { addMovieImageFromURL, deleteImage, getMoviePoster, MoviePosterMeta, uploadMovieImage } from '../app/actions/images';
-import UploadModal from './modals/UploadModal';
+import { addMovieImageFromURL, deleteImage, getMoviePoster, MoviePosterMeta, uploadMovieImage } from '../../app/actions/images';
+import UploadModal from '../modals/UploadModal';
 
 import { IoTrashBinOutline } from "react-icons/io5";
 import { FiEdit3 } from "react-icons/fi";
-import YesNoModal from './modals/YesNoModal';
+import YesNoModal from '../modals/YesNoModal';
 import { Tooltip } from '@heroui/react';
 
 interface MoviePosterProps {

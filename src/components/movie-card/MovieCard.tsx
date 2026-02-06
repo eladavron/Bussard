@@ -1,6 +1,7 @@
 'use client';
 
-import { Movie } from "../types/movie";
+import { Movie } from "../../types/movie";
+import DiskSpan from "./DiskSpan";
 import MoviePoster from "./MoviePoster";
 
 export default function MovieCard( movie: Movie ) {
@@ -18,11 +19,11 @@ export default function MovieCard( movie: Movie ) {
                 <div className="flex justify-center pb-4">
                     <MoviePoster movieId={movie.id} />
                 </div>
-                <div className="text-sm text-secondary mb-4 flex gap-2">
+                <div className="text-sm text-secondary mb-4 flex gap-2 items-center">
                     <span>{movie.runtime_min} min</span>
                     <span>•</span>
-                    <span>
-                        {Array.from(new Set(movie.disks.map(d => d.format.name).filter(Boolean))).join(', ') || 'No Disks'}
+                    <span className="grow">
+                        <DiskSpan {...movie} />
                     </span>
                 </div>
 
