@@ -2,7 +2,7 @@
 
 import { Menu, MenuButton, MenuItem, MenuItems, MenuSeparator } from '@headlessui/react'
 import { useState } from 'react';
-import { exportMetadataToFile, importMetadataFromFile } from '../app/metadata/actions';
+import { exportMetadataToFile, importMetadataFromFile } from '../app/actions/metadata';
 import { IoSettingsOutline, IoSunnySharp } from "react-icons/io5";
 import UploadModal from './modals/UploadModal';
 import { Switch } from "@heroui/switch";
@@ -62,7 +62,7 @@ export default function SettingsMenu() {
                 isOpen={isUploadModalOpen}
                 onClose={() => setUploadModalOpen(false)}
                 onUpload={async (formData) => {
-                    importMetadataFromFile(formData);
+                    await importMetadataFromFile(formData);
                     setUploadModalOpen(false);
                 }}
                 title="Import Movie Metadata"

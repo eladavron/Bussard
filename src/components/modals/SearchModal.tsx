@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import BaseModal from './BaseModal';
 import { OMDBMovieExtended, OMDBResult } from '../../types/omdb';
 import MovieResultRow from './MovieResultRow';
+import { searchOMDB } from '../../app/actions/omdb';
 
 interface SearchModalProps {
     isOpen: boolean;
@@ -30,7 +31,10 @@ export default function SearchModal({ isOpen, setIsOpen }: SearchModalProps) {
 
     useEffect(() => {
         omdbResults?.forEach((movie) => {
-            void getMoreData(movie.imdbID);
+            // Only fetch more data if we don't already have it
+            if (!movie.Actors && !movie.Director) {
+                void getMoreData(movie.imdbID);
+            }
         });
     }, [omdbResults]);
 
@@ -47,17 +51,16 @@ export default function SearchModal({ isOpen, setIsOpen }: SearchModalProps) {
             return;
         }
         movieIDsBeingFetched.current.add(imdbID);
-        const results = await fetch("/api/search-omdb?query=" + encodeURIComponent(imdbID))
-        if (!results.ok) {
-            setErrorMessage([results.statusText, await results.text()]);
+        try {
+            const data = await searchOMDB(imdbID) as OMDBMovieExtended;
+            setOmdbResults((prev) => prev.map((movie) => (
+                movie.imdbID === imdbID ? { ...movie, Actors: data.Actors, Director: data.Director } : movie
+            )));
+        } catch (error) {
+            setErrorMessage(['Error', error instanceof Error ? error.message : 'Failed to fetch details']);
+        } finally {
             movieIDsBeingFetched.current.delete(imdbID);
-            return;
         }
-        const data = await results.json() as OMDBMovieExtended;
-        setOmdbResults((prev) => prev.map((movie) => (
-            movie.imdbID === imdbID ? { ...movie, Actors: data.Actors, Director: data.Director } : movie
-        )));
-        movieIDsBeingFetched.current.delete(imdbID);
     }
 
     async function search(query: string): Promise<void> {
@@ -69,17 +72,16 @@ export default function SearchModal({ isOpen, setIsOpen }: SearchModalProps) {
         }
 
         setLoading(true);
-        const results = await fetch("/api/search-omdb?query=" + encodeURIComponent(query))
-        if (!results.ok) {
+        try {
+            const data = await searchOMDB(query) as OMDBResult;
+            setErrorMessage(['', '']);
+            setOmdbResults(data.Search);
+        } catch (error) {
             setOmdbResults([]);
+            setErrorMessage(['Error', error instanceof Error ? error.message : 'Failed to search']);
+        } finally {
             setLoading(false);
-            setErrorMessage([results.statusText, await results.text()]);
-            return;
         }
-        const data = await results.json() as OMDBResult;
-        setErrorMessage(['', '']);
-        setOmdbResults(data.Search);
-        setLoading(false);
     }
 
     return (

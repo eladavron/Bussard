@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { addMovieImageFromURL, deleteImage, uploadMovieImage } from '../app/actions/images';
+import { addMovieImageFromURL, deleteImage, getMoviePoster, MoviePosterMeta, uploadMovieImage } from '../app/actions/images';
 import UploadModal from './modals/UploadModal';
 
 import { IoTrashBinOutline } from "react-icons/io5";
@@ -12,12 +12,7 @@ interface MoviePosterProps {
     movieId: string;
 }
 
-interface MoviePosterMeta {
-    src: string;
-    isPlaceholder: boolean;
-    height?: number;
-    width?: number;
-}
+
 
 export default function MoviePoster({ movieId }: MoviePosterProps) {
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
@@ -27,8 +22,7 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
 
     async function loadImage() {
         try {
-            const response = await fetch(`/api/movie-poster?id=${movieId}`);
-            const data = await response.json();
+            const data = await getMoviePoster(movieId);
             setImageMeta(data);
         } catch (error) {
             console.error('Failed to load image:', error);
@@ -75,16 +69,12 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                 isOpen={isUploadModalOpen}
                 onUpload={async (formData) => {
                     await uploadMovieImage(movieId, formData);
-                    // Reload image after upload
-                    const response = await fetch(`/api/movie-poster?id=${movieId}`);
-                    const data = await response.json();
+                    const data = await getMoviePoster(movieId);
                     setImageMeta(data);
                 }}
                 onURL={async (url) => {
                     await addMovieImageFromURL(movieId, url);
-                    // Reload image after upload
-                    const response = await fetch(`/api/movie-poster?id=${movieId}`);
-                    const data = await response.json();
+                    const data = await getMoviePoster(movieId);
                     setImageMeta(data);
                 }}
                 onClose={() => setUploadModalOpen(false)}

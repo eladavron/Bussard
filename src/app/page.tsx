@@ -6,15 +6,15 @@ import { Movie } from '../types/movie';
 import { IoAddCircleOutline } from "react-icons/io5";
 import { Link, Tooltip } from '@heroui/react';
 import SearchModal from '../components/modals/SearchModal';
+import { getMovies } from './actions/movies';
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch('/api/movies')
-      .then(res => res.json())
-      .then(data => setMovies(data.movies))
+    getMovies()
+      .then(data => setMovies(data))
       .catch(() => setMovies([]));
   }, []);
 

@@ -1,6 +1,7 @@
 import { OMDBMovieExtended } from '@/src/types/omdb';
 import { Skeleton } from '@heroui/react';
 import { useState } from 'react';
+import { IoCheckmarkCircle } from "react-icons/io5";import { IoAddCircleOutline } from "react-icons/io5";
 
 interface MovieResultRowProps {
     movie?: OMDBMovieExtended;
@@ -31,9 +32,9 @@ export default function MovieResultRow({ movie, isLoading = false }: MovieResult
         <li className="mb-2 p-2 border border-default rounded">
             <div className="flex">
                 {movie.Poster !== 'N/A' && !imageError ? (
-                    <img 
-                        src={movie.Poster} 
-                        alt={`${movie.Title} Poster`} 
+                    <img
+                        src={movie.Poster}
+                        alt={`${movie.Title} Poster`}
                         className="w-16 h-auto mr-4"
                         onError={() => setImageError(true)}
                     />
@@ -54,6 +55,9 @@ export default function MovieResultRow({ movie, isLoading = false }: MovieResult
                     <p className='text-sm text-secondary'>
                         Actors: {movie.Actors ? movie.Actors : <Skeleton className="h-4 w-3/4 rounded" />}
                     </p>
+                </div>
+                <div className="flex items-center ml-4">
+                    <IoAddCircleOutline className=" text-2xl cursor-pointer" />
                 </div>
             </div>
         </li>

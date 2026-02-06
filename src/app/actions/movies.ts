@@ -4,6 +4,21 @@ import { Movie } from "@/src/types/movie";
 import { db } from "@/src/lib/db";
 import { addMovieImageFromURL, uploadMovieImage } from "./images";
 
+export async function getMovies(): Promise<Movie[]> {
+    const movies = await db<Movie[]>`SELECT * FROM movie_overview ORDER BY title ASC`;
+    return movies;
+}
+
+export async function clearDatabase(): Promise<void> {
+    await db`DELETE FROM people`;
+    await db`DELETE FROM movies`;
+    await db`DELETE FROM movie_directors`;
+    await db`DELETE FROM movie_actors`;
+    await db`DELETE FROM movie_writers`;
+    await db`DELETE FROM movie_disks`;
+    await db`DELETE FROM images`;
+}
+
 export type MovieInput = {
     title: string;
     description: string | null;

@@ -2,6 +2,33 @@
 
 import ExifReader from 'exifreader';
 import { db } from '../../lib/db';
+import { DBImage } from '@/src/types/db_image';
+
+export type MoviePosterMeta = {
+    src: string;
+    isPlaceholder: boolean;
+    width: number;
+    height: number;
+}
+
+export async function getMoviePoster(movieId: string): Promise<MoviePosterMeta> {
+    const image = await db<DBImage[]>`SELECT * FROM images WHERE id IN (SELECT poster_image_id FROM movies WHERE id = ${movieId}) LIMIT 1`;
+
+    let width = 200;
+    let height = 300;
+    let src = '/movie_poster.jpg';
+    let isPlaceholder = true;
+
+    if (image.length > 0) {
+        const img = image[0];
+        height = Math.floor((img.height / img.width) * width);
+        const base64String = Buffer.from(img.byte_data).toString('base64');
+        src = `data:${img.mime_type};base64,${base64String}`;
+        isPlaceholder = false;
+    }
+
+    return { src, isPlaceholder, width, height };
+}
 
 export type ImageInput = {
     mime_type: string;
