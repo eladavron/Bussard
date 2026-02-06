@@ -1,34 +1,28 @@
 'use server';
 
-import { Movie } from "@/src/types/movie";
+import { Movie, MovieInput } from "@/src/types/movie";
 import { db } from "@/src/lib/db";
 import { addMovieImageFromURL, uploadMovieImage } from "./images";
+import { OMDBMovieExtended } from "@/src/types/omdb";
 
 export async function getMovies(): Promise<Movie[]> {
     const movies = await db<Movie[]>`SELECT * FROM movie_overview ORDER BY title ASC`;
     return movies;
 }
 
-export async function clearDatabase(): Promise<void> {
-    await db`DELETE FROM people`;
-    await db`DELETE FROM movies`;
-    await db`DELETE FROM movie_directors`;
-    await db`DELETE FROM movie_actors`;
-    await db`DELETE FROM movie_writers`;
-    await db`DELETE FROM movie_disks`;
-    await db`DELETE FROM images`;
-}
-
-export type MovieInput = {
-    title: string;
-    description: string | null;
-    year: number | null;
-    runtime_min: number | null;
-    imdb_id: string | null;
-    directors: string[];
-    actors: { name: string; character: string | null }[];
-    writers: string[];
-    poster_image_url: string | null;
+export async function inputFromOMDB(movie: OMDBMovieExtended): Promise<MovieInput> {
+    const input: MovieInput = {
+        title: movie.Title,
+        description: movie.Plot || null,
+        year: movie.Year ? parseInt(movie.Year) : null,
+        runtime_min: movie.Runtime ? parseInt(movie.Runtime) : null,
+        imdb_id: movie.imdbID || null,
+        directors: movie.Director ? movie.Director.split(',').map(d => d.trim()) : [],
+        actors: movie.Actors ? movie.Actors.split(',').map(a => ({ name: a.trim(), character: null })) : [],
+        writers: movie.Writer ? movie.Writer.split(',').map(w => w.trim()) : [],
+        poster_image_url: movie.Poster && movie.Poster !== 'N/A' ? movie.Poster : null,
+    };
+    return input;
 }
 
 async function addPeople(movie_id: string, names: string[], table: string, extra_data?: {key: string, value: any}[]) {
@@ -71,6 +65,14 @@ export async function addMovie(movie: MovieInput): Promise<string> {
     }
 
     return newID;
+}
+
+export async function getMovieByIMDBID(imdb_id: string): Promise<Movie | null> {
+    const movies = await db<Movie[]>`SELECT * FROM movie_overview WHERE imdb_id = ${imdb_id}`;
+    if (movies.length === 0) {
+        return null;
+    }
+    return movies[0];
 }
 
 export async function editMovie(movie: Movie) {

@@ -5,14 +5,16 @@ import BaseModal from './BaseModal';
 import { OMDBMovieExtended, OMDBResult } from '../../types/omdb';
 import MovieResultRow from './MovieResultRow';
 import { searchOMDB } from '../../app/actions/omdb';
+import { getMovieByIMDBID } from '@/src/app/actions/movies';
 
 interface SearchModalProps {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
+    onMovieAdded?: () => void;
 }
 
 // Add logic for searching by title if needed
-export default function SearchModal({ isOpen, setIsOpen }: SearchModalProps) {
+export default function SearchModal({ isOpen, setIsOpen, onMovieAdded }: SearchModalProps) {
 
     const [omdbResults, setOmdbResults] = useState<OMDBMovieExtended[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -32,11 +34,12 @@ export default function SearchModal({ isOpen, setIsOpen }: SearchModalProps) {
     useEffect(() => {
         omdbResults?.forEach((movie) => {
             // Only fetch more data if we don't already have it
-            if (!movie.Actors && !movie.Director) {
+            if (!movie.Actors && !movie.Director && !movieIDsBeingFetched.current.has(movie.imdbID)) {
                 void getMoreData(movie.imdbID);
             }
         });
-    }, [omdbResults]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [omdbResults.length]);
 
     useEffect(() => {
         if (!isOpen) {
@@ -54,7 +57,7 @@ export default function SearchModal({ isOpen, setIsOpen }: SearchModalProps) {
         try {
             const data = await searchOMDB(imdbID) as OMDBMovieExtended;
             setOmdbResults((prev) => prev.map((movie) => (
-                movie.imdbID === imdbID ? { ...movie, Actors: data.Actors, Director: data.Director } : movie
+                movie.imdbID === imdbID ? { ...movie, ...data } : movie
             )));
         } catch (error) {
             setErrorMessage(['Error', error instanceof Error ? error.message : 'Failed to fetch details']);
@@ -115,7 +118,7 @@ export default function SearchModal({ isOpen, setIsOpen }: SearchModalProps) {
                     {omdbResults && omdbResults.length > 0 ? (
                         <ul>
                             {omdbResults.map((movie) => (
-                                <MovieResultRow key={movie.imdbID} movie={movie} />
+                                <MovieResultRow key={movie.imdbID} movie={movie} onAdd={onMovieAdded} />
                             ))}
                         </ul>
                     ) : (!loading && <p className="text-primary">No results found.</p>)

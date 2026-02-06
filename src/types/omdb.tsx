@@ -15,6 +15,7 @@ export type OMDBMovieBasic = {
 }
 
 export type OMDBMovieExtended = OMDBMovieBasic & {
+    Plot: string;
     Rated: string;
     Released: string;
     Runtime: string;

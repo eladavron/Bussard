@@ -1,6 +1,8 @@
 'use client';
 
+import { clear } from "node:console";
 import { addMovie, MovieInput } from "../app/actions/movies";
+import { clearMetadata } from "../app/actions/debug";
 
 export default function Footer() {
   return (
@@ -32,9 +34,8 @@ export default function Footer() {
             }}
           >ADD</button>
           <button className="button-danger"
-            onClick={() => {
-              fetch('/api/debug/clear', { method: 'POST' });
-              //Reload main page
+            onClick={async () => {
+              await clearMetadata();
               window.location.reload();
             }
             }

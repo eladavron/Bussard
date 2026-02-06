@@ -24,7 +24,7 @@ export async function exportMetadataToFile() {
     const images = await db<DBImage[]>`SELECT * FROM images`;
     const people = await db<{ id: string; name: string }[]>`SELECT id, name FROM people`;
     const movieDisks = await db<Disk[]>`SELECT * FROM movie_disks`;
-    const movieActors = await db<{ movie_id: string; person_id: string; character_name: string | null }[]>`SELECT movie_id, person_id, character_name FROM movie_actors`;
+    const movieActors = await db<{ movie_id: string; person_id: string; character: string | null }[]>`SELECT movie_id, person_id, character_name AS character FROM movie_actors`;
     const movieWriters = await db<{ movie_id: string; person_id: string }[]>`SELECT movie_id, person_id FROM movie_writers`;
     const movieDirectors = await db<{ movie_id: string; person_id: string }[]>`SELECT movie_id, person_id FROM movie_directors`;
     //Save as JSON

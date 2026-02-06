@@ -1,15 +1,29 @@
+'use client';
+
+import { addMovie, getMovieByIMDBID, inputFromOMDB } from '@/src/app/actions/movies';
+import { DoesMovieExist } from '@/src/types/movie';
 import { OMDBMovieExtended } from '@/src/types/omdb';
 import { Skeleton } from '@heroui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoCheckmarkCircle } from "react-icons/io5";import { IoAddCircleOutline } from "react-icons/io5";
+import { CgSpinner } from "react-icons/cg";
 
 interface MovieResultRowProps {
     movie?: OMDBMovieExtended;
     isLoading?: boolean;
+    onAdd?: () => void;
 }
-
-export default function MovieResultRow({ movie, isLoading = false }: MovieResultRowProps) {
+export default function MovieResultRow({ movie, isLoading = false, onAdd }: MovieResultRowProps) {
     const [imageError, setImageError] = useState(false);
+    const [doesMovieExist, setDoesMovieExist] = useState<DoesMovieExist>(DoesMovieExist.Loading);
+
+    useEffect(() => {
+        if (!movie?.imdbID) return;
+        setDoesMovieExist(DoesMovieExist.Loading);
+        getMovieByIMDBID(movie.imdbID)
+            .then((movie) => movie == null ? setDoesMovieExist(DoesMovieExist.No) : setDoesMovieExist(DoesMovieExist.Yes))
+            .catch(() => setDoesMovieExist(DoesMovieExist.Error));
+    }, [movie?.imdbID]);
 
     if (isLoading) {
         return (
@@ -49,15 +63,24 @@ export default function MovieResultRow({ movie, isLoading = false }: MovieResult
                         <a href={`https://www.imdb.com/title/${movie.imdbID}`} className="text-sm text-secondary" target="_blank" rel="noopener noreferrer"><code>{movie.imdbID}</code></a>
                     </div>
                     <p className="text-sm text-secondary">{movie.Year}</p>
-                    <p className="text-sm text-secondary flex items-center">
+                    <div className="text-sm text-secondary flex items-center">
                         Director: {movie.Director ? movie.Director : <Skeleton className="h-4 w-20 rounded inline-block ml-2" />}
-                    </p>
-                    <p className='text-sm text-secondary'>
+                    </div>
+                    <div className='text-sm text-secondary'>
                         Actors: {movie.Actors ? movie.Actors : <Skeleton className="h-4 w-3/4 rounded" />}
-                    </p>
+                    </div>
                 </div>
                 <div className="flex items-center ml-4">
-                    <IoAddCircleOutline className=" text-2xl cursor-pointer" />
+                    {doesMovieExist === DoesMovieExist.No && <IoAddCircleOutline className="cursor-pointer" title="Add Movie" onClick={async () => {
+                        //replace with spinner
+                        setDoesMovieExist(DoesMovieExist.Adding);
+                        await addMovie(await inputFromOMDB(movie));
+                        knownAdded.add(movie.imdbID);
+                        setDoesMovieExist(DoesMovieExist.Yes);
+                        onAdd?.();
+                    }} />}
+                    {doesMovieExist === DoesMovieExist.Yes && <IoCheckmarkCircle title="Already in Collection" />}
+                    {(doesMovieExist === DoesMovieExist.Adding || doesMovieExist === DoesMovieExist.Loading) && <CgSpinner className="animate-spin" />}
                 </div>
             </div>
         </li>

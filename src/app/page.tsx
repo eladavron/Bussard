@@ -12,10 +12,14 @@ export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
 
-  useEffect(() => {
+  const refreshMovies = () => {
     getMovies()
       .then(data => setMovies(data))
       .catch(() => setMovies([]));
+  };
+
+  useEffect(() => {
+    refreshMovies();
   }, []);
 
   return (
@@ -67,7 +71,7 @@ export default function Home() {
           ))}
       </div>
 
-      <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} />
+      <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} onMovieAdded={refreshMovies} />
     </>
   );
 }
