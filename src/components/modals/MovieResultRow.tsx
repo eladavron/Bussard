@@ -11,9 +11,10 @@ import { CgSpinner } from "react-icons/cg";
 interface MovieResultRowProps {
     movie?: OMDBMovieExtended;
     isLoading?: boolean;
+    extendedDataLoaded?: boolean;
     onAdd?: () => void;
 }
-export default function MovieResultRow({ movie, isLoading = false, onAdd }: MovieResultRowProps) {
+export default function MovieResultRow({ movie, isLoading = false, extendedDataLoaded = false, onAdd }: MovieResultRowProps) {
     const [imageError, setImageError] = useState(false);
     const [doesMovieExist, setDoesMovieExist] = useState<DoesMovieExist>(DoesMovieExist.Loading);
 
@@ -71,7 +72,7 @@ export default function MovieResultRow({ movie, isLoading = false, onAdd }: Movi
                     </div>
                 </div>
                 <div className="flex items-center ml-4 text-primary">
-                    {doesMovieExist === DoesMovieExist.No && <IoAddCircleOutline className="cursor-pointer" title="Add Movie" onClick={async () => {
+                    {doesMovieExist === DoesMovieExist.No && extendedDataLoaded && <IoAddCircleOutline className="cursor-pointer" title="Add Movie" onClick={async () => {
                         //replace with spinner
                         setDoesMovieExist(DoesMovieExist.Adding);
                         await addMovie(await inputFromOMDB(movie));

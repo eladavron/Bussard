@@ -44,7 +44,7 @@ INSERT INTO regions (name) VALUES
 ('Region A'),
 ('Region B'),
 ('Region C');
-REVOKE ALL ON formats FROM PUBLIC;
+REVOKE ALL ON regions FROM PUBLIC;
 
 -- People --
 CREATE TABLE people (

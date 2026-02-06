@@ -24,9 +24,8 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                 <div className="flex justify-center pb-4">
                     <MoviePoster movieId={movie.id} />
                 </div>
-                <div className="text-sm text-secondary mb-4 flex gap-2 items-center">
-                    <span>{movie.runtime_min} min</span>
-                    <span>•</span>
+                <div className="text-sm text-secondary mb-4 flex flex-wrap gap-2 items-center">
+                    <span>Runtime: {movie.runtime_min} min</span>
                     <span className="grow">
                         <DiskSpan movie={movie} onRefresh={onRefresh} />
                     </span>

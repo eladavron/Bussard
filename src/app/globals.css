@@ -86,6 +86,10 @@ h2 {
   @apply span-border hover:bg-gray-50 dark:hover:bg-gray-700;
 }
 
+.button-link-secondary{
+  @apply text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors cursor-pointer;
+}
+
 @utility span-border {
   @apply rounded-md bg-white dark:bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-xs inset-ring-1 inset-ring-gray-300 dark:inset-ring-gray-600;
 }

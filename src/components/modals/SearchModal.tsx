@@ -14,12 +14,16 @@ interface SearchModalProps {
 }
 
 // Add logic for searching by title if needed
+// Cache extended movie data across searches
+const extendedDataCache = new Map<string, OMDBMovieExtended>();
+
 export default function SearchModal({ isOpen, setIsOpen, onMovieAdded }: SearchModalProps) {
 
     const [omdbResults, setOmdbResults] = useState<OMDBMovieExtended[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<[string, string]>(['', '']);
+    const [loadedMovieIDs, setLoadedMovieIDs] = useState<Set<string>>(new Set());
     const movieIDsBeingFetched = useRef<Set<string>>(new Set());
 
     // Debounce timer reference
@@ -33,19 +37,27 @@ export default function SearchModal({ isOpen, setIsOpen, onMovieAdded }: SearchM
 
     useEffect(() => {
         omdbResults?.forEach((movie) => {
-            // Only fetch more data if we don't already have it
             if (!movie.Actors && !movie.Director && !movieIDsBeingFetched.current.has(movie.imdbID)) {
-                void getMoreData(movie.imdbID);
+                // Use cached data if available
+                const cached = extendedDataCache.get(movie.imdbID);
+                if (cached) {
+                    setOmdbResults((prev) => prev.map((m) => (
+                        m.imdbID === movie.imdbID ? { ...m, ...cached } : m
+                    )));
+                    setLoadedMovieIDs((prev) => new Set(prev).add(movie.imdbID));
+                } else {
+                    void getMoreData(movie.imdbID);
+                }
             }
         });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [omdbResults.length]);
+    }, [omdbResults?.length]);
 
     useEffect(() => {
         if (!isOpen) {
             setOmdbResults([]);
             setSearchQuery('');
             setErrorMessage(['', '']);
+            setLoadedMovieIDs(new Set());
         }
     }, [isOpen]);
 
@@ -56,9 +68,11 @@ export default function SearchModal({ isOpen, setIsOpen, onMovieAdded }: SearchM
         movieIDsBeingFetched.current.add(imdbID);
         try {
             const data = await searchOMDB(imdbID) as OMDBMovieExtended;
+            extendedDataCache.set(imdbID, data);
             setOmdbResults((prev) => prev.map((movie) => (
                 movie.imdbID === imdbID ? { ...movie, ...data } : movie
             )));
+            setLoadedMovieIDs((prev) => new Set(prev).add(imdbID));
         } catch (error) {
             setErrorMessage(['Error', error instanceof Error ? error.message : 'Failed to fetch details']);
         } finally {
@@ -78,7 +92,8 @@ export default function SearchModal({ isOpen, setIsOpen, onMovieAdded }: SearchM
         try {
             const data = await searchOMDB(query) as OMDBResult;
             setErrorMessage(['', '']);
-            setOmdbResults(data.Search);
+            setOmdbResults(data.Search ?? []);
+            setLoadedMovieIDs(new Set());
         } catch (error) {
             setOmdbResults([]);
             setErrorMessage(['Error', error instanceof Error ? error.message : 'Failed to search']);
@@ -118,7 +133,7 @@ export default function SearchModal({ isOpen, setIsOpen, onMovieAdded }: SearchM
                     {omdbResults && omdbResults.length > 0 ? (
                         <ul>
                             {omdbResults.map((movie) => (
-                                <MovieResultRow key={movie.imdbID} movie={movie} onAdd={onMovieAdded} />
+                                <MovieResultRow key={movie.imdbID} movie={movie} extendedDataLoaded={loadedMovieIDs.has(movie.imdbID)} onAdd={onMovieAdded} />
                             ))}
                         </ul>
                     ) : (!loading && <p className="text-primary">No results found.</p>)
