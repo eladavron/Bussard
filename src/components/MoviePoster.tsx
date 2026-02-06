@@ -7,6 +7,7 @@ import UploadModal from './modals/UploadModal';
 import { IoTrashBinOutline } from "react-icons/io5";
 import { FiEdit3 } from "react-icons/fi";
 import YesNoModal from './modals/YesNoModal';
+import { Tooltip } from '@heroui/react';
 
 interface MoviePosterProps {
     movieId: string;
@@ -53,12 +54,16 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
             {!imageMeta.isPlaceholder && (
                 <div className="relative group">
                     <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex justify-end gap-2 items-end">
-                        <button className="button-hover" role='button' title="Delete Image">
-                            <IoTrashBinOutline className="text-white w-full h-full" onClick={async () => setYesNoModalOpen(true)} />
-                        </button>
-                        <button className="button-hover" role='button' onClick={() => setUploadModalOpen(true)} title="Edit Image">
-                            <FiEdit3 className="text-white w-full h-full" />
-                        </button>
+                        <Tooltip color='foreground' content='Delete Image' placement='top' closeDelay={0}>
+                            <button className="button-hover" role='button' title="Delete Image">
+                                <IoTrashBinOutline className="hover-icon" onClick={async () => setYesNoModalOpen(true)} />
+                            </button>
+                        </Tooltip>
+                        <Tooltip color='foreground' content='Edit Image' placement='top' closeDelay={0}>
+                            <button className="button-hover" role='button' onClick={() => setUploadModalOpen(true)} title="Edit Image">
+                                <FiEdit3 className="hover-icon" />
+                            </button>
+                        </Tooltip>
                     </div>
                     <img src={imageMeta.src} alt="Movie Poster" className='movie-poster' />
                 </div>

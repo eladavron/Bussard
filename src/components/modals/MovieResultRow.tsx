@@ -70,12 +70,11 @@ export default function MovieResultRow({ movie, isLoading = false, onAdd }: Movi
                         Actors: {movie.Actors ? movie.Actors : <Skeleton className="h-4 w-3/4 rounded" />}
                     </div>
                 </div>
-                <div className="flex items-center ml-4">
+                <div className="flex items-center ml-4 text-primary">
                     {doesMovieExist === DoesMovieExist.No && <IoAddCircleOutline className="cursor-pointer" title="Add Movie" onClick={async () => {
                         //replace with spinner
                         setDoesMovieExist(DoesMovieExist.Adding);
                         await addMovie(await inputFromOMDB(movie));
-                        knownAdded.add(movie.imdbID);
                         setDoesMovieExist(DoesMovieExist.Yes);
                         onAdd?.();
                     }} />}
