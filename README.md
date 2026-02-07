@@ -33,7 +33,10 @@ To configure ProstegeSQL, follow these steps:
     POSTGRES_USER=bussard_user
     POSTGRES_PASSWORD=changeme
     POSTGRES_DB=bussard_db
+    OMDB_API_KEY=your_omdb_api_key_here
     ```
+
+    Replace `changeme` with a strong password and `your_omdb_api_key_here` with your actual OMDB API key.
 
 1. Run the database with:
 
