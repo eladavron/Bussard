@@ -44,6 +44,7 @@ export default function Home() {
               || movie.directors.some(director => director.name.toLowerCase().includes(filterQuery.toLowerCase()))
               || (movie.year && movie.year.toString().includes(filterQuery)
               ))
+            .sort((a, b) => a.title.localeCompare(b.title)) //TODO: Custom Sorting (ignoring articles, etc.)
             .map((movie) => <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />)
         )}
       </div>
