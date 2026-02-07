@@ -1,5 +1,5 @@
-import { DBImage } from "./db_image";
-import { Movie } from "./movie";
+import { DBImage } from './db_image';
+import { Movie } from './movie';
 
 /* Formats and Regions are static data in the database, so no need to import them */
 

@@ -1,8 +1,9 @@
 'use client';
 
-import { addMovie, MovieInput } from "../app/actions/movies";
-import { clearMetadata } from "../app/actions/debug";
-import { addDisk } from "../app/actions/disks";
+import { addMovie } from '../app/actions/movies';
+import { clearMetadata } from '../app/actions/debug';
+import { addDisk } from '../app/actions/disks';
+import { MovieInput } from '../types/movie';
 
 export default function Footer() {
   return (
@@ -15,22 +16,22 @@ export default function Footer() {
         <div className="mb-4 flex flex-row gap-2">
           <button className="button-primary"
             onClick={async () => {
-              let newMovie: MovieInput = {
-                title: "Test Movie",
-                description: "This is a test movie",
+              const newMovie: MovieInput = {
+                title: 'Test Movie',
+                description: 'This is a test movie',
                 year: 2024,
                 runtime_min: 120,
                 imdb_id: null,
-                directors: ["Director One", "Director Two"],
+                directors: ['Director One', 'Director Two'],
                 actors: [
-                  { name: "Actor One", character: "Character A" },
-                  { name: "Actor Two", character: "Character B" }
+                  { name: 'Actor One', character: 'Character A' },
+                  { name: 'Actor Two', character: 'Character B' }
                 ],
-                writers: ["Writer One"],
-                poster_image_url: "https://i.imgur.com/sm3qZl3.jpeg"
+                writers: ['Writer One'],
+                poster_image_url: 'https://i.imgur.com/sm3qZl3.jpeg'
               }
-              let movie_id = await addMovie(newMovie);
-              await addDisk(movie_id, "Blu-Ray", "Region A");
+              const movie_id = await addMovie(newMovie);
+              await addDisk(movie_id, 'Blu-Ray', 'Region A');
               window.location.reload();
             }}
           >ADD</button>

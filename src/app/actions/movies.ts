@@ -1,9 +1,9 @@
 'use server';
 
-import { Movie, MovieInput } from "@/src/types/movie";
-import { db } from "@/src/lib/db";
-import { addMovieImageFromURL, uploadMovieImage } from "./images";
-import { OMDBMovieExtended } from "@/src/types/omdb";
+import { Movie, MovieInput } from '@/src/types/movie';
+import { db } from '@/src/lib/db';
+import { addMovieImageFromURL } from './images';
+import { OMDBMovieExtended } from '@/src/types/omdb';
 
 export async function getMovies(): Promise<Movie[]> {
     const movies = await db<Movie[]>`SELECT * FROM movie_overview ORDER BY title ASC`;
@@ -25,7 +25,7 @@ export async function inputFromOMDB(movie: OMDBMovieExtended): Promise<MovieInpu
     return input;
 }
 
-async function addPeople(movie_id: string, names: string[], table: string, extra_data?: {key: string, value: any}[]) {
+async function addPeople(movie_id: string, names: string[], table: string, extra_data?: { key: string, value: string }[]) {
     for (const name of names) {
         const people = await db`SELECT id FROM people WHERE name = ${name as string}`;
         let personID: string;
@@ -47,7 +47,7 @@ async function addPeople(movie_id: string, names: string[], table: string, extra
 }
 
 export async function addMovie(movie: MovieInput): Promise<string> {
-    let newItem = await db`INSERT INTO movies (title, description, year, runtime_min, imdb_id) VALUES (
+    const newItem = await db`INSERT INTO movies (title, description, year, runtime_min, imdb_id) VALUES (
         ${movie.title},
         ${movie.description},
         ${movie.year},
@@ -58,7 +58,13 @@ export async function addMovie(movie: MovieInput): Promise<string> {
 
     await addPeople(newID, movie.directors, 'directors');
     await addPeople(newID, movie.writers, 'writers');
-    await addPeople(newID, movie.actors.map(actor => actor.name), 'actors', movie.actors.map(actor => ({ key: 'character_name', value: actor.character })));
+    for (const actor of movie.actors) {
+        if (actor.character) {
+            await addPeople(newID, [actor.name], 'actors', [{ key: 'character_name', value: actor.character }]);
+        } else {
+            await addPeople(newID, [actor.name], 'actors');
+        }
+    }
     if (movie.poster_image_url) {
         //Upload poster image
         await addMovieImageFromURL(newID, movie.poster_image_url);
@@ -73,12 +79,4 @@ export async function getMovieByIMDBID(imdb_id: string): Promise<Movie | null> {
         return null;
     }
     return movies[0];
-}
-
-export async function editMovie(movie: Movie) {
-    // function implementation
-}
-
-export async function deleteMovie(movieId: string) {
-    // function implementation
 }

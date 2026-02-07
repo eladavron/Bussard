@@ -1,8 +1,8 @@
 'use client';
 
-import { Movie } from "../../types/movie";
-import DiskSpan from "./DiskSpan";
-import MoviePoster from "./MoviePoster";
+import { Movie } from '../../types/movie';
+import DiskSpan from './DiskSpan';
+import MoviePoster from './MoviePoster';
 
 export interface MovieCardProps {
     movie: Movie;

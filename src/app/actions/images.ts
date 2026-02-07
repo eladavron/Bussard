@@ -14,7 +14,7 @@ export type MoviePosterMeta = {
 export async function getMoviePoster(movieId: string): Promise<MoviePosterMeta> {
     const image = await db<DBImage[]>`SELECT * FROM images WHERE id IN (SELECT poster_image_id FROM movies WHERE id = ${movieId}) LIMIT 1`;
 
-    let width = 200;
+    const width = 200;
     let height = 300;
     let src = '/movie_poster.jpg';
     let isPlaceholder = true;
@@ -57,7 +57,7 @@ async function getImageFromForm(formData: FormData): Promise<Buffer> {
 }
 
 async function addImage(formData?: FormData, imageUrl?: string): Promise<string> {
-    var buffer: Buffer;
+    let buffer: Buffer;
 
     if (imageUrl) {
         buffer = await getImageFromURL(imageUrl);
@@ -69,11 +69,11 @@ async function addImage(formData?: FormData, imageUrl?: string): Promise<string>
 
     const tags = ExifReader.load(buffer);
 
-    let width = Number(tags['Image Width']?.value ?? tags.ImageWidth?.value ?? 0);
-    let height = Number(tags['Image Height']?.value ?? tags.ImageHeight?.value ?? 0);
-    let mime_type = `image/${tags.FileType?.value || 'UNKNOWN'}`;
+    const width = Number(tags['Image Width']?.value ?? tags.ImageWidth?.value ?? 0);
+    const height = Number(tags['Image Height']?.value ?? tags.ImageHeight?.value ?? 0);
+    const mime_type = `image/${tags.FileType?.value || 'UNKNOWN'}`;
 
-    let newItem = await db`INSERT INTO images (mime_type, byte_data, width, height, byte_size) VALUES (
+    const newItem = await db`INSERT INTO images (mime_type, byte_data, width, height, byte_size) VALUES (
         ${mime_type},
         ${buffer},
         ${width},

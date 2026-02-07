@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { addMovieImageFromURL, deleteImage, getMoviePoster, MoviePosterMeta, uploadMovieImage } from '../../app/actions/images';
 import UploadModal from '../modals/UploadModal';
 
-import { IoTrashBinOutline } from "react-icons/io5";
-import { FiEdit3 } from "react-icons/fi";
+import { IoTrashBinOutline } from 'react-icons/io5';
+import { FiEdit3 } from 'react-icons/fi';
 import YesNoModal from '../modals/YesNoModal';
-import { Tooltip } from '@heroui/react';
+import { Image, Tooltip } from '@heroui/react';
 
 interface MoviePosterProps {
     movieId: string;
@@ -48,7 +48,7 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                             Upload Image
                         </span>
                     </div>
-                    <img src={imageMeta.src} alt="Movie Poster" className='movie-poster' />
+                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' />
                 </div>
             )}
             {!imageMeta.isPlaceholder && (
@@ -65,7 +65,7 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                             </button>
                         </Tooltip>
                     </div>
-                    <img src={imageMeta.src} alt="Movie Poster" className='movie-poster' />
+                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' />
                 </div>
             )}
             <UploadModal

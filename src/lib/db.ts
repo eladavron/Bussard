@@ -9,7 +9,7 @@ const SQL_DB=process.env.POSTGRES_DB;
 const connectionString = `postgresql://${SQL_USER}:${SQL_PASS}@localhost:5432/${SQL_DB}`
 
 if (!connectionString) {
-  throw new Error("DATABASE_URL is not set");
+  throw new Error('DATABASE_URL is not set');
 }
 
 // Prevent multiple connections during development hot-reloading

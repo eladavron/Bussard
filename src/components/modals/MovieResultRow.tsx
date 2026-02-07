@@ -3,10 +3,10 @@
 import { addMovie, getMovieByIMDBID, inputFromOMDB } from '@/src/app/actions/movies';
 import { DoesMovieExist } from '@/src/types/movie';
 import { OMDBMovieExtended } from '@/src/types/omdb';
-import { Skeleton } from '@heroui/react';
+import { Image, Skeleton } from '@heroui/react';
 import { useEffect, useState } from 'react';
-import { IoCheckmarkCircle } from "react-icons/io5";import { IoAddCircleOutline } from "react-icons/io5";
-import { CgSpinner } from "react-icons/cg";
+import { IoCheckmarkCircle } from 'react-icons/io5';import { IoAddCircleOutline } from 'react-icons/io5';
+import { CgSpinner } from 'react-icons/cg';
 
 interface MovieResultRowProps {
     movie?: OMDBMovieExtended;
@@ -47,7 +47,7 @@ export default function MovieResultRow({ movie, isLoading = false, extendedDataL
         <li className="mb-2 p-2 border border-default rounded">
             <div className="flex">
                 {movie.Poster !== 'N/A' && !imageError ? (
-                    <img
+                    <Image
                         src={movie.Poster}
                         alt={`${movie.Title} Poster`}
                         className="w-16 h-auto mr-4"

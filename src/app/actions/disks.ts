@@ -1,9 +1,9 @@
 'use server';
 
-import { db } from "@/src/lib/db";
+import { db } from '@/src/lib/db';
 
-export async function addDisk(movieId: string, format: string, region: string | null) {
-    let disk_id = await db`
+export async function addDisk(movieId: string, format: string, region: string | null) : Promise<string> {
+    const disk_id = await db`
         INSERT INTO movie_disks (movie_id, disk_region, disk_format)
         VALUES (
             ${movieId},
@@ -11,9 +11,10 @@ export async function addDisk(movieId: string, format: string, region: string | 
             (SELECT id FROM formats WHERE name = ${format})
         ) RETURNING id;
     `;
+    return disk_id[0].id;
 }
 
-export async function removeDisk(movieId: string, format: string, region: string | null) {
+export async function removeDisk(movieId: string, format: string, region: string | null) : Promise<void> {
     if (region === null) {
         await db`
             DELETE FROM movie_disks

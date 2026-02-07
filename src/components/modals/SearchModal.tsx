@@ -5,7 +5,6 @@ import BaseModal from './BaseModal';
 import { OMDBMovieExtended, OMDBResult } from '../../types/omdb';
 import MovieResultRow from './MovieResultRow';
 import { searchOMDB } from '../../app/actions/omdb';
-import { getMovieByIMDBID } from '@/src/app/actions/movies';
 
 interface SearchModalProps {
     isOpen: boolean;
