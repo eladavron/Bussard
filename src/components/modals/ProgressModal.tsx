@@ -39,7 +39,7 @@ export default function ProgressModal({ title, message, isOpen, progress, errors
                     </button>
                 </div>
             ) : undefined}
-            className={(warnings && warnings.length > 0) || (errors && errors.length > 0) ? 'w-3/4' : 'w-1/2'}
+            className={(warnings && warnings.length > 0) || (errors && errors.length > 0) ? 'max-w-3/4' : 'max-w-1/2'}
             body={
                 <>
                     <div className="mb-6">
