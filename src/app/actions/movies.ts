@@ -84,3 +84,7 @@ export async function getMovieByIMDBID(imdb_id: string): Promise<Movie | null> {
     }
     return movies[0];
 }
+
+export async function deleteMovie(movie_id: string): Promise<void> {
+    await db`DELETE FROM movies WHERE id = ${movie_id}`;
+}

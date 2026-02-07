@@ -12,6 +12,7 @@
 - [ ] Add restore from backup
 - [ ] Fix Metadata manually or from search
 - [ ] Add sorting options (Title, Year, with/without 'The', etc.)
+- [x] Add "Delete Movie" option
 
 ## Smaller Features
 

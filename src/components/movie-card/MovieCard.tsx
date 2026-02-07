@@ -7,6 +7,7 @@ import { Movie } from '../../types/movie';
 import DiskSpan from './DiskSpan';
 import MoviePoster from './MoviePoster';
 import { Tooltip } from '@heroui/react';
+import { deleteMovie } from '@/src/app/actions/movies';
 
 export interface MovieCardProps {
     movie: Movie;
@@ -58,7 +59,7 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                     title="Delete Movie"
                     message="Are you sure you want to delete this movie?"
                     onConfirm={async () => {
-                        // TODO: Implement delete logic
+                        await deleteMovie(movie.id);
                         setYesNoModalOpen(false);
                         onRefresh();
                     }}
