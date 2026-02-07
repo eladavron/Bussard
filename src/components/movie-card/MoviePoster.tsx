@@ -8,6 +8,7 @@ import { IoTrashBinOutline } from 'react-icons/io5';
 import { FiEdit3 } from 'react-icons/fi';
 import YesNoModal from '../modals/YesNoModal';
 import { Image, Tooltip } from '@heroui/react';
+import { MimeType } from '@/src/types/mime';
 
 interface MoviePosterProps {
     movieId: string;
@@ -83,6 +84,7 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                     setImageMeta(data);
                 }}
                 onClose={() => setUploadModalOpen(false)}
+                fileTypes={[MimeType.IMAGE]} // Accept only common image formats
             />
             <YesNoModal
                 isOpen={isYesNoModalOpen}

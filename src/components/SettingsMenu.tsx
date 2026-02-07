@@ -9,6 +9,7 @@ import { Switch } from '@heroui/switch';
 import { FaMoon } from 'react-icons/fa';
 import { useTheme } from 'next-themes';
 import { Tooltip } from '@heroui/react';
+import { MimeType } from '../types/mime';
 
 export default function SettingsMenu() {
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
@@ -67,6 +68,7 @@ export default function SettingsMenu() {
                 }}
                 title="Import Movie Metadata"
                 message="Select a metadata JSON file to import movie data."
+                fileTypes={[MimeType.JSON, MimeType.CSV]}
             />
         </>
     )

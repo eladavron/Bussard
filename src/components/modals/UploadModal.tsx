@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import BaseModal from './BaseModal';
+import { MimeType } from '../../types/mime';
 import InputWithValidation from '../InputWithValidation';
 
 interface UploadModalProps {
@@ -11,9 +12,10 @@ interface UploadModalProps {
     onURL?: (url: string) => Promise<void> | undefined;
     onClose: () => void;
     isOpen: boolean;
+    fileTypes?: MimeType[]; // Optional prop to specify accepted file types
 }
 
-export default function UploadModal({ title, message, onUpload, onURL, onClose, isOpen }: UploadModalProps) {
+export default function UploadModal({ title, message, onUpload, onURL, onClose, isOpen, fileTypes }: UploadModalProps) {
 
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
     const [urlInput, setUrlInput] = useState<string>('');
@@ -49,7 +51,7 @@ export default function UploadModal({ title, message, onUpload, onURL, onClose, 
             body={
                 <>
                     <div className="mb-6">
-                        <p className="mb-4">{message}</p>
+                        <p className="mb-4 text-primary">{message}</p>
                     </div>
                     <form id="upload-form" onSubmit={async (e) => {
                         e.preventDefault();
@@ -81,8 +83,8 @@ export default function UploadModal({ title, message, onUpload, onURL, onClose, 
                             </label>
                             <input
                                 type="file"
-                                name="image"
-                                accept="image/*"
+                                name="file"
+                                accept={fileTypes ? fileTypes.join(',') : '*/*'}
                                 className={`file-input-upload ${urlInput ? 'disabled' : ''}`}
                                 onChange={(e) => {
                                     const file = e.target.files ? e.target.files[0] : null;
