@@ -25,7 +25,7 @@ export async function importMetadataFromFile(formData: FormData) {
     else if (file.type == MimeType.CSV) {
         //For now assume it's libib
         const csvData = Papa.parse(text, { header: true });
-        for (const row of csvData.data) {
+        for (const row of csvData.data as Record<string, string>[]) {
             const imdb_id = row['imdb id (movie)']; //This requires a custom imdb_id column in libib
             const title = row.title;
             const year = row.publish_date ? parseInt(/\d{4}/.exec(row.publish_date)![0]) : null; //Extract just the year from the string, since libib exports it as "Year: 1999"
