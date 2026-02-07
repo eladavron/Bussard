@@ -66,7 +66,7 @@ export default function UploadModal({ title, message, onUpload, onURL, onClose, 
                         }
 
                         if (file && urlData) {
-                            alert('Please provide only one image source, either upload a file or enter a URL.'); //TODO: Prevent by disabling file upload if URL is not empty
+                            alert('Please provide only one image source, either upload a file or enter a URL.'); //Should never happen since the URL input is disabled if a file is selected and vice versa, but we check just in case
                             return;
                         }
 
