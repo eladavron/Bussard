@@ -102,8 +102,8 @@ return /^Region [A-C]/.test(r);
                     </div>
                 </span>
             ) : (
-                <span className="flex items-stretch gap-1">
-                    {movie.disks?.map(d => 
+                <span className="flex items-stretch gap-1 flex-wrap">
+                    {movie.disks?.map(d =>
                         <span className="tag tag-gray font-mono p-0 flex items-center gap-1"
                               key={d.format.name + (d.region?.name ?? '')}>
                             {d.format.name} {d.region?.name != null ? `(${d.region.name})` : ''}
