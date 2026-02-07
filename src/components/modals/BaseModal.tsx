@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface BaseModalProps {
@@ -13,7 +13,10 @@ interface BaseModalProps {
 }
 
 export default function BaseModal({ title, isOpen, onClose, body, footer, className }: BaseModalProps) {
+    const [mounted, setMounted] = useState(false);
+
     useEffect(() => {
+        setMounted(true);
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 onClose();
@@ -28,6 +31,8 @@ export default function BaseModal({ title, isOpen, onClose, body, footer, classN
             document.removeEventListener('keydown', handleEscape);
         };
     }, [isOpen, onClose]);
+
+    if (!mounted) return null;
 
     return createPortal(
         <>
@@ -63,6 +68,6 @@ export default function BaseModal({ title, isOpen, onClose, body, footer, classN
                 </div>
             )}
         </>,
-        document.body
+        window.document.body
     );
 }

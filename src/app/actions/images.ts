@@ -48,7 +48,7 @@ async function getImageFromURL(url: string): Promise<Buffer> {
 }
 
 async function getImageFromForm(formData: FormData): Promise<Buffer> {
-    const file = formData.get('image') as File;
+    const file = formData.get('file') as File;
     if (!file || file.size === 0) {
         throw new Error('No file uploaded');
     }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import BaseModal from './BaseModal';
 import { MimeType } from '../../types/mime';
 import InputWithValidation from '../InputWithValidation';
+import { form } from '@heroui/theme';
 
 interface UploadModalProps {
     title: string;
@@ -56,22 +57,29 @@ export default function UploadModal({ title, message, onUpload, onURL, onClose, 
                     <form id="upload-form" onSubmit={async (e) => {
                         e.preventDefault();
                         const formData = new FormData(e.currentTarget);
+                        const file = formData?.get('file') as File;
+                        const urlData = formData.get('imageUrl');
 
-                        if (!formData.get('image') && !formData.get('imageUrl')) {
+                        if (!file && !urlData) {
                             alert('Please select a file or enter a URL.'); //TODO: Form validation popup
                             return;
                         }
 
-                        if (formData.get('image') && formData.get('imageUrl')) {
+                        if (file && urlData) {
                             alert('Please provide only one image source, either upload a file or enter a URL.'); //TODO: Prevent by disabling file upload if URL is not empty
                             return;
                         }
 
-                        if (onURL) {
+                        if (urlData && !onURL) {
+                            alert('Error: URL upload is not supported.'); // This should never happen since the URL input is only shown if onURL is provided, but we check just in case
+                            return;
+                        }
+
+                        if (urlData && onURL) {
                             const url = formData.get('imageUrl') as string;
                             await onURL(url);
                         }
-                        else if (onUpload) {
+                        else if (file) {
                             await onUpload(formData);
                         }
                         onClose();
