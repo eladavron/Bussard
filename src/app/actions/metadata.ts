@@ -10,6 +10,7 @@ import Papa from 'papaparse';
 import { addMovie, inputFromOMDB } from './movies';
 import { searchOMDB } from './omdb';
 import { OMDBMovieExtended } from '@/src/types/omdb';
+import { ImportError } from '@/src/types/import_error';
 
 export async function startImport(formData: FormData): Promise<string> {
     // Generate UUID
@@ -37,14 +38,14 @@ function _setProgressMessage(uuid: string, message: string) {
     importProgressStore[uuid].message = message;
 }
 
-function _setWarning(uuid: string, warning: string) {
+function _setWarning(uuid: string, warning: ImportError) {
     if (!importProgressStore[uuid]) {
         importProgressStore[uuid] = { ...defaultImportProgress, UUID: uuid };
     }
     importProgressStore[uuid].warnings.push(warning);
 }
 
-function _setError(uuid: string, error: string) {
+function _setError(uuid: string, error: ImportError) {
     if (!importProgressStore[uuid]) {
         importProgressStore[uuid] = { ...defaultImportProgress, UUID: uuid };
     }
@@ -55,8 +56,8 @@ export interface ImportProgress {
     UUID: string;
     percentage: number;
     message: string;
-    errors: string[];
-    warnings: string[];
+    errors: ImportError[];
+    warnings: ImportError[];
 }
 
 export async function getImportProgress(uuid: string): Promise<ImportProgress> {
@@ -80,6 +81,7 @@ export async function importMetadataFromFile(formData: FormData, importProgress?
         if (file.type == MimeType.JSON) {
             const metadata: BackupMetadata = JSON.parse(text);
             console.log('Imported metadata:', metadata);
+            //TODO: IMPLEMENT
         } else if (file.type == MimeType.CSV) {
             //For now assume it's libib
             const csvData = Papa.parse(text, { header: true });
@@ -108,18 +110,16 @@ export async function importMetadataFromFile(formData: FormData, importProgress?
                     if (imdb_id) {
                         const existingMovies = await db<Movie[]>`SELECT * FROM movies WHERE imdb_id = ${imdb_id}`;
                         if (existingMovies.length > 0) {
-                            console.warn(`Movie with IMDB ID ${imdb_id} already exists, skipping import for "${title}".`);
                             if (importProgress) {
-                                _setWarning(importProgress.UUID, `Movie with IMDB ID ${imdb_id} already exists, skipping import for "${title}".`);
+                                _setWarning(importProgress.UUID, { message: `Movie with IMDB ID ${imdb_id} already exists, skipping import for "${title}".`, index, row });
                             }
                             continue;
                         }
                     } else if (title && year) {
                         const existingMovies = await db<Movie[]>`SELECT * FROM movies WHERE title = ${title} AND year = ${year}`;
                         if (existingMovies.length > 0) {
-                            console.warn(`Movie with title "${title}" and year "${year}" already exists, skipping import.`);
                             if (importProgress) {
-                                _setWarning(importProgress.UUID, `Movie with title "${title}" and year "${year}" already exists, skipping import.`);
+                                _setWarning(importProgress.UUID, { message: `Movie with title "${title}" and year "${year}" already exists, skipping import.`, index, row });
                             }
                             continue;
                         }
@@ -132,9 +132,8 @@ export async function importMetadataFromFile(formData: FormData, importProgress?
                             const movieInput = await inputFromOMDB(omdb_data);
                             await addMovie(movieInput);
                         } catch (error) {
-                            console.error(`Failed to import movie with IMDB ID ${imdb_id}:`, error);
                             if (importProgress) {
-                                _setError(importProgress.UUID, `Failed to import movie with IMDB ID ${imdb_id}: ${error}`);
+                                _setError(importProgress.UUID, { message: `Failed to import "${title}" (${imdb_id}): ${error}`, index, row });
                             }
                         }
                     } else if (title && year) {
@@ -147,27 +146,23 @@ export async function importMetadataFromFile(formData: FormData, importProgress?
                                 const movieInput = await inputFromOMDB(omdb_data);
                                 await addMovie(movieInput);
                             } else {
-                                console.warn(`No OMDB results found for ${query}, skipping.`);
                                 if (importProgress) {
-                                    _setError(importProgress.UUID, `No OMDB results found for ${query}, skipping.`);
+                                    _setError(importProgress.UUID, { message: `No OMDB results found for ${query}, skipping.`, index, row });
                                 }
                             }
                         } catch (error) {
-                            console.error(`Failed to import movie with title "${title}" and year "${year}":`, error);
                             if (importProgress) {
-                                _setError(importProgress.UUID, `Failed to import movie with title "${title}" and year "${year}": ${error}`);
+                                _setError(importProgress.UUID, { message: `Failed to import movie with title "${title}" and year "${year}": ${error}`, index, row });
                             }
                         }
                     } else {
-                        console.warn('Row is missing both IMDB ID and title/year, skipping:', row);
                         if (importProgress) {
-                            _setError(importProgress.UUID, `Row is missing both IMDB ID and title/year, skipping: ${JSON.stringify(row)}`);
+                            _setError(importProgress.UUID, { message: `Row is missing both IMDB ID and title/year, skipping: ${JSON.stringify(row)}`, index, row });
                         }
                     }
                 } catch (error) {
-                    console.error(`Failed to import row ${index + 1}:`, error);
                     if (importProgress) {
-                        _setError(importProgress.UUID, `Failed to import row ${index + 1}: ${error}`);
+                        _setError(importProgress.UUID, { message: `Failed to import row ${index + 1}: ${error} - ${JSON.stringify(row)}`, index, row });
                     }
                 }
             }
@@ -180,7 +175,7 @@ export async function importMetadataFromFile(formData: FormData, importProgress?
     } catch (error) {
         console.error('Failed to import metadata:', error);
         if (importProgress) {
-            _setError(importProgress.UUID, `Failed to import metadata: ${error}`);
+            _setError(importProgress.UUID, { message: `Failed to import metadata: ${error}`, index: -1, row: {} });
         }
         if (importProgress) {
             _setProgress(importProgress.UUID, 100);
@@ -209,8 +204,5 @@ export async function exportMetadataToFile() {
         MovieWriters: movieWriters,
         MovieDirectors: movieDirectors,
     };
-    //Save as JSON
-    const json = JSON.stringify(metadata, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    return blob;
+    return metadata;
 };

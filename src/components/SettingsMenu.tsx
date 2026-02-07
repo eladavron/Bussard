@@ -11,13 +11,16 @@ import { useTheme } from 'next-themes';
 import { Tooltip } from '@heroui/react';
 import { MimeType } from '../types/mime';
 import ProgressModal from './modals/ProgressModal';
+import { clearMetadata } from '../app/actions/debug';
+import { ImportError } from '../types/import_error';
+import { downloadData } from '../lib/global';
 
 export default function SettingsMenu() {
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
     const [isProgressModalOpen, setProgressModalOpen] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [importErrors, setImportErrors] = useState<string[]>([]);
-    const [importWarnings, setImportWarnings] = useState<string[]>([]);
+    const [importErrors, setImportErrors] = useState<ImportError[]>([]);
+    const [importWarnings, setImportWarnings] = useState<ImportError[]>([]);
     const [progressMessage, setProgressMessage] = useState('Processing...');
     const { theme, setTheme } = useTheme();
 
@@ -50,17 +53,17 @@ export default function SettingsMenu() {
                         </a>
                     </MenuItem>
                     <MenuItem>
-                        <a href="#" className="menu-item-link" onClick={() => exportMetadataToFile().then((blob: Blob | MediaSource) => {
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = 'backup_metadata.json';
-                            document.body.appendChild(a);
-                            a.click();
-                            a.remove();
-                            URL.revokeObjectURL(url);
-                        })}>
+                        <a href="#" className="menu-item-link" onClick={() => exportMetadataToFile().then(data => downloadData(data, 'movie_metadata_backup.json'))}>
                             Export...
+                        </a>
+                    </MenuItem>
+                    <MenuSeparator className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
+                    <MenuItem>
+                        <a href="#" className="menu-item-link" onClick={async () => {
+                            await clearMetadata();
+                            window.location.reload();
+                        }}>
+                            Clear Local Data
                         </a>
                     </MenuItem>
                 </MenuItems>
