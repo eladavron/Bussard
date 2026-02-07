@@ -10,7 +10,7 @@ services:
     networks:
       - appnet
     ports:
-      - "127.0.0.1:5432:5432"
+      - "0.0.0.0:5432:5432"
 
   app:
     build: .
@@ -22,7 +22,7 @@ services:
     networks:
       - appnet
     ports:
-      - "3000:3000"
+      - "0.0.0.0:3000:3000"
     # Uncomment the following lines for development hot-reloading
     # volumes:
     #   - ./:/app

@@ -2,11 +2,14 @@
 
 import postgres from 'postgres';
 
-const SQL_USER=process.env.POSTGRES_USER;
-const SQL_PASS=process.env.POSTGRES_PASSWORD;
-const SQL_DB=process.env.POSTGRES_DB;
 
-const connectionString = `postgresql://${SQL_USER}:${SQL_PASS}@localhost:5432/${SQL_DB}`
+const SQL_USER = process.env.POSTGRES_USER;
+const SQL_PASS = process.env.POSTGRES_PASSWORD;
+const SQL_DB = process.env.POSTGRES_DB;
+const SQL_HOST = process.env.POSTGRES_HOST || (process.env.NODE_ENV === 'production' ? 'postgres' : 'localhost');
+const SQL_PORT = process.env.POSTGRES_PORT || '5432';
+
+const connectionString = `postgresql://${SQL_USER}:${SQL_PASS}@${SQL_HOST}:${SQL_PORT}/${SQL_DB}`
 
 if (!connectionString) {
   throw new Error('DATABASE_URL is not set');
