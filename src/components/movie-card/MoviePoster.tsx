@@ -7,7 +7,8 @@ import UploadModal from '../modals/UploadModal';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import { FiEdit3 } from 'react-icons/fi';
 import YesNoModal from '../modals/YesNoModal';
-import { Image, Tooltip } from '@heroui/react';
+import { Tooltip } from '@heroui/react';
+import Image from 'next/image';
 import { MimeType } from '@/src/types/mime';
 
 interface MoviePosterProps {
@@ -49,7 +50,7 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                             Upload Image
                         </span>
                     </div>
-                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' />
+                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' width={imageMeta.width} height={imageMeta.height} />
                 </div>
             )}
             {!imageMeta.isPlaceholder && (
@@ -66,7 +67,7 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                             </button>
                         </Tooltip>
                     </div>
-                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' />
+                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' width={300} height={200} />
                 </div>
             )}
             <UploadModal
