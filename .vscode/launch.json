@@ -15,13 +15,17 @@
       "webRoot": "${workspaceFolder}",
       "sourceMapPathOverrides": {
         "webpack://*": "${webRoot}/*"
-      }
+      },
+      "preLaunchTask": "wait-for-next-server"
     }
   ],
   "compounds": [
     {
       "name": "Next.js: debug fullstack",
-      "configurations": ["Next.js: debug server", "Next.js: debug client"],
+      "configurations": [
+        "Next.js: debug server",
+        "Next.js: debug client"
+      ],
       "stopAll": true
     }
   ]
