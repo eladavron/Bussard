@@ -8,6 +8,10 @@ A self-hosted [free and open source](https://en.wikipedia.org/wiki/Free_and_open
 
 Logo created by [Noel Rupenthal](https://ca.linkedin.com/in/noel-ruppenthal-4217628).
 
+## Deployment
+
+Simply run `docker-compose up -d` in the root directory to start the application and its dependencies. The application will be available at `http://localhost:3000`.
+
 ## Development
 
 These are all *recommended* settings, you don't *need* to follow those, but that's what I used.

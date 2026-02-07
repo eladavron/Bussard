@@ -3,13 +3,30 @@ services:
     image: postgres:15
     restart: unless-stopped
     env_file:
-      - .env  
+      - .env
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./dev-scripts/db-init.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
       - appnet
     ports:
       - "127.0.0.1:5432:5432"
+
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    networks:
+      - appnet
+    ports:
+      - "3000:3000"
+    # Uncomment the following lines for development hot-reloading
+    # volumes:
+    #   - ./:/app
+    #   - /app/node_modules
 
 volumes:
   db_data:
