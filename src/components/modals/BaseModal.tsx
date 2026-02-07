@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface BaseModalProps {
     title: string;
@@ -28,7 +29,7 @@ export default function BaseModal({ title, isOpen, onClose, body, footer, classN
         };
     }, [isOpen, onClose]);
 
-    return (
+    return createPortal(
         <>
             {isOpen && (
                 <div
@@ -61,6 +62,7 @@ export default function BaseModal({ title, isOpen, onClose, body, footer, classN
                     </div>
                 </div>
             )}
-        </>
+        </>,
+        document.body
     );
 }
