@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface BaseModalProps {
-    title: string;
+    title: ReactNode | string;
     isOpen: boolean;
     onClose?: () => void;
     body: ReactNode;

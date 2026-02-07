@@ -41,10 +41,7 @@ export default function TopBar({ movies, refreshMovies, loading }: TopBarProps) 
                 </Tooltip>
             </div>
             }
-            <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} onMovieAdded={async () => {
-                await refreshMovies();
-                setIsSearchModalOpen(false);
-            }} />
+            <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} refreshMovies={refreshMovies} />
         </>
     )
 }

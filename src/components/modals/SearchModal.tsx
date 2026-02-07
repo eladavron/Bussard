@@ -5,24 +5,26 @@ import BaseModal from './BaseModal';
 import { OMDBMovieExtended, OMDBResult } from '../../types/omdb';
 import MovieResultRow from './MovieResultRow';
 import { searchOMDB } from '../../app/actions/omdb';
+import { Tooltip } from '@heroui/react';
 
 interface SearchModalProps {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
-    onMovieAdded?: () => void;
+    refreshMovies: () => Promise<void>;
 }
 
 // Add logic for searching by title if needed
 // Cache extended movie data across searches
 const extendedDataCache = new Map<string, OMDBMovieExtended>();
 
-export default function SearchModal({ isOpen, setIsOpen, onMovieAdded }: SearchModalProps) {
+export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: SearchModalProps) {
 
     const [omdbResults, setOmdbResults] = useState<OMDBMovieExtended[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<[string, string]>(['', '']);
     const [loadedMovieIDs, setLoadedMovieIDs] = useState<Set<string>>(new Set());
+    const [addMultiple, setAddMultiple] = useState<boolean>(false);
     const movieIDsBeingFetched = useRef<Set<string>>(new Set());
 
     // Debounce timer reference
@@ -103,11 +105,22 @@ export default function SearchModal({ isOpen, setIsOpen, onMovieAdded }: SearchM
 
     return (
         <BaseModal
-            title="Search by IMDB ID or Title..." isOpen={isOpen} onClose={() => setIsOpen(false)}
+            title={
+                <span className="flex flex-col gap-2">
+                    <span>Search by IMDB ID or Title...</span>
+                </span>
+            }
+            isOpen={isOpen} onClose={() => setIsOpen(false)}
             className='max-w-1/2'
             body={<>
                 <div className="flex justify-center">
                     <div className='w-full mb-0'>
+                        <Tooltip color='foreground' content='Add multiple movies from search results without closing the modal' placement='top' closeDelay={0}>
+                            <label className="text-sm text-secondary cursor-pointer flex items-center gap-2 float-end">
+                                Add Multiple
+                                <input id="addMultiple" type="checkbox" checked={addMultiple} onChange={(e) => setAddMultiple(e.target.checked)} />
+                            </label>
+                        </Tooltip>
                         <input
                             className='input-default w-full'
                             name='search'
@@ -132,7 +145,12 @@ export default function SearchModal({ isOpen, setIsOpen, onMovieAdded }: SearchM
                     {omdbResults && omdbResults.length > 0 ? (
                         <ul>
                             {omdbResults.map((movie) => (
-                                <MovieResultRow key={movie.imdbID} movie={movie} extendedDataLoaded={loadedMovieIDs.has(movie.imdbID)} onAdd={onMovieAdded} />
+                                <MovieResultRow key={movie.imdbID} movie={movie} extendedDataLoaded={loadedMovieIDs.has(movie.imdbID)} onAdd={async () => {
+                                    await refreshMovies();
+                                    if (!addMultiple) {
+                                        setIsOpen(false);
+                                    }
+                                }} />
                             ))}
                         </ul>
                     ) : (!loading && <p className="text-primary">No results found.</p>)
