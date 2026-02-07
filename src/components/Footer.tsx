@@ -25,10 +25,10 @@ export default function Footer() {
                 directors: ['Director One', 'Director Two'],
                 actors: [
                   { name: 'Actor One', character: 'Character A' },
-                  { name: 'Actor Two', character: 'Character B' }
+                  { name: 'Actor Two', character: 'Character B' },
                 ],
                 writers: ['Writer One'],
-                poster_image_url: 'https://i.imgur.com/sm3qZl3.jpeg'
+                poster_image_url: 'https://i.imgur.com/sm3qZl3.jpeg',
               }
               const movie_id = await addMovie(newMovie);
               await addDisk(movie_id, 'Blu-Ray', 'Region A');

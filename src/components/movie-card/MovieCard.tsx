@@ -11,7 +11,7 @@ export interface MovieCardProps {
 
 export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
     return (
-        < article key={movie.id} className="movie-card" >
+        <article key={movie.id} className="movie-card" >
             <div className="p-5 flex-1">
                 <div className="flex justify-between items-start mb-2">
                     <h2 className="movie-title">
@@ -38,7 +38,7 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                 <div className="text-xs text-secondary space-y-1">
                     <p><strong className="text-primary">Director:</strong> {movie.directors.map(d => d.name).join(', ') || 'N/A'}</p>
                     <p><strong className="text-primary">Starring:</strong> {movie.actors.slice(0, 3).map(a =>
-                         a.name + (a.character != null ? ` (${a.character})` : '')
+                         a.name + (a.character != null ? ` (${a.character})` : ''),
                     ).join(', ')}{movie.actors.length > 3 ? '...' : ''}</p>
                 </div>
             </div>

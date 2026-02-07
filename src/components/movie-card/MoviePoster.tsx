@@ -35,7 +35,9 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
         }
     }
 
-    useEffect(() => { loadImage(); }, [movieId]);
+    useEffect(() => {
+ loadImage(); 
+}, [movieId]);
 
     if (loading || !imageMeta) {
         return <div className="movie-poster" />;

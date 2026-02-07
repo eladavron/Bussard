@@ -18,4 +18,6 @@ const globalForDb = global as unknown as { conn: ReturnType<typeof postgres> | u
 // Disable prefetch as it is not supported for "Transaction" pool mode
 export const db = globalForDb.conn ?? postgres(connectionString.trim(), { prepare: false });
 
-if (process.env.NODE_ENV !== 'production') globalForDb.conn = db;
+if (process.env.NODE_ENV !== 'production') {
+globalForDb.conn = db;
+}

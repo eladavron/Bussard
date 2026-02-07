@@ -11,54 +11,180 @@ import { addMovie, inputFromOMDB } from './movies';
 import { searchOMDB } from './omdb';
 import { OMDBMovieExtended } from '@/src/types/omdb';
 
-export async function importMetadataFromFile(formData: FormData) {
-    const file = formData.get('file') as File;
+export async function startImport(formData: FormData): Promise<string> {
+    // Generate UUID
+    const uuid = crypto.randomUUID();
+    // Start the import process asynchronously
+    importMetadataFromFile(formData, { ...defaultImportProgress, UUID: uuid });
+    // Return the UUID to the client
+    return uuid;
+}
 
-    if (!file || file.size === 0) {
-        throw new Error('No file uploaded');
-    }
-    const text = await file.text();
-    if (file.type == MimeType.JSON) {
-        const metadata: BackupMetadata = JSON.parse(text);
-        console.log('Imported metadata:', metadata);
-    }
-    else if (file.type == MimeType.CSV) {
-        //For now assume it's libib
-        const csvData = Papa.parse(text, { header: true });
-        for (const row of csvData.data as Record<string, string>[]) {
-            const imdb_id = row['imdb id (movie)']; //This requires a custom imdb_id column in libib
-            const title = row.title;
-            const year = row.publish_date ? parseInt(/\d{4}/.exec(row.publish_date)![0]) : null; //Extract just the year from the string, since libib exports it as "Year: 1999"
+const importProgressStore: Record<string, ImportProgress> = {};
+const defaultImportProgress: ImportProgress = { UUID: '', percentage: 0, message: 'Processing...', errors: [], warnings: [] };
 
-            //If there's an IMDB ID, use it to fetch metadata from OMDB and add the movie, otherwise skip
-            if (imdb_id) {
+function _setProgress(uuid: string, percentage: number) {
+    if (!importProgressStore[uuid]) {
+        importProgressStore[uuid] = { ...defaultImportProgress, UUID: uuid };
+    }
+    importProgressStore[uuid].percentage = percentage;
+}
+
+function _setProgressMessage(uuid: string, message: string) {
+    if (!importProgressStore[uuid]) {
+        importProgressStore[uuid] = { ...defaultImportProgress, UUID: uuid };
+    }
+    importProgressStore[uuid].message = message;
+}
+
+function _setWarning(uuid: string, warning: string) {
+    if (!importProgressStore[uuid]) {
+        importProgressStore[uuid] = { ...defaultImportProgress, UUID: uuid };
+    }
+    importProgressStore[uuid].warnings.push(warning);
+}
+
+function _setError(uuid: string, error: string) {
+    if (!importProgressStore[uuid]) {
+        importProgressStore[uuid] = { ...defaultImportProgress, UUID: uuid };
+    }
+    importProgressStore[uuid].errors.push(error);
+}
+
+export interface ImportProgress {
+    UUID: string;
+    percentage: number;
+    message: string;
+    errors: string[];
+    warnings: string[];
+}
+
+export async function getImportProgress(uuid: string): Promise<ImportProgress> {
+    return {
+        UUID: uuid,
+        percentage: importProgressStore[uuid]?.percentage || 0,
+        message: importProgressStore[uuid]?.message || 'Processing...',
+        errors: importProgressStore[uuid]?.errors || [],
+        warnings: importProgressStore[uuid]?.warnings || [],
+    };
+}
+
+export async function importMetadataFromFile(formData: FormData, importProgress?: ImportProgress) {
+    try {
+        const file = formData.get('file') as File;
+
+        if (!file || file.size === 0) {
+            throw new Error('No file uploaded');
+        }
+        const text = await file.text();
+        if (file.type == MimeType.JSON) {
+            const metadata: BackupMetadata = JSON.parse(text);
+            console.log('Imported metadata:', metadata);
+        } else if (file.type == MimeType.CSV) {
+            //For now assume it's libib
+            const csvData = Papa.parse(text, { header: true });
+            const rows = csvData.data as Record<string, string>[];
+            for (const [index, row] of rows.entries()) {
                 try {
-                    const omdb_data = await searchOMDB(imdb_id) as OMDBMovieExtended;
-                    const movieInput = await inputFromOMDB(omdb_data);
-                    await addMovie(movieInput);
-                } catch (error) {
-                    console.error(`Failed to import movie with IMDB ID ${imdb_id}:`, error);
-                }
-            }
-            else if (title && year) {
-                //If there's no IMDB ID but there's a title and year, try to find the movie on OMDB and add it
-                try {
-                    const query = `${title} ${year}`;
-                    const searchResults = await searchOMDB(query);
-                    if ('Search' in searchResults && searchResults.Search.length > 0) {
-                        const omdb_data = await searchOMDB(searchResults.Search[0].imdbID) as OMDBMovieExtended;
-                        const movieInput = await inputFromOMDB(omdb_data);
-                        await addMovie(movieInput);
+                    const percentage = Math.round(((index + 1) / rows.length) * 100);
+                    if (importProgress) {
+                        _setProgress(importProgress.UUID, percentage);
+                    }
+                    if (importProgress) {
+                        _setProgressMessage(importProgress.UUID, `Importing "${row.title}"... (${index + 1}/${rows.length})`);
+                    }
+
+                    const imdb_id = row['imdb id (movie)']; //This requires a custom imdb_id column in libib
+                    const title = row.title;
+                    let year: number | null = null;
+                    try {
+                        year = row.publish_date ? parseInt(/\d{4}/.exec(row.publish_date)![0]) : null; //Extract just the year from the string, since libib exports it as "Year: 1999"
+                    } catch {
+                        year = null;
+                    }
+
+                    //Check if doesn't exist already
+
+                    if (imdb_id) {
+                        const existingMovies = await db<Movie[]>`SELECT * FROM movies WHERE imdb_id = ${imdb_id}`;
+                        if (existingMovies.length > 0) {
+                            console.warn(`Movie with IMDB ID ${imdb_id} already exists, skipping import for "${title}".`);
+                            if (importProgress) {
+                                _setWarning(importProgress.UUID, `Movie with IMDB ID ${imdb_id} already exists, skipping import for "${title}".`);
+                            }
+                            continue;
+                        }
+                    } else if (title && year) {
+                        const existingMovies = await db<Movie[]>`SELECT * FROM movies WHERE title = ${title} AND year = ${year}`;
+                        if (existingMovies.length > 0) {
+                            console.warn(`Movie with title "${title}" and year "${year}" already exists, skipping import.`);
+                            if (importProgress) {
+                                _setWarning(importProgress.UUID, `Movie with title "${title}" and year "${year}" already exists, skipping import.`);
+                            }
+                            continue;
+                        }
+                    }
+
+                    //If there's an IMDB ID, use it to fetch metadata from OMDB and add the movie, otherwise skip
+                    if (imdb_id) {
+                        try {
+                            const omdb_data = await searchOMDB(imdb_id) as OMDBMovieExtended;
+                            const movieInput = await inputFromOMDB(omdb_data);
+                            await addMovie(movieInput);
+                        } catch (error) {
+                            console.error(`Failed to import movie with IMDB ID ${imdb_id}:`, error);
+                            if (importProgress) {
+                                _setError(importProgress.UUID, `Failed to import movie with IMDB ID ${imdb_id}: ${error}`);
+                            }
+                        }
+                    } else if (title && year) {
+                        //If there's no IMDB ID but there's a title and year, try to find the movie on OMDB and add it
+                        try {
+                            const query = `${title} ${year}`;
+                            const searchResults = await searchOMDB(query);
+                            if ('Search' in searchResults && searchResults.Search.length > 0) {
+                                const omdb_data = await searchOMDB(searchResults.Search[0].imdbID) as OMDBMovieExtended;
+                                const movieInput = await inputFromOMDB(omdb_data);
+                                await addMovie(movieInput);
+                            } else {
+                                console.warn(`No OMDB results found for ${query}, skipping.`);
+                                if (importProgress) {
+                                    _setError(importProgress.UUID, `No OMDB results found for ${query}, skipping.`);
+                                }
+                            }
+                        } catch (error) {
+                            console.error(`Failed to import movie with title "${title}" and year "${year}":`, error);
+                            if (importProgress) {
+                                _setError(importProgress.UUID, `Failed to import movie with title "${title}" and year "${year}": ${error}`);
+                            }
+                        }
                     } else {
-                        console.warn(`No OMDB results found for ${query}, skipping.`);
+                        console.warn('Row is missing both IMDB ID and title/year, skipping:', row);
+                        if (importProgress) {
+                            _setError(importProgress.UUID, `Row is missing both IMDB ID and title/year, skipping: ${JSON.stringify(row)}`);
+                        }
                     }
                 } catch (error) {
-                    console.error(`Failed to import movie with title "${title}" and year "${year}":`, error);
+                    console.error(`Failed to import row ${index + 1}:`, error);
+                    if (importProgress) {
+                        _setError(importProgress.UUID, `Failed to import row ${index + 1}: ${error}`);
+                    }
                 }
             }
-            else {
-                console.warn('Row is missing both IMDB ID and title/year, skipping:', row);
+            // Ensure progress is set to 100% after completion
+            if (importProgress) {
+                _setProgress(importProgress.UUID, 100);
+                _setProgressMessage(importProgress.UUID, 'Import complete.');
             }
+        }
+    } catch (error) {
+        console.error('Failed to import metadata:', error);
+        if (importProgress) {
+            _setError(importProgress.UUID, `Failed to import metadata: ${error}`);
+        }
+        if (importProgress) {
+            _setProgress(importProgress.UUID, 100);
+            _setProgressMessage(importProgress.UUID, 'Import complete with errors.');
         }
     }
 }

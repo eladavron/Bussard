@@ -8,8 +8,11 @@ export default [
   ...tseslint.configs.recommended,
   {
     rules: {
-      quotes: ['error', 'single']
-    }
+      quotes: ['error', 'single'],
+      curly: ['error', 'all'],
+      'comma-dangle': ['error', 'always-multiline'],
+      'brace-style': ['error', '1tbs'],
+    },
   },
   // Override default ignores of eslint-config-next.
   globalIgnores([

@@ -5,7 +5,7 @@ import { DoesMovieExist } from '@/src/types/movie';
 import { OMDBMovieExtended } from '@/src/types/omdb';
 import { Image, Skeleton } from '@heroui/react';
 import { useEffect, useState } from 'react';
-import { IoCheckmarkCircle } from 'react-icons/io5';import { IoAddCircleOutline } from 'react-icons/io5';
+import { IoCheckmarkCircle } from 'react-icons/io5'; import { IoAddCircleOutline } from 'react-icons/io5';
 import { CgSpinner } from 'react-icons/cg';
 
 interface MovieResultRowProps {
@@ -19,7 +19,9 @@ export default function MovieResultRow({ movie, isLoading = false, extendedDataL
     const [doesMovieExist, setDoesMovieExist] = useState<DoesMovieExist>(DoesMovieExist.Loading);
 
     useEffect(() => {
-        if (!movie?.imdbID) return;
+        if (!movie?.imdbID) {
+return;
+}
         setDoesMovieExist(DoesMovieExist.Loading);
         getMovieByIMDBID(movie.imdbID)
             .then((movie) => movie == null ? setDoesMovieExist(DoesMovieExist.No) : setDoesMovieExist(DoesMovieExist.Yes))
@@ -42,7 +44,10 @@ export default function MovieResultRow({ movie, isLoading = false, extendedDataL
         );
     }
 
-    if (!movie) return null;
+    if (!movie) {
+        return null;
+    }
+
     return (
         <li className="mb-2 p-2 border border-default rounded">
             <div className="flex">

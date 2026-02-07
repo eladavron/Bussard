@@ -35,9 +35,15 @@ export default function DiskSpan({ movie, onRefresh }: DiskSpanProps) {
     const isDigital = format === 'Digital';
 
     const filteredRegions = allRegions.filter(r => {
-        if (r === 'Region Free') return true;
-        if (format === 'DVD') return /^Region \d/.test(r);
-        if (format === 'Blu-Ray' || format === '4K Ultra HD') return /^Region [A-C]/.test(r);
+        if (r === 'Region Free') {
+return true;
+}
+        if (format === 'DVD') {
+return /^Region \d/.test(r);
+}
+        if (format === 'Blu-Ray' || format === '4K Ultra HD') {
+return /^Region [A-C]/.test(r);
+}
         return true; // no format selected yet — show all
     });
 

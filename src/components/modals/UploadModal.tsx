@@ -4,7 +4,6 @@ import { useState } from 'react';
 import BaseModal from './BaseModal';
 import { MimeType } from '../../types/mime';
 import InputWithValidation from '../InputWithValidation';
-import { form } from '@heroui/theme';
 
 interface UploadModalProps {
     title: string;
@@ -78,8 +77,7 @@ export default function UploadModal({ title, message, onUpload, onURL, onClose, 
                         if (urlData && onURL) {
                             const url = formData.get('imageUrl') as string;
                             await onURL(url);
-                        }
-                        else if (file) {
+                        } else if (file) {
                             await onUpload(formData);
                         }
                         onClose();

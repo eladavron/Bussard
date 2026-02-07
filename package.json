@@ -4,7 +4,7 @@
   "description": "A physical media collection management tool.",
   "main": "index.js",
   "scripts": {
-    "dev": "docker compose up -d && next dev -H 0.0.0.0",
+    "dev": "docker compose up postgres -d && next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start -H 0.0.0.0",
     "lint": "eslint",

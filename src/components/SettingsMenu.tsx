@@ -2,7 +2,7 @@
 
 import { Menu, MenuButton, MenuItem, MenuItems, MenuSeparator } from '@headlessui/react'
 import { useState } from 'react';
-import { exportMetadataToFile, importMetadataFromFile } from '../app/actions/metadata';
+import { exportMetadataToFile, getImportProgress, ImportProgress, startImport } from '../app/actions/metadata';
 import { IoSettingsOutline, IoSunnySharp } from 'react-icons/io5';
 import UploadModal from './modals/UploadModal';
 import { Switch } from '@heroui/switch';
@@ -10,9 +10,15 @@ import { FaMoon } from 'react-icons/fa';
 import { useTheme } from 'next-themes';
 import { Tooltip } from '@heroui/react';
 import { MimeType } from '../types/mime';
+import ProgressModal from './modals/ProgressModal';
 
 export default function SettingsMenu() {
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
+    const [isProgressModalOpen, setProgressModalOpen] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [importErrors, setImportErrors] = useState<string[]>([]);
+    const [importWarnings, setImportWarnings] = useState<string[]>([]);
+    const [progressMessage, setProgressMessage] = useState('Processing...');
     const { theme, setTheme } = useTheme();
 
     return (
@@ -63,12 +69,32 @@ export default function SettingsMenu() {
                 isOpen={isUploadModalOpen}
                 onClose={() => setUploadModalOpen(false)}
                 onUpload={async (formData) => {
-                    await importMetadataFromFile(formData);
+                    setProgressModalOpen(true)
+                    const UUID = await startImport(formData);
+                    //TODO: timeout
+                    while (progress < 100) {
+                        //Get progress from server
+                        const currentProgress = await getImportProgress(UUID) as ImportProgress;
+                        setProgress(currentProgress.percentage);
+                        setProgressMessage(currentProgress.message);
+                        setImportErrors(currentProgress.errors);
+                        setImportWarnings(currentProgress.warnings);
+                        await new Promise(resolve => setTimeout(resolve, 500)); //Wait for 500ms before polling again to avoid spamming the server with requests
+                    }
                     setUploadModalOpen(false);
                 }}
                 title="Import Movie Metadata"
                 message="Select a metadata JSON file to import movie data."
                 fileTypes={[MimeType.JSON, MimeType.CSV]}
+            />
+            <ProgressModal
+                isOpen={isProgressModalOpen}
+                title="Progress"
+                onClose={() => setProgressModalOpen(false)}
+                message={progressMessage}
+                progress={progress}
+                warnings={importWarnings}
+                errors={importErrors}
             />
         </>
     )
