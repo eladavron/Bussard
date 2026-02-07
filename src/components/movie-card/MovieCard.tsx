@@ -1,8 +1,12 @@
 'use client';
 
+import { IoTrashBinOutline } from 'react-icons/io5';
+import YesNoModal from '../modals/YesNoModal';
+import { useState } from 'react';
 import { Movie } from '../../types/movie';
 import DiskSpan from './DiskSpan';
 import MoviePoster from './MoviePoster';
+import { Tooltip } from '@heroui/react';
 
 export interface MovieCardProps {
     movie: Movie;
@@ -10,8 +14,9 @@ export interface MovieCardProps {
 }
 
 export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
+    const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
     return (
-        <article key={movie.id} className="movie-card" >
+        <article key={movie.id} className="movie-card">
             <div className="p-5 flex-1">
                 <div className="flex justify-between items-start mb-2">
                     <h2 className="movie-title">
@@ -38,10 +43,29 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                 <div className="text-xs text-secondary space-y-1">
                     <p><strong className="text-primary">Director:</strong> {movie.directors.map(d => d.name).join(', ') || 'N/A'}</p>
                     <p><strong className="text-primary">Starring:</strong> {movie.actors.slice(0, 3).map(a =>
-                         a.name + (a.character != null ? ` (${a.character})` : ''),
+                        a.name + (a.character != null ? ` (${a.character})` : ''),
                     ).join(', ')}{movie.actors.length > 3 ? '...' : ''}</p>
                 </div>
             </div>
-        </article >
+            {<>
+                <Tooltip color='foreground' content='Delete Movie' placement='top' closeDelay={0}>
+                    <button className="button-hover absolute bottom-2 right-2" role='button' title="Delete Movie" onClick={() => setYesNoModalOpen(true)}>
+                        <IoTrashBinOutline className="hover-icon text-red-500 hover:text-red-300" />
+                    </button>
+                </Tooltip>
+                <YesNoModal
+                    isOpen={isYesNoModalOpen}
+                    title="Delete Movie"
+                    message="Are you sure you want to delete this movie?"
+                    onConfirm={async () => {
+                        // TODO: Implement delete logic
+                        setYesNoModalOpen(false);
+                        onRefresh();
+                    }}
+                    onCancel={() => setYesNoModalOpen(false)}
+                />
+            </>
+            }
+        </article>
     );
 }
