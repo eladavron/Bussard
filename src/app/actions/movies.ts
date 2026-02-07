@@ -51,7 +51,7 @@ export async function addMovie(movie: MovieInput): Promise<string> {
         ${movie.title},
         ${movie.description},
         ${movie.year},
-        ${movie.runtime_min},
+        ${movie.runtime_min ? movie.runtime_min : null},
         ${movie.imdb_id}
     ) RETURNING id`;
     const newID = newItem[0].id;

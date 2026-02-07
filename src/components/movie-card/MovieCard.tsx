@@ -31,7 +31,7 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                     <MoviePoster movieId={movie.id} />
                 </div>
                 <div className="text-sm text-secondary mb-4 flex flex-wrap gap-2 items-center">
-                    <span>Runtime: {movie.runtime_min} min</span>
+                    {movie.runtime_min && <span>Runtime: {movie.runtime_min} min</span>}
                     <span className="grow">
                         <DiskSpan movie={movie} onRefresh={onRefresh} />
                     </span>
