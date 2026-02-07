@@ -45,7 +45,7 @@ To configure ProstegeSQL, follow these steps:
 1. Run the database with:
 
     ```bash
-    docker-compose up -d
+    docker-compose up -d postgres
     ```
 
 1. Connect to the database with the following settings:
