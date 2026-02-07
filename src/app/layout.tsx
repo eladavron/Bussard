@@ -19,7 +19,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <main className="main-page">
-            <div className="max-w-7xl mx-auto">
+            <div className="mx-auto">
               <Header />
               {children}
               <Footer />
