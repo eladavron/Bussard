@@ -10,6 +10,7 @@ import MovieCardSkeleton from '../components/movie-card/MovieCardSkeleton';
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [filterQuery, setFilterQuery] = useState<string>('');
 
   const refreshMovies = async () => {
     setLoading(true);
@@ -24,7 +25,7 @@ export default function Home() {
 
   return (
     <>
-      <TopBar movies={movies} refreshMovies={refreshMovies} loading={loading} />
+      <TopBar movies={movies} refreshMovies={refreshMovies} setFilterQuery={setFilterQuery} filterQuery={filterQuery} loading={loading} />
 
       <div className="main-grid">
         {loading && [1, 2, 3, 4].map((i) => <MovieCardSkeleton key={i} />)}
@@ -35,7 +36,15 @@ export default function Home() {
           </div>
         )}
         {movies && movies.length > 0 && !loading && (
-          movies.map((movie) => <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />)
+          movies
+            .filter((movie) =>
+              movie.title.toLowerCase().includes(filterQuery.toLowerCase())
+              || movie.description?.toLowerCase().includes(filterQuery.toLowerCase())
+              || movie.actors.some(actor => actor.name.toLowerCase().includes(filterQuery.toLowerCase()))
+              || movie.directors.some(director => director.name.toLowerCase().includes(filterQuery.toLowerCase()))
+              || (movie.year && movie.year.toString().includes(filterQuery)
+              ))
+            .map((movie) => <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />)
         )}
       </div>
     </>

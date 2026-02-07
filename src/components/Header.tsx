@@ -9,7 +9,7 @@ export default function Header() {
         <header className="main-header ">
             <div className="flex items-center gap-3">
                 <Image src={BussardLogo} alt="Bussard Logo" width={60} />
-                <h1>Bussard Collector</h1>
+                <h1>Codename "Bussard"</h1>
             </div>
             <SettingsMenu />
         </header>
