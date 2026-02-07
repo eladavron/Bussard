@@ -10,7 +10,11 @@ Logo created by [Noel Rupenthal](https://ca.linkedin.com/in/noel-ruppenthal-4217
 
 ## Deployment
 
-Simply run `docker-compose up -d` in the root directory to start the application and its dependencies. The application will be available at `http://localhost:3000`.
+Create a `.env` file with your desired settings (see the [Development](#prostegesql) section below for details), then run the following command:
+
+```bash
+docker-compose up -d
+```
 
 ## Development
 
