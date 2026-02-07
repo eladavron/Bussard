@@ -7,15 +7,15 @@
 
 ## Big Features
 
-- [ ] Add Search
+- [x] Add Search
+- [x] Add "Delete Movie" option
 - [ ] Add Letter anchors
 - [ ] Add restore from backup
-- [ ] Fix Metadata manually or from search
+- [ ] Edit Metadata Manually
 - [ ] Add sorting options (Title, Year, with/without 'The', etc.)
-- [x] Add "Delete Movie" option
 
 ## Smaller Features
 
-- [ ] Add Blu-Ray 3D to formats
+- [x] Add Blu-Ray 3D to formats
 - [ ] Add support for multi-zone disks
 - [ ] Auto-Select "Region Free" for 4K UHD disks

@@ -11,7 +11,7 @@ export default [
       quotes: ['error', 'single'],
       curly: ['error', 'all'],
       'comma-dangle': ['error', 'always-multiline'],
-      'brace-style': ['error', '1tbs'],
+      'brace-style': ['error', 'stroustrup'],
     },
   },
   // Override default ignores of eslint-config-next.

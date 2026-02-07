@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "docker compose up postgres -d && next dev -H 0.0.0.0",
     "build": "next build",
-    "start": "next start -H 0.0.0.0",
+    "start": "docker compose up postgres -d && next start -H 0.0.0.0",
     "lint": "eslint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

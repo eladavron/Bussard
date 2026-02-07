@@ -2,7 +2,7 @@
 
 import { Input, Link, Skeleton, Tooltip } from '@heroui/react';
 import { useState } from 'react';
-import { IoAddCircleOutline, IoReload } from 'react-icons/io5';
+import { IoAddCircleOutline, IoReload, IoSearch } from 'react-icons/io5';
 import SearchModal from './modals/SearchModal';
 import { Movie } from '../types/movie';
 
@@ -19,11 +19,15 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
 
     return (
         <>
-            {loading && <div className="flex gap-2 mb-6">
-                <Skeleton className="w-22 h-7 tag" />
-                <Skeleton className="w-11 h-7 tag" />
-                <Skeleton className="w-11 h-7 tag" />
-            </div>}
+            {loading &&
+                <div className='flex justify-between items-center mb-3'>
+                    <div className="flex gap-2">
+                        <Skeleton className="w-22 h-7 tag" />
+                        <Skeleton className="w-11 h-7 tag" />
+                        <Skeleton className="w-11 h-7 tag" />
+                    </div>
+                    <Skeleton className="w-1/2 h-9 tag" />
+                </div>}
             {!loading &&
                 <div className='flex justify-between items-center mb-3'>
                     <div className="flex gap-2">
@@ -44,7 +48,17 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                             </Link>
                         </Tooltip>
                     </div>
-                    <Input type="text" placeholder="Search movies..." className="shrink w-1/2" disabled={loading} value={filterQuery} onChange={(e) => setFilterQuery(e.target.value)} />
+                    <Input
+                        type="text"
+                        placeholder="Search movies..."
+                        radius="full"
+                        className='w-1/2'
+                        disabled={loading}
+                        value={filterQuery}
+                        isClearable={true}
+                        startContent={<IoSearch />}
+                        onChange={(e) => setFilterQuery(e.target.value)}
+                    />
                 </div>
             }
             <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} refreshMovies={refreshMovies} />

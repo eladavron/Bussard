@@ -36,14 +36,17 @@ export default function DiskSpan({ movie, onRefresh }: DiskSpanProps) {
 
     const filteredRegions = allRegions.filter(r => {
         if (r === 'Region Free') {
-return true;
-}
+            return true;
+        }
         if (format === 'DVD') {
-return /^Region \d/.test(r);
-}
-        if (format === 'Blu-Ray' || format === '4K Ultra HD') {
-return /^Region [A-C]/.test(r);
-}
+            return /^Region \d/.test(r);
+        }
+        else if (format === 'Blu-Ray' || format === 'Blu-Ray 3D') {
+            return /^Region [A-C]/.test(r);
+        }
+        else if (format === '4K Ultra HD') {
+            return r === 'Region Free';
+        }
         return true; // no format selected yet — show all
     });
 
@@ -105,7 +108,7 @@ return /^Region [A-C]/.test(r);
                 <span className="flex items-stretch gap-1 flex-wrap">
                     {movie.disks?.map(d =>
                         <span className="tag tag-gray font-mono p-0 flex items-center gap-1"
-                              key={d.format.name + (d.region?.name ?? '')}>
+                            key={d.format.name + (d.region?.name ?? '')}>
                             {d.format.name} {d.region?.name != null ? `(${d.region.name})` : ''}
                             <Tooltip color='foreground' content="Remove Disk" placement='top' closeDelay={0}>
                                 <Link role="button" className="button-link-secondary"

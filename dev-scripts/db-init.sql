@@ -17,14 +17,16 @@ DROP VIEW IF EXISTS movie_overview CASCADE;
 -- Formats --
 CREATE TABLE formats (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL UNIQUE  -- e.g., DVD, Blu-Ray, 4K, Digital
+  name TEXT NOT NULL UNIQUE,  -- e.g., DVD, Blu-Ray, 4K, Digital
+  sort_order INT NOT NULL DEFAULT 0 -- For custom ordering of formats
 );
 
-INSERT INTO formats (name) VALUES
-('DVD'),
-('Blu-Ray'),
-('4K Ultra HD'),
-('Digital');
+INSERT INTO formats (name, sort_order) VALUES
+('DVD', 0),
+('Blu-Ray', 1),
+('Blu-Ray 3D', 2),
+('4K Ultra HD', 3),
+('Digital', 4);
 REVOKE ALL ON formats FROM PUBLIC;
 
 -- Regions --
