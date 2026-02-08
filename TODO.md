@@ -11,7 +11,7 @@
 - [x] Add "Delete Movie" option
 - [ ] Add Letter anchors
 - [ ] Add restore from backup
-- [ ] Edit Metadata Manually
+- [x] Edit Metadata Manually
 - [ ] Add sorting options (Title, Year, with/without 'The', etc.)
 
 ## Smaller Features

@@ -8,6 +8,8 @@ import DiskSpan from './DiskSpan';
 import MoviePoster from './MoviePoster';
 import { Tooltip } from '@heroui/react';
 import { deleteMovie } from '@/src/app/actions/movies';
+import { FiEdit3 } from 'react-icons/fi';
+import EditModal from '../modals/EditModal';
 
 export interface MovieCardProps {
     movie: Movie;
@@ -16,6 +18,8 @@ export interface MovieCardProps {
 
 export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
     const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
+    const [isEditModalOpen, setEditModalOpen] = useState(false);
+
     return (
         <article key={movie.id} className="movie-card relative group">
             <div className="p-5 flex-1">
@@ -49,16 +53,23 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                 </div>
             </div>
             {<>
-                <Tooltip color='foreground' content='Delete Movie' placement='top' closeDelay={0}>
-                    <button
-                        className="button-hover absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                        role='button'
-                        title="Delete Movie"
-                        onClick={() => setYesNoModalOpen(true)}
-                    >
-                        <IoTrashBinOutline className="hover-icon text-red-500 hover:text-red-300" />
-                    </button>
-                </Tooltip>
+                <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                    <Tooltip color='foreground' content='Delete Movie' placement='top' closeDelay={0}>
+                        <button
+                            className="button-hover"
+                            role='button'
+                            title="Delete Movie"
+                            onClick={() => setYesNoModalOpen(true)}
+                        >
+                            <IoTrashBinOutline className="hover-icon text-red-500 hover:text-red-300" />
+                        </button>
+                    </Tooltip>
+                    <Tooltip color='foreground' content='Edit Movie' placement='top' closeDelay={0}>
+                        <button className="button-hover" role='button' onClick={() => setEditModalOpen(true)} title="Edit Movie">
+                            <FiEdit3 className="hover-icon text-white" />
+                        </button>
+                    </Tooltip>
+                </div>
                 <YesNoModal
                     isOpen={isYesNoModalOpen}
                     title="Delete Movie"
@@ -72,6 +83,12 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                 />
             </>
             }
+            <EditModal
+                movie={movie}
+                isOpen={isEditModalOpen}
+                setIsOpen={setEditModalOpen}
+                onRefresh={onRefresh}
+            />
         </article>
     );
 }

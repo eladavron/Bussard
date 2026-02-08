@@ -85,6 +85,10 @@ export async function getMovieByIMDBID(imdb_id: string): Promise<Movie | null> {
     return movies[0];
 }
 
+export async function editMovie(movie: Movie): Promise<void> {
+    await db`UPDATE movies SET title = ${movie.title}, description = ${movie.description}, year = ${movie.year}, runtime_min = ${movie.runtime_min}, imdb_id = ${movie.imdb_id} WHERE id = ${movie.id}`;
+}
+
 export async function deleteMovie(movie_id: string): Promise<void> {
     await db`DELETE FROM movies WHERE id = ${movie_id}`;
 }

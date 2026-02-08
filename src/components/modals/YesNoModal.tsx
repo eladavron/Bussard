@@ -5,7 +5,7 @@ import BaseModal from './BaseModal';
 interface YesNoModalProps {
     title: string;
     message: string;
-    onConfirm: () => Promise<void>;
+    onConfirm: () => Promise<void> | void;
     onCancel: () => void;
     isOpen: boolean;
 }
