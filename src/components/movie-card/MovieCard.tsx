@@ -17,7 +17,7 @@ export interface MovieCardProps {
 export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
     const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
     return (
-        <article key={movie.id} className="movie-card">
+        <article key={movie.id} className="movie-card relative group">
             <div className="p-5 flex-1">
                 <div className="flex justify-between items-start mb-2">
                     <h2 className="movie-title">
@@ -50,7 +50,12 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
             </div>
             {<>
                 <Tooltip color='foreground' content='Delete Movie' placement='top' closeDelay={0}>
-                    <button className="button-hover absolute bottom-2 right-2" role='button' title="Delete Movie" onClick={() => setYesNoModalOpen(true)}>
+                    <button
+                        className="button-hover absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                        role='button'
+                        title="Delete Movie"
+                        onClick={() => setYesNoModalOpen(true)}
+                    >
                         <IoTrashBinOutline className="hover-icon text-red-500 hover:text-red-300" />
                     </button>
                 </Tooltip>

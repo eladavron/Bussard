@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { addMovieImageFromURL, deleteImage, getMoviePoster, MoviePosterMeta, uploadMovieImage } from '../../app/actions/images';
+// Simple in-memory cache for movie posters
+const moviePosterCache = new Map<string, MoviePosterMeta>();
 import UploadModal from '../modals/UploadModal';
 
 import { IoTrashBinOutline } from 'react-icons/io5';
@@ -25,18 +27,27 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
 
     async function loadImage() {
         try {
+            // Check cache first
+            if (moviePosterCache.has(movieId)) {
+                setImageMeta(moviePosterCache.get(movieId)!);
+                setLoading(false);
+                return;
+            }
             const data = await getMoviePoster(movieId);
+            moviePosterCache.set(movieId, data);
             setImageMeta(data);
         } catch (error) {
             console.error('Failed to load image:', error);
-            setImageMeta({ src: '/movie_poster.jpg', isPlaceholder: true, width: 200, height: 300 });
+            const fallback = { src: '/movie_poster.jpg', isPlaceholder: true, width: 200, height: 300 };
+            moviePosterCache.set(movieId, fallback);
+            setImageMeta(fallback);
         } finally {
             setLoading(false);
         }
     }
 
     useEffect(() => {
- loadImage(); 
+ loadImage();
 }, [movieId]);
 
     if (loading || !imageMeta) {
@@ -60,12 +71,12 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                     <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex justify-end gap-2 items-end">
                         <Tooltip color='foreground' content='Delete Image' placement='top' closeDelay={0}>
                             <button className="button-hover" role='button' title="Delete Image">
-                                <IoTrashBinOutline className="hover-icon" onClick={async () => setYesNoModalOpen(true)} />
+                                <IoTrashBinOutline className="hover-icon text-white" onClick={async () => setYesNoModalOpen(true)} />
                             </button>
                         </Tooltip>
                         <Tooltip color='foreground' content='Edit Image' placement='top' closeDelay={0}>
                             <button className="button-hover" role='button' onClick={() => setUploadModalOpen(true)} title="Edit Image">
-                                <FiEdit3 className="hover-icon" />
+                                <FiEdit3 className="hover-icon text-white" />
                             </button>
                         </Tooltip>
                     </div>
@@ -79,11 +90,13 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                 onUpload={async (formData) => {
                     await uploadMovieImage(movieId, formData);
                     const data = await getMoviePoster(movieId);
+                    moviePosterCache.set(movieId, data);
                     setImageMeta(data);
                 }}
                 onURL={async (url) => {
                     await addMovieImageFromURL(movieId, url);
                     const data = await getMoviePoster(movieId);
+                    moviePosterCache.set(movieId, data);
                     setImageMeta(data);
                 }}
                 onClose={() => setUploadModalOpen(false)}
@@ -95,7 +108,9 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                 message="Are you sure you want to delete this image?"
                 onConfirm={async () => {
                     await deleteImage(movieId);
-                    setImageMeta({ src: '/movie_poster.jpg', isPlaceholder: true, width: 200, height: 300 });
+                    const fallback = { src: '/movie_poster.jpg', isPlaceholder: true, width: 200, height: 300 };
+                    moviePosterCache.set(movieId, fallback);
+                    setImageMeta(fallback);
                     setYesNoModalOpen(false);
                 }}
                 onCancel={() => setYesNoModalOpen(false)}
