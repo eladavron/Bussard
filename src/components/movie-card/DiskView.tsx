@@ -20,35 +20,42 @@ function getCachedDiskOptions() {
     return diskOptionsPromise;
 }
 
-export interface DiskSpanProps {
+export interface DiskViewProps {
     movie: Movie;
     onRefresh: () => void;
 }
 
-export default function DiskSpan({ movie, onRefresh }: DiskSpanProps) {
+export default function DiskView({ movie, onRefresh }: DiskViewProps) {
     const [editMode, setEditMode] = useState(movie.disks?.length === 0);
     const [format, setFormat] = useState('');
-    const [region, setRegion] = useState('');
+    const [regions, setRegions] = useState<Set<string>>(new Set([]));
     const [allFormats, setAllFormats] = useState<string[]>([]);
     const [allRegions, setAllRegions] = useState<string[]>([]);
+    const [filteredRegions, setFilteredRegions] = useState<string[]>([]);
 
     const isDigital = format === 'Digital';
 
-    const filteredRegions = allRegions.filter(r => {
-        if (r === 'Region Free') {
-            return true;
-        }
-        if (format === 'DVD') {
-            return /^Region \d/.test(r);
-        }
-        else if (format === 'Blu-Ray' || format === 'Blu-Ray 3D') {
-            return /^Region [A-C]/.test(r);
-        }
-        else if (format === '4K Ultra HD') {
-            return r === 'Region Free';
-        }
-        return true; // no format selected yet — show all
-    });
+    useEffect(() => {
+        setFilteredRegions(allRegions.filter(r => {
+            //Hide if the format and region combo already exists for the movie
+            if (movie.disks?.some(d => d.format.name === format && d.regions?.some(r2 => r2.name === r))) {
+                return false;
+            }
+            if (r === 'Region Free') {
+                return true;
+            }
+            if (format === 'DVD') {
+                return /^Region \d/.test(r);
+            }
+            if (format === 'Blu-Ray' || format === 'Blu-Ray 3D') {
+                return /^Region [A-C]/.test(r);
+            }
+            if (format === '4K Ultra HD') {
+                return r === 'Region Free';
+            }
+            return true; // no format selected yet — show all
+        }));
+    }, [format])
 
     useEffect(() => {
         getCachedDiskOptions().then(({ formats, regions }) => {
@@ -59,8 +66,8 @@ export default function DiskSpan({ movie, onRefresh }: DiskSpanProps) {
 
     useEffect(() => {
         // Clear region when format changes and current selection is no longer valid
-        if (isDigital || (region && !filteredRegions.includes(region))) {
-            setRegion('');
+        if (isDigital || (regions.size > 0 && !filteredRegions.some(r => regions.has(r)))) {
+            setRegions(new Set());
         }
     }, [format]);
 
@@ -77,7 +84,18 @@ export default function DiskSpan({ movie, onRefresh }: DiskSpanProps) {
                             <SelectItem className="text-primary" key={format}>{format}</SelectItem>
                         ))}
                     </Select>
-                    <Select placeholder="Region" size="sm" variant="bordered" value={region} isDisabled={isDigital} onSelectionChange={value => setRegion(value.anchorKey || '')} classNames={{ trigger: 'min-w-fit px-2', value: '!overflow-visible !text-ellipsis-[unset] !truncate-none pr-5', selectorIcon: 'right-1 shrink-0' }} popoverProps={{ classNames: { content: 'w-fit min-w-0' } }} listboxProps={{ itemClasses: { title: 'whitespace-nowrap' } }}>
+                    <Select
+                        placeholder="Region"
+                        size="sm"
+                        variant="bordered"
+                        selectionMode='multiple'
+                        selectedKeys={regions}
+                        isDisabled={!format || isDigital}
+                        onChange={e => setRegions(new Set(e.target.value.split(',')))}
+                        classNames={{ trigger: 'min-w-fit px-2', value: '!overflow-visible !text-ellipsis-[unset] !truncate-none pr-5', selectorIcon: 'right-1 shrink-0' }}
+                        popoverProps={{ classNames: { content: 'w-fit min-w-0' } }}
+                        listboxProps={{ itemClasses: { title: 'whitespace-nowrap' } }}
+                    >
                         {filteredRegions.map(region => (
                             <SelectItem className="text-primary" key={region}>{region}</SelectItem>
                         ))}
@@ -85,10 +103,10 @@ export default function DiskSpan({ movie, onRefresh }: DiskSpanProps) {
                     <div className="flex items-center gap-1">
                         <Tooltip color='foreground' content="Save" placement='top' closeDelay={0}>
                             <button
-                                className={`button-hollow h-8 ${!format || (!isDigital && !region) ? 'disabled' : ''}`}
-                                disabled={!format || (!isDigital && !region)}
+                                className={`button-hollow h-8 ${!format || (!isDigital && regions.size === 0) ? 'disabled' : ''}`}
+                                disabled={!format || (!isDigital && regions.size === 0)}
                                 onClick={async () => {
-                                    await addDisk(movie.id, format, isDigital ? null : region);
+                                    await addDisk(movie.id, format, isDigital ? null : Array.from(regions));
                                     onRefresh();
                                 }}
                             >
@@ -108,12 +126,12 @@ export default function DiskSpan({ movie, onRefresh }: DiskSpanProps) {
                 <span className="flex items-stretch gap-1 flex-wrap">
                     {movie.disks?.map(d =>
                         <span className="tag tag-gray font-mono p-0 flex items-center gap-1"
-                            key={d.format.name + (d.region?.name ?? '')}>
-                            {d.format.name} {d.region?.name != null ? `(${d.region.name})` : ''}
+                            key={d.format.name + (d.regions?.map(r => r.name).join(',') ?? '')}>
+                            {d.format.name} {d.regions?.length ? `(${d.regions.map((r, i) => i > 0 ? r.name.replace('Region ', '') : r.name).join(', ')})` : ''}
                             <Tooltip color='foreground' content="Remove Disk" placement='top' closeDelay={0}>
                                 <Link role="button" className="button-link-secondary"
                                     onClick={async () => {
-                                        await removeDisk(movie.id, d.format.name, d.region?.name ?? null);
+                                        await removeDisk(movie.id, d.format.name);
                                         onRefresh();
                                     }}
                                 >

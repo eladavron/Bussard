@@ -12,27 +12,27 @@ export interface Movie {
   disks: {
     id: string;
     format: { id: string; name: string };
-    region: { id: string; name: string };
+    regions: { id: string; name: string }[];
   }[];
   poster_image: { id: string; mime_type: string; width: number; height: number; byte_size: number };
 }
 
 export type MovieInput = {
-    title: string;
-    description: string | null;
-    year: number | null;
-    runtime_min: number | null;
-    imdb_id: string | null;
-    directors: string[];
-    actors: { name: string; character: string | null }[];
-    writers: string[];
-    poster_image_url: string | null;
+  title: string;
+  description: string | null;
+  year: number | null;
+  runtime_min: number | null;
+  imdb_id: string | null;
+  directors: string[];
+  actors: { name: string; character: string | null }[];
+  writers: string[];
+  poster_image_url: string | null;
 }
 
 export enum DoesMovieExist {
-    Yes,
-    No,
-    Adding,
-    Loading,
-    Error,
+  Yes,
+  No,
+  Adding,
+  Loading,
+  Error,
 }

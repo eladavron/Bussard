@@ -4,7 +4,7 @@ import { IoTrashBinOutline } from 'react-icons/io5';
 import YesNoModal from '../modals/YesNoModal';
 import { useState } from 'react';
 import { Movie } from '../../types/movie';
-import DiskSpan from './DiskSpan';
+import DiskView from './DiskView';
 import MoviePoster from './MoviePoster';
 import { Tooltip } from '@heroui/react';
 import { deleteMovie } from '@/src/app/actions/movies';
@@ -37,7 +37,7 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                 <div className="text-sm text-secondary mb-4 flex flex-wrap gap-2 items-center">
                     {movie.runtime_min && <span>Runtime: {movie.runtime_min} min</span>}
                     <span className="grow">
-                        <DiskSpan movie={movie} onRefresh={onRefresh} />
+                        <DiskView movie={movie} onRefresh={onRefresh} />
                     </span>
                 </div>
 

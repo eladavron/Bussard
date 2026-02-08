@@ -86,8 +86,13 @@ CREATE TABLE movie_disks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   disk_number SMALLINT,
   movie_id UUID REFERENCES movies(id) ON DELETE CASCADE,
-  disk_region UUID REFERENCES regions(id) ON DELETE CASCADE,
   disk_format UUID REFERENCES formats(id) ON DELETE CASCADE
+);
+
+CREATE TABLE movie_disk_regions (
+  movie_disk_id UUID REFERENCES movie_disks(id) ON DELETE CASCADE,
+  region_id UUID REFERENCES regions(id) ON DELETE CASCADE,
+  PRIMARY KEY (movie_disk_id, region_id)
 );
 
 CREATE TABLE movie_directors (
@@ -109,8 +114,22 @@ CREATE TABLE movie_actors (
   PRIMARY KEY (movie_id, person_id)
 );
 
--- Main View --
 CREATE VIEW movie_overview AS
+WITH disk_with_regions AS (
+  SELECT
+    disk.id AS disk_id,
+    disk.disk_number,
+    disk.movie_id,
+    disk.disk_format,
+    f.id AS format_id,
+    f.name AS format_name,
+    jsonb_agg(DISTINCT jsonb_build_object('id', r.id, 'name', r.name)) FILTER (WHERE r.id IS NOT NULL) AS regions
+  FROM movie_disks disk
+  LEFT JOIN formats f ON disk.disk_format = f.id
+  LEFT JOIN movie_disk_regions mdr ON disk.id = mdr.movie_disk_id
+  LEFT JOIN regions r ON mdr.region_id = r.id
+  GROUP BY disk.id, f.id, f.name
+)
 SELECT
   m.id,
   title,
@@ -137,11 +156,11 @@ SELECT
   COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pa.id, 'name', pa.name, 'character', ma.character_name)) FILTER (WHERE pa.id IS NOT NULL), '[]') AS actors,
   COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', pw.id, 'name', pw.name)) FILTER (WHERE pw.id IS NOT NULL), '[]') AS writers,
   COALESCE(jsonb_agg(DISTINCT jsonb_build_object(
-    'id', disk.id,
-    'disk_number', disk.disk_number,
-    'format', jsonb_build_object('id', f.id, 'name', f.name),
-    'region', jsonb_build_object('id', r.id, 'name', r.name)
-  )) FILTER (WHERE disk.id IS NOT NULL), '[]') AS disks
+    'id', dwr.disk_id,
+    'disk_number', dwr.disk_number,
+    'format', jsonb_build_object('id', dwr.format_id, 'name', dwr.format_name),
+    'regions', COALESCE(dwr.regions, '[]')
+  )) FILTER (WHERE dwr.disk_id IS NOT NULL), '[]') AS disks
 
 FROM movies m
 LEFT JOIN movie_directors md ON m.id = md.movie_id
@@ -150,9 +169,7 @@ LEFT JOIN movie_actors ma ON m.id = ma.movie_id
 LEFT JOIN people pa ON ma.person_id = pa.id
 LEFT JOIN movie_writers mw ON m.id = mw.movie_id
 LEFT JOIN people pw ON mw.person_id = pw.id
-LEFT JOIN movie_disks disk ON m.id = disk.movie_id
-LEFT JOIN formats f ON disk.disk_format = f.id
-LEFT JOIN regions r ON disk.disk_region = r.id
+LEFT JOIN disk_with_regions dwr ON m.id = dwr.movie_id
 LEFT JOIN images pi ON m.poster_image_id = pi.id
 
 GROUP BY m.id, pi.id;
