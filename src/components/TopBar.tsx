@@ -52,12 +52,13 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                         type="text"
                         placeholder="Search movies..."
                         radius="full"
-                        className='w-1/2'
+                        className='w-1/2 text-primary'
                         disabled={loading}
                         value={filterQuery}
-                        isClearable={true}
-                        startContent={<IoSearch />}
+                        isClearable
+                        startContent={<IoSearch className='text-secondary' />}
                         onChange={(e) => setFilterQuery(e.target.value)}
+                        onClear={() => setFilterQuery('')}
                     />
                 </div>
             }
