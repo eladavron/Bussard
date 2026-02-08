@@ -55,6 +55,9 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
             }
             return true; // no format selected yet — show all
         }));
+        if (format === '4K Ultra HD') {
+            setRegions(new Set(['Region Free']));
+        }
     }, [format])
 
     useEffect(() => {

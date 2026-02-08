@@ -17,5 +17,5 @@
 ## Smaller Features
 
 - [x] Add Blu-Ray 3D to formats
-- [ ] Add support for multi-zone disks
-- [ ] Auto-Select "Region Free" for 4K UHD disks
+- [x] Add support for multi-zone disks
+- [x] Auto-Select "Region Free" for 4K UHD disks
