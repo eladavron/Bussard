@@ -6,7 +6,7 @@ services:
       - .env
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./dev-scripts/db-init.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./initdb/:/docker-entrypoint-initdb.d/
     networks:
       - appnet
     ports:
