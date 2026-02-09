@@ -2,7 +2,7 @@
 
 ## Bugs
 
-- [ ] Fix scrolling to top when saving data
+- [x] Fix scrolling to top when saving data
 - [ ] Fix webp support for images
 
 ## Big Features

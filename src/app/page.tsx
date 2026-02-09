@@ -10,15 +10,14 @@ import MovieCardSkeleton from '../components/movie-card/MovieCardSkeleton';
 export default function Home() {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [filterQuery, setFilterQuery] = useState<string>('');
 
   const refreshMovies = async () => {
-    setLoading(true);
     const data = await getMovies();
     setAllMovies(data);
     setFilteredMovies(data);
-    setLoading(false);
+    setInitialLoad(false);
   };
 
   useEffect(() => {
@@ -45,17 +44,17 @@ export default function Home() {
 
   return (
     <>
-      <TopBar movies={allMovies} refreshMovies={refreshMovies} setFilterQuery={setFilterQuery} filterQuery={filterQuery} loading={loading} />
+      <TopBar movies={allMovies} refreshMovies={refreshMovies} setFilterQuery={setFilterQuery} filterQuery={filterQuery} loading={initialLoad} />
 
       <div className="main-grid">
-        {loading && [1, 2, 3, 4].map((i) => <MovieCardSkeleton key={i} />)}
-        {allMovies && allMovies.length === 0 && !loading && (
+        {initialLoad && [1, 2, 3, 4].map((i) => <MovieCardSkeleton key={i} />)}
+        {allMovies && allMovies.length === 0 && !initialLoad && (
           <div className="empty-state">
             <h2 className="text-2xl font-semibold mb-2">No movies found</h2>
             <p className="text-secondary">Start by adding some movies to your collection.</p>
           </div>
         )}
-        {filteredMovies && filteredMovies.length > 0 && !loading && (
+        {filteredMovies && filteredMovies.length > 0 && !initialLoad && (
           filteredMovies
             .sort((a, b) => a.title.localeCompare(b.title)) //TODO: Custom Sorting (ignoring articles, etc.)
             .map((movie) => <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />)
