@@ -110,6 +110,8 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
                                 disabled={!format || (!isDigital && regions.size === 0)}
                                 onClick={async () => {
                                     await addDisk(movie.id, format, isDigital ? null : Array.from(regions));
+                                    setFormat('');
+                                    setRegions(new Set());
                                     onRefresh();
                                 }}
                             >
