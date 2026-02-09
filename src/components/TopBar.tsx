@@ -7,6 +7,7 @@ import SearchModal from './modals/SearchModal';
 import { Movie } from '../types/movie';
 import { SortOption } from '../lib/sorting';
 import SortMenu from './SortMenu';
+import SettingsMenu from './SettingsMenu';
 
 interface TopBarProps {
     movies: Movie[];

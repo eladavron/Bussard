@@ -16,7 +16,11 @@ import { ImportError } from '../types/import_error';
 import { downloadData } from '../lib/global';
 import { getMovies } from '../app/actions/movies';
 
-export default function SettingsMenu() {
+interface SettingsMenuProps {
+    refreshMovies: () => Promise<void>;
+}
+
+export default function SettingsMenu({ refreshMovies }: SettingsMenuProps) {
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
     const [isProgressModalOpen, setProgressModalOpen] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -25,14 +29,10 @@ export default function SettingsMenu() {
     const [progressMessage, setProgressMessage] = useState('Processing...');
     const { theme, setTheme } = useTheme();
 
-    function refreshMovies() {
-        throw new Error('Function not implemented.');
-    }
-
     return (
         <>
-            <Menu as="div" className="relative inline-block">
-                <Tooltip color='foreground' content="Settings" placement='bottom' closeDelay={0}>
+            <Menu as="div" className="inline-block ml-8 h-full">
+                <Tooltip color='foreground' content="Settings" placement='top' closeDelay={0}>
                     <MenuButton className="button-hollow cursor-pointer">
                         <IoSettingsOutline />
                     </MenuButton>
@@ -89,8 +89,6 @@ export default function SettingsMenu() {
                         setImportWarnings(currentProgress.warnings);
                         await new Promise(resolve => setTimeout(resolve, 500)); //Wait for 500ms before polling again to avoid spamming the server with requests
                     }
-                    setUploadModalOpen(false);
-                    refreshMovies();
                 }}
                 title="Import Movie Metadata"
                 message="Select a metadata JSON file to import movie data."
@@ -99,7 +97,11 @@ export default function SettingsMenu() {
             <ProgressModal
                 isOpen={isProgressModalOpen}
                 title="Progress"
-                onClose={() => setProgressModalOpen(false)}
+                onClose={() => {
+                    setProgressModalOpen(false);
+                    setUploadModalOpen(false);
+                    refreshMovies();
+                }}
                 message={progressMessage}
                 progress={progress}
                 warnings={importWarnings}

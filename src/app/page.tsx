@@ -7,6 +7,8 @@ import MovieCard from '../components/movie-card/MovieCard';
 import TopBar from '../components/TopBar';
 import MovieCardSkeleton from '../components/movie-card/MovieCardSkeleton';
 import { SortBy, sortMovies as sortedMovies, SortOption, SortOrder } from '../lib/sorting';
+// import SettingsMenu from '../components/SettingsMenu';
+import Header from '../components/Header';
 
 export default function Home() {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
@@ -58,6 +60,7 @@ export default function Home() {
 
   return (
     <>
+      <Header refreshMovies={refreshMovies} />
       <TopBar
         movies={allMovies}
         refreshMovies={refreshMovies}

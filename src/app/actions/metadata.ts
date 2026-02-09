@@ -115,8 +115,7 @@ export async function importMetadataFromFile(formData: FormData, importProgress?
                     //Poster
                     if (movie.poster_image) {
                         //Save poster image to database and link to movie
-                        const byte_string = movie.poster_image.byte_data: string;
-                        const buffer = Buffer.from(, 'binary');
+                        const buffer = Buffer.from(movie.poster_image.byte_data.slice(2), 'hex');
                         const mime_type = movie.poster_image.mime_type;
                         const width = movie.poster_image.width;
                         const height = movie.poster_image.height;
