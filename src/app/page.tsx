@@ -19,6 +19,8 @@ export default function Home() {
     ignoreArticles: true,
   });
 
+  const seenLetters = new Set<string>();
+
   const refreshMovies = async () => {
     const data = await getMovies();
     setAllMovies(data);
@@ -56,7 +58,7 @@ export default function Home() {
 
   return (
     <>
-      <TopBar 
+      <TopBar
         movies={allMovies}
         refreshMovies={refreshMovies}
         setFilterQuery={setFilterQuery}
@@ -64,22 +66,34 @@ export default function Home() {
         sortOption={sortOption}
         setSortOption={setSortOption}
         loading={loading}
+        seenLetters={seenLetters}
       />
 
       <div className="main-grid">
         {loading
-          ? [1, 2, 3, 4].map((i) => <MovieCardSkeleton key={i} />)
+          ? Array.from({length: 10}).map((_, i) => i+1).map(i => <MovieCardSkeleton key={i} />)
           : filteredMovies.length === 0
             ? (
-                <div className="empty-state">
-                  <h2 className="text-2xl font-semibold mb-2">No movies found</h2>
-                  <p className="text-secondary">Start by adding some movies to your collection.</p>
-                </div>
-              )
+              <div className="empty-state" key="empty-state">
+                <h2 className="text-2xl font-semibold mb-2">No movies found</h2>
+                <p className="text-secondary">Start by adding some movies to your collection.</p>
+              </div>
+            )
             : (
-                sortedMovies(filteredMovies, sortOption)
-                  .map((movie) => <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />)
-              )
+              sortedMovies(filteredMovies, sortOption)
+                .map((movie) => {
+                  const firstLetter = movie.title[0].toUpperCase();
+                  const isFirst = !seenLetters.has(firstLetter);
+                  if (isFirst) {
+                    seenLetters.add(firstLetter);
+                  }
+                  return (
+                    <div id={isFirst ? `letter-${firstLetter}` : undefined} key={movie.id} className='flex items-stretch'>
+                      <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />
+                    </div>
+                  );
+                })
+            )
         }
       </div>
     </>

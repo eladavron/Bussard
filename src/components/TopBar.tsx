@@ -16,9 +16,10 @@ interface TopBarProps {
     sortOption: SortOption;
     setSortOption: (option: SortOption) => void;
     loading: boolean;
+    seenLetters: Set<string>;
 }
 
-export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQuery, sortOption, setSortOption, loading }: TopBarProps) {
+export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQuery, sortOption, setSortOption, loading, seenLetters }: TopBarProps) {
     const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
 
     return (
@@ -56,6 +57,14 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                         </>
                     )}
                 </div>
+                {!loading && <div className='flex gap-1'>
+                    {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+                        .map(letter => seenLetters.has(letter) ?
+                            <Tooltip key={letter} color='foreground' content={`Jump to movies starting with ${letter}`} placement='top' closeDelay={0}>
+                                <Link key={letter} href={`#letter-${letter}`}>{letter}</Link>
+                            </Tooltip> : <span key={letter} className='text-secondary opacity-50'>{letter}</span>)
+                    }
+                </div>}
                 <Input
                     type="text"
                     placeholder="Search movies..."
