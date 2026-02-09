@@ -2,7 +2,7 @@
 
 import { Menu, MenuButton, MenuItem, MenuItems, MenuSeparator } from '@headlessui/react'
 import { useState } from 'react';
-import { exportMetadataToFile, getImportProgress, ImportProgress, startImport } from '../app/actions/metadata';
+import { getImportProgress, ImportProgress, startImport } from '../app/actions/metadata';
 import { IoSettingsOutline, IoSunnySharp } from 'react-icons/io5';
 import UploadModal from './modals/UploadModal';
 import { Switch } from '@heroui/switch';
@@ -14,6 +14,7 @@ import ProgressModal from './modals/ProgressModal';
 import { clearMetadata } from '../app/actions/debug';
 import { ImportError } from '../types/import_error';
 import { downloadData } from '../lib/global';
+import { getMovies } from '../app/actions/movies';
 
 export default function SettingsMenu() {
     const [isUploadModalOpen, setUploadModalOpen] = useState(false);
@@ -23,6 +24,10 @@ export default function SettingsMenu() {
     const [importWarnings, setImportWarnings] = useState<ImportError[]>([]);
     const [progressMessage, setProgressMessage] = useState('Processing...');
     const { theme, setTheme } = useTheme();
+
+    function refreshMovies() {
+        throw new Error('Function not implemented.');
+    }
 
     return (
         <>
@@ -53,7 +58,7 @@ export default function SettingsMenu() {
                         </a>
                     </MenuItem>
                     <MenuItem>
-                        <a href="#" className="menu-item-link" onClick={() => exportMetadataToFile().then(data => downloadData(data, 'movie_metadata_backup.json'))}>
+                        <a href="#" className="menu-item-link" onClick={() => getMovies().then(data => downloadData(data, 'movie_metadata_backup.json'))}>
                             Export...
                         </a>
                     </MenuItem>
@@ -85,6 +90,7 @@ export default function SettingsMenu() {
                         await new Promise(resolve => setTimeout(resolve, 500)); //Wait for 500ms before polling again to avoid spamming the server with requests
                     }
                     setUploadModalOpen(false);
+                    refreshMovies();
                 }}
                 title="Import Movie Metadata"
                 message="Select a metadata JSON file to import movie data."

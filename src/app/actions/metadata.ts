@@ -1,16 +1,15 @@
 'use server';
 
 import { db } from '@/src/lib/db';
-import { BackupMetadata } from '@/src/types/backup_metadata';
-import { DBImage } from '@/src/types/db_image';
-import { Disk } from '@/src/types/disk';
 import { MimeType } from '@/src/types/mime';
-import { Movie } from '@/src/types/movie';
+import { Movie, MovieInput } from '@/src/types/movie';
 import Papa from 'papaparse';
 import { addMovie, inputFromOMDB } from './movies';
 import { searchOMDB } from './omdb';
 import { OMDBMovieExtended } from '@/src/types/omdb';
 import { ImportError } from '@/src/types/import_error';
+import { addImageFromBuffer, setMoviePoster } from './images';
+import { addDisk } from './disks';
 
 export async function startImport(formData: FormData): Promise<string> {
     // Generate UUID
@@ -79,9 +78,77 @@ export async function importMetadataFromFile(formData: FormData, importProgress?
         }
         const text = await file.text();
         if (file.type == MimeType.JSON) {
-            const metadata: BackupMetadata = JSON.parse(text);
-            console.log('Imported metadata:', metadata);
-            //TODO: IMPLEMENT
+            const metadata = JSON.parse(text);
+            //Assume it's Bussard export
+            for (const [index, movie] of metadata.entries()) {
+                try {
+                    const percentage = Math.round(((index + 1) / metadata.length) * 100);
+                    if (importProgress) {
+                        _setProgress(importProgress.UUID, percentage);
+                    }
+                    if (importProgress) {
+                        _setProgressMessage(importProgress.UUID, `Importing "${movie.title}"... (${index + 1}/${metadata.length})`);
+                    }
+                    //Assume each item is in the format of {...Movie, movie_poster: MoviePosterMeta}
+                    const movieData = movie as Movie;
+                    const existingMovies = await db<Movie[]>`SELECT * FROM movies WHERE title = ${movieData.title} AND year = ${movieData.year}`;
+                    if (existingMovies.length > 0) {
+                        if (importProgress) {
+                            _setWarning(importProgress.UUID, { message: `Movie with title "${movieData.title}" and year "${movieData.year}" already exists, skipping.`, index, row: movieData });
+                        }
+                        continue;
+                    }
+                    //Movie
+                    const movieInput: MovieInput = {
+                        title: movieData.title,
+                        year: movieData.year,
+                        imdb_id: movieData.imdb_id,
+                        description: movieData.description,
+                        actors: movieData.actors.map(actor => ({ name: actor.name, character: actor.character })),
+                        directors: movieData.directors.map(director => director.name),
+                        writers: movieData.writers.map(writer => writer.name),
+                        poster_image_url: null, //Images are handled differently
+                        runtime_min: movieData.runtime_min,
+                    };
+                    const newMovieId = await addMovie(movieInput);
+
+                    //Poster
+                    if (movie.poster_image) {
+                        //Save poster image to database and link to movie
+                        const byte_string = movie.poster_image.byte_data: string;
+                        const buffer = Buffer.from(, 'binary');
+                        const mime_type = movie.poster_image.mime_type;
+                        const width = movie.poster_image.width;
+                        const height = movie.poster_image.height;
+                        const byte_size = movie.poster_image.byte_size;
+                        //Verify byte size is correct:
+                        if (buffer.length !== byte_size) {
+                            if (importProgress) {
+                                _setWarning(importProgress.UUID, { message: `Byte size for poster image of "${movie.title}" does not match actual buffer size, using buffer size.`, index, row: movieData });
+                            }
+                        }
+                        const imageId = await addImageFromBuffer(buffer, mime_type, width, height);
+                        await setMoviePoster(newMovieId, imageId);
+                    }
+
+                    //Disks
+                    for (const disk of movie.disks) {
+                        const format = disk.format.name;
+                        const regions = disk.regions?.map((r: { name: string, id: string }) => r.name) || [];
+                        addDisk(newMovieId, format, regions);
+                    }
+
+                } catch (error) {
+                    if (importProgress) {
+                        _setError(importProgress.UUID, { message: `Failed to import "${movie.title}": ${error}`, index, row: movie });
+                    }
+                }
+            }
+            // Ensure progress is set to 100% after completion
+            if (importProgress) {
+                _setProgress(importProgress.UUID, 100);
+                _setProgressMessage(importProgress.UUID, 'Import complete.');
+            }
         } else if (file.type == MimeType.CSV) {
             //For now assume it's libib
             const csvData = Papa.parse(text, { header: true });
@@ -183,26 +250,3 @@ export async function importMetadataFromFile(formData: FormData, importProgress?
         }
     }
 }
-
-export async function exportMetadataToFile() {
-    //TODO: Figure out how to handle images
-
-    const movies = await db<Movie[]>`SELECT * FROM movies`;
-    const images = await db<DBImage[]>`SELECT * FROM images`;
-    const people = await db<{ id: string; name: string }[]>`SELECT id, name FROM people`;
-    const movieDisks = await db<Disk[]>`SELECT * FROM movie_disks`;
-    const movieActors = await db<{ movie_id: string; person_id: string; character: string | null }[]>`SELECT movie_id, person_id, character_name AS character FROM movie_actors`;
-    const movieWriters = await db<{ movie_id: string; person_id: string }[]>`SELECT movie_id, person_id FROM movie_writers`;
-    const movieDirectors = await db<{ movie_id: string; person_id: string }[]>`SELECT movie_id, person_id FROM movie_directors`;
-    //Save as JSON
-    const metadata: BackupMetadata = {
-        Movies: movies,
-        Images: images,
-        People: people,
-        MovieDisks: movieDisks,
-        MovieActors: movieActors,
-        MovieWriters: movieWriters,
-        MovieDirectors: movieDirectors,
-    };
-    return metadata;
-};

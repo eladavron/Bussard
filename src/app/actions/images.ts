@@ -56,6 +56,17 @@ async function getImageFromForm(formData: FormData): Promise<Buffer> {
     return Buffer.from(arrayBuffer);
 }
 
+export async function addImageFromBuffer(buffer: Buffer, mime_type: string, width: number, height: number): Promise<string> {
+    const newID = await db`INSERT INTO images (mime_type, byte_data, width, height, byte_size) VALUES (
+        ${mime_type},
+        ${buffer},
+        ${width},
+        ${height},
+        ${buffer.length}
+    ) RETURNING id`
+    return newID[0].id;
+}
+
 async function addImage(formData?: FormData, imageUrl?: string): Promise<string> {
     let buffer: Buffer;
 
@@ -73,35 +84,26 @@ async function addImage(formData?: FormData, imageUrl?: string): Promise<string>
     const height = Number(tags['Image Height']?.value ?? tags.ImageHeight?.value ?? 0);
     const mime_type = `image/${tags.FileType?.value || 'UNKNOWN'}`;
 
-    const newItem = await db`INSERT INTO images (mime_type, byte_data, width, height, byte_size) VALUES (
-        ${mime_type},
-        ${buffer},
-        ${width},
-        ${height},
-        ${buffer.length}
-    ) RETURNING id`;
-    return newItem[0].id;
+    return await addImageFromBuffer(buffer, mime_type, width, height);
 }
 
 export async function uploadMovieImage(movieId: string, formData: FormData) {
-    //Check if movie already has a poster
-    const old_poster = await db`SELECT poster_image_id FROM movies WHERE id = ${movieId}`;
-
     const imageID = await addImage(formData);
-    await db`UPDATE movies SET poster_image_id = ${imageID} WHERE id = ${movieId}`
-
-    //Delete old poster
-    if (old_poster.length > 0) {
-        await db`DELETE FROM images WHERE id = ${old_poster[0].poster_image_id}`;
-    }
+    await setMoviePoster(movieId, imageID);
 }
 
 export async function addMovieImageFromURL(movieId: string, imageUrl: string) {
     //Check if movie already has a poster
+    const imageID = await addImage(undefined, imageUrl);
+    await setMoviePoster(movieId, imageID);
+}
+
+export async function setMoviePoster(movieId: string, imageId: string) {
+    //Check if movie already has a poster
     const old_poster = await db`SELECT poster_image_id FROM movies WHERE id = ${movieId}`;
 
-    const imageID = await addImage(undefined, imageUrl);
-    await db`UPDATE movies SET poster_image_id = ${imageID} WHERE id = ${movieId}`
+    await db`UPDATE movies SET poster_image_id = ${imageId} WHERE id = ${movieId}`
+
     //Delete old poster
     if (old_poster.length > 0) {
         await db`DELETE FROM images WHERE id = ${old_poster[0].poster_image_id}`;
@@ -117,13 +119,3 @@ export async function deleteImage(movieId: string) {
     await db`UPDATE movies SET poster_image_id = NULL WHERE id = ${movieId}`;
     return await db`DELETE FROM images WHERE id = ${imageId}`;
 }
-
-/*
-CREATE TABLE images (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    mime_type TEXT NOT NULL CHECK (mime_type in ('image/jpeg', 'image/png', 'image/gif', 'image/webp')),
-    byte_data BYTEA NOT NULL,
-    width INT NOT NULL CHECK (width > 0),
-    height INT NOT NULL CHECK (height > 0),
-    byte_size INT NOT NULL CHECK (byte_size > 0)
-);*/
