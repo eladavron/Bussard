@@ -5,16 +5,20 @@ import { useState } from 'react';
 import { IoAddCircleOutline, IoReload, IoSearch } from 'react-icons/io5';
 import SearchModal from './modals/SearchModal';
 import { Movie } from '../types/movie';
+import { SortOption } from '../lib/sorting';
+import SortMenu from './SortMenu';
 
 interface TopBarProps {
     movies: Movie[];
     refreshMovies: () => Promise<void>;
     setFilterQuery: (query: string) => void;
     filterQuery: string;
+    sortOption: SortOption;
+    setSortOption: (option: SortOption) => void;
     loading: boolean;
 }
 
-export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQuery, loading }: TopBarProps) {
+export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQuery, sortOption, setSortOption, loading }: TopBarProps) {
     const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
 
     return (
@@ -23,6 +27,7 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                 <div className='flex justify-between items-center mb-3'>
                     <div className="flex gap-2">
                         <Skeleton className="w-22 h-7 tag" />
+                        <Skeleton className="w-11 h-7 tag" />
                         <Skeleton className="w-11 h-7 tag" />
                         <Skeleton className="w-11 h-7 tag" />
                     </div>
@@ -41,6 +46,9 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                                 className={`button-hollow tag cursor-pointer ${loading ? 'disabled' : ''}`}>
                                 <IoReload />
                             </Link>
+                        </Tooltip>
+                        <Tooltip color='foreground' content="Sort Options" placement='top' closeDelay={0}>
+                            <SortMenu isLoading={loading} sortOption={sortOption} setSortOption={setSortOption} />
                         </Tooltip>
                         <Tooltip color='foreground' content="Add Movie" placement='top' closeDelay={0}>
                             <Link role='button' href="#" onClick={() => setIsSearchModalOpen(true)} className={`button-hollow tag cursor-pointer ${loading ? 'disabled' : ''}`}>

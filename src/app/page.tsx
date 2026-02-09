@@ -6,12 +6,18 @@ import { getMovies } from './actions/movies';
 import MovieCard from '../components/movie-card/MovieCard';
 import TopBar from '../components/TopBar';
 import MovieCardSkeleton from '../components/movie-card/MovieCardSkeleton';
+import { SortBy, sortMovies as sortedMovies, SortOption, SortOrder } from '../lib/sorting';
 
 export default function Home() {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [filterQuery, setFilterQuery] = useState<string>('');
+  const [sortOption, setSortOption] = useState<SortOption>({
+    sortBy: SortBy.TITLE,
+    sortOrder: SortOrder.ASC,
+    ignoreArticles: true,
+  });
 
   const refreshMovies = async () => {
     const data = await getMovies();
@@ -44,7 +50,15 @@ export default function Home() {
 
   return (
     <>
-      <TopBar movies={allMovies} refreshMovies={refreshMovies} setFilterQuery={setFilterQuery} filterQuery={filterQuery} loading={initialLoad} />
+      <TopBar 
+        movies={allMovies}
+        refreshMovies={refreshMovies}
+        setFilterQuery={setFilterQuery}
+        filterQuery={filterQuery}
+        sortOption={sortOption}
+        setSortOption={setSortOption}
+        loading={initialLoad} 
+      />
 
       <div className="main-grid">
         {initialLoad && [1, 2, 3, 4].map((i) => <MovieCardSkeleton key={i} />)}
@@ -55,8 +69,7 @@ export default function Home() {
           </div>
         )}
         {filteredMovies && filteredMovies.length > 0 && !initialLoad && (
-          filteredMovies
-            .sort((a, b) => a.title.localeCompare(b.title)) //TODO: Custom Sorting (ignoring articles, etc.)
+          sortedMovies(filteredMovies, sortOption)
             .map((movie) => <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />)
         )}
       </div>
