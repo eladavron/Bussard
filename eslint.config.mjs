@@ -11,8 +11,6 @@ export default [
       quotes: ['error', 'single'],
       curly: ['error', 'all'],
       'comma-dangle': ['error', 'always-multiline'],
-      // Use 'stroustrup' style but allow 'catch' and 'finally' on the same line as the closing bracket
-      'brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
     },
   },
   // Override default ignores of eslint-config-next.
