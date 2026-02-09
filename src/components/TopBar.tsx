@@ -25,7 +25,7 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
 
     return (
         <>
-            <div className='flex justify-between items-center mb-3'>
+            <div className='flex justify-between items-center mb-3 flex-wrap gap-2'>
                 <div className="flex gap-2">
                     {loading ? (
                         <>
@@ -58,7 +58,7 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                         </>
                     )}
                 </div>
-                {!loading && <div className='flex gap-1'>
+                {!loading && <div className='flex gap-1 flex-wrap'>
                     {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
                         .map(letter => seenLetters.has(letter) ?
                             <Tooltip key={letter} color='foreground' content={`Jump to movies starting with ${letter}`} placement='top' closeDelay={0}>
@@ -66,17 +66,19 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                             </Tooltip> : <span key={letter} className='text-secondary opacity-50'>{letter}</span>)
                     }
                 </div>}
-                <Input
+                <div className="w-full sm:w-auto">
+                  <Input
                     type="text"
                     placeholder="Search movies..."
                     radius="full"
-                    className='w-1/2 text-primary'
+                    className='w-full text-primary sm:w-64'
                     value={filterQuery}
                     isClearable
                     startContent={<IoSearch className='text-secondary' />}
                     onChange={(e) => setFilterQuery(e.target.value)}
                     onClear={() => setFilterQuery('')}
-                />
+                  />
+                </div>
             </div>
             <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} refreshMovies={refreshMovies} />
         </>

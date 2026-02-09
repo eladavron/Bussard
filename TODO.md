@@ -4,6 +4,7 @@
 
 - [x] Fix scrolling to top when saving data
 - [ ] Fix webp support for images
+- [x] Fix mobile layout
 
 ## Big Features
 
