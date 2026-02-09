@@ -9,7 +9,7 @@ import UploadModal from '../modals/UploadModal';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import { FiEdit3 } from 'react-icons/fi';
 import YesNoModal from '../modals/YesNoModal';
-import { Tooltip } from '@heroui/react';
+import { Tooltip, Skeleton } from '@heroui/react';
 import Image from 'next/image';
 import { MimeType } from '@/src/types/mime';
 
@@ -24,6 +24,7 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
     const [isYesNoModalOpen, setYesNoModalOpen] = useState(false);
     const [imageMeta, setImageMeta] = useState<MoviePosterMeta | null>(null);
     const [loading, setLoading] = useState(true);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
     async function loadImage() {
         try {
@@ -47,11 +48,12 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
     }
 
     useEffect(() => {
- loadImage();
+    loadImage();
+    setImageLoaded(false);
 }, [movieId]);
 
     if (loading || !imageMeta) {
-        return <div className="movie-poster" />;
+        return <Skeleton className="movie-poster" style={{ width: 200, height: 300 }} />;
     }
 
     return (
@@ -63,7 +65,8 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                             Upload Image
                         </span>
                     </div>
-                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' width={imageMeta.width} height={imageMeta.height} />
+                    {!imageLoaded && <Skeleton className="movie-poster" style={{ width: imageMeta.width, height: imageMeta.height }} />}
+                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' width={imageMeta.width} height={imageMeta.height} onLoad={() => setImageLoaded(true)} style={{ display: imageLoaded ? 'block' : 'none' }} />
                 </div>
             )}
             {!imageMeta.isPlaceholder && (
@@ -80,7 +83,8 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
                             </button>
                         </Tooltip>
                     </div>
-                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' width={300} height={200} />
+                    {!imageLoaded && <Skeleton className="movie-poster" style={{ width: 300, height: 200 }} />}
+                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' width={300} height={200} onLoad={() => setImageLoaded(true)} style={{ display: imageLoaded ? 'block' : 'none' }} />
                 </div>
             )}
             <UploadModal

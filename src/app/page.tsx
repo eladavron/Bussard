@@ -11,7 +11,7 @@ import { SortBy, sortMovies as sortedMovies, SortOption, SortOrder } from '../li
 export default function Home() {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
-  const [initialLoad, setInitialLoad] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [filterQuery, setFilterQuery] = useState<string>('');
   const [sortOption, setSortOption] = useState<SortOption>({
     sortBy: SortBy.TITLE,
@@ -23,7 +23,7 @@ export default function Home() {
     const data = await getMovies();
     setAllMovies(data);
     setFilteredMovies(data);
-    setInitialLoad(false);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -31,14 +31,19 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    if (filterQuery === '') {
+      setFilteredMovies(allMovies);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     const timer = setTimeout(() => {
       handleSearch();
     }, 500);
-
     return () => clearTimeout(timer);
-  }, [filterQuery]);
+  }, [filterQuery, allMovies]);
 
-  function handleSearch() {
+  async function handleSearch() {
     setFilteredMovies(allMovies.filter((movie) =>
       movie.title.toLowerCase().includes(filterQuery.toLowerCase())
       || movie.description?.toLowerCase().includes(filterQuery.toLowerCase())
@@ -46,6 +51,7 @@ export default function Home() {
       || movie.directors.some(director => director.name.toLowerCase().includes(filterQuery.toLowerCase()))
       || (movie.year && movie.year.toString().includes(filterQuery)),
     ));
+    setLoading(false);
   }
 
   return (
@@ -57,21 +63,24 @@ export default function Home() {
         filterQuery={filterQuery}
         sortOption={sortOption}
         setSortOption={setSortOption}
-        loading={initialLoad} 
+        loading={loading}
       />
 
       <div className="main-grid">
-        {initialLoad && [1, 2, 3, 4].map((i) => <MovieCardSkeleton key={i} />)}
-        {allMovies && allMovies.length === 0 && !initialLoad && (
-          <div className="empty-state">
-            <h2 className="text-2xl font-semibold mb-2">No movies found</h2>
-            <p className="text-secondary">Start by adding some movies to your collection.</p>
-          </div>
-        )}
-        {filteredMovies && filteredMovies.length > 0 && !initialLoad && (
-          sortedMovies(filteredMovies, sortOption)
-            .map((movie) => <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />)
-        )}
+        {loading
+          ? [1, 2, 3, 4].map((i) => <MovieCardSkeleton key={i} />)
+          : filteredMovies.length === 0
+            ? (
+                <div className="empty-state">
+                  <h2 className="text-2xl font-semibold mb-2">No movies found</h2>
+                  <p className="text-secondary">Start by adding some movies to your collection.</p>
+                </div>
+              )
+            : (
+                sortedMovies(filteredMovies, sortOption)
+                  .map((movie) => <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />)
+              )
+        }
       </div>
     </>
   );
