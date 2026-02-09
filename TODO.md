@@ -7,10 +7,11 @@
 
 ## Big Features
 
+- [ ] Add proper logging
 - [x] Add Search
 - [x] Add "Delete Movie" option
 - [x] Add Letter anchors
-- [ ] Add restore from backup
+- [x] Add restore from backup
 - [x] Edit Metadata Manually
 - [x] Add sorting options (Title, Year, with/without 'The', etc.)
 
