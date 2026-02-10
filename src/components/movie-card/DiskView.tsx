@@ -1,16 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useDiskOptions } from './DiskOptionsContext';
+import { useContext, useEffect, useState } from 'react';
 import { Movie } from '../../types/movie';
 import { addDisk, removeDisk } from '@/src/app/actions/disks';
 import { Select, SelectItem, Tooltip } from '@heroui/react';
-import { getDiskOptions } from '@/src/lib/diskOptions';
 import { IoCheckmark } from 'react-icons/io5';
 import { IoCloseSharp } from 'react-icons/io5';
 import { IoCloseCircleOutline } from 'react-icons/io5';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { Link } from '@heroui/react';
+import { DiskOptionsContext } from '@/src/context/DiskOptionsContext';
 
 export interface DiskViewProps {
     movie: Movie;
@@ -23,7 +22,7 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
     const [regions, setRegions] = useState<Set<string>>(new Set([]));
     const [filteredRegions, setFilteredRegions] = useState<string[]>([]);
 
-    const { allFormats, allRegions, loading } = useDiskOptions();
+    const { allFormats, allRegions, loading } = useContext(DiskOptionsContext)!;
     const isDigital = format === 'Digital';
 
     useEffect(() => {

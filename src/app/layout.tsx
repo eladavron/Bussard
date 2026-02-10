@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes'
 import './globals.css';
-import { DiskOptionsProvider } from '@/src/components/movie-card/DiskOptionsContext';
+import { DiskOptionsProvider } from '@/src/context/DiskOptionsContext';
 
 export const metadata: Metadata = {
   title: 'Codename "Bussard"',

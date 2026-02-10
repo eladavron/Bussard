@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Movie } from '../types/movie';
 import { getMovies } from './actions/movies';
 import MovieCard from '../components/movie-card/MovieCard';
@@ -9,7 +9,7 @@ import MovieCardSkeleton from '../components/movie-card/MovieCardSkeleton';
 import { SortBy, sortMovies as sortedMovies, sortedName, SortOption, SortOrder } from '../lib/sorting';
 import { BiSolidToTop } from 'react-icons/bi';
 import Header from '../components/Header';
-import { Link, Skeleton, Tooltip } from '@heroui/react';
+import { Alert, Link, SharedSelection, Skeleton, Tooltip } from '@heroui/react';
 
 export default function Home() {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
@@ -21,6 +21,7 @@ export default function Home() {
     sortOrder: SortOrder.ASC,
     ignoreArticles: true,
   });
+  const [filterOptions, setFilterOptions] = useState<SharedSelection>(new Set());
 
   const seenLetters = new Set<string>();
 
@@ -36,26 +37,31 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (filterQuery === '') {
-      setFilteredMovies(allMovies);
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     const timer = setTimeout(() => {
       handleSearch();
     }, 500);
     return () => clearTimeout(timer);
-  }, [filterQuery, allMovies]);
+  }, [filterQuery, Array.from(filterOptions).join(','), allMovies]);
 
   async function handleSearch() {
-    setFilteredMovies(allMovies.filter((movie) =>
-      movie.title.toLowerCase().includes(filterQuery.toLowerCase())
-      || movie.description?.toLowerCase().includes(filterQuery.toLowerCase())
-      || movie.actors.some(actor => actor.name.toLowerCase().includes(filterQuery.toLowerCase()))
-      || movie.directors.some(director => director.name.toLowerCase().includes(filterQuery.toLowerCase()))
-      || (movie.year && movie.year.toString().includes(filterQuery)),
-    ));
+    setFilteredMovies(allMovies.filter((movie) => {
+      const hasFormat = (filterOptions as Set<string>).has(movie.disks?.[0]?.format.name || '');
+      const hasRegion = movie.disks?.some(disk => disk.regions?.some(r => (filterOptions as Set<string>).has(r.name)));
+      const noDisks = (filterOptions as Set<string>).has('no-disks') && (!movie.disks || movie.disks.length === 0);
+      const matchesText = filterQuery === ''
+        ? true
+        : movie.title.toLowerCase().includes(filterQuery.toLowerCase())
+          || movie.description?.toLowerCase().includes(filterQuery.toLowerCase())
+          || movie.actors.some(actor => actor.name.toLowerCase().includes(filterQuery.toLowerCase()))
+          || movie.directors.some(director => director.name.toLowerCase().includes(filterQuery.toLowerCase()))
+          || (movie.year && movie.year.toString().includes(filterQuery));
+      // If no filterOptions are selected, show all movies (matchesText only)
+      const hasAnyFilter = (filterOptions as Set<string>).size > 0;
+      return hasAnyFilter
+        ? (hasFormat || hasRegion || noDisks) && matchesText
+        : matchesText;
+    }));
     setLoading(false);
   }
 
@@ -72,8 +78,19 @@ export default function Home() {
         setSortOption={setSortOption}
         loading={loading}
         seenLetters={seenLetters}
+        filterOptions={filterOptions}
+        setFilterOptions={setFilterOptions}
       />
-
+      {process.env.NODE_ENV === 'development' && <Alert color='warning' className='mb-3'>DEVELOPMENT
+        <pre>
+          {JSON.stringify({
+            filterQuery,
+            filterOptions: Array.from(filterOptions),
+            sortOption,
+            filteredMoviesCount: filteredMovies.length,
+          }, null, 2)}
+        </pre>
+      </Alert>}
       <div className="main-grid">
         {loading && (
           <>
@@ -111,7 +128,7 @@ export default function Home() {
               seenLetters.add(firstLetter);
             }
             return (
-              <>
+              <React.Fragment key={movie.id}>
                 {isFirst && <div key={`header-${firstLetter}`} className="col-span-full mt-6 mb-2">
                   <h2 className="border-b-1 border-gray-500 flex justify-between" id={`letter-${firstLetter}`}>
                     <span className='text-xl font-bold'>{firstLetter}</span>
@@ -124,7 +141,7 @@ export default function Home() {
                 <div key={movie.id} className='flex items-stretch'>
                   <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />
                 </div>
-              </>
+              </React.Fragment>
             );
           })
         )
@@ -133,6 +150,3 @@ export default function Home() {
     </>
   );
 }
-/*
-
-                    */

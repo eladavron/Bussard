@@ -1,85 +1,54 @@
 'use client';
 
-import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link, Switch } from '@heroui/react';
-import { SortBy, SortOption, SortOrder } from '../../lib/sorting';
-import { IoFilter } from 'react-icons/io5';
-import { FaCheck } from 'react-icons/fa';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link, SharedSelection } from '@heroui/react';
+import { GrFilter } from 'react-icons/gr';
+import { Movie } from '@/src/types/movie';
+import { DiskOptionsContext } from '@/src/context/DiskOptionsContext';
+import { useContext } from 'react';
 
 interface SortMenuProps {
     isLoading?: boolean;
-    sortOption: SortOption;
-    setSortOption: (option: SortOption) => void;
+    filterOptions: SharedSelection;
+    setFilterOptions: (keys: SharedSelection) => void;
+    movies?: Movie[];
 }
 
-export default function SortMenu({ isLoading, sortOption, setSortOption }: SortMenuProps) {
-
-    function handleAction(key: React.Key) {
-        switch (key) {
-            case 'title':
-                setSortOption({ ...sortOption, sortBy: SortBy.TITLE });
-                break;
-            case 'year':
-                setSortOption({ ...sortOption, sortBy: SortBy.YEAR });
-                break;
-            case 'asc':
-                setSortOption({ ...sortOption, sortOrder: SortOrder.ASC });
-                break;
-            case 'desc':
-                setSortOption({ ...sortOption, sortOrder: SortOrder.DESC });
-                break;
-        }
-    }
-
-    function handleIgnoreArticlesChange(ignoreArticles: boolean) {
-        setSortOption({
-            ...sortOption,
-            ignoreArticles,
-        });
-    }
-
-    const checkIcon = <FaCheck className="text-secondary" size={12} />;
-
+export default function FilterMenu({ isLoading, filterOptions, setFilterOptions, movies }: SortMenuProps) {
+    const { allFormats, allRegions } = useContext(DiskOptionsContext)!;
     return (
-        <>
-            <Dropdown className='text-primary' closeOnSelect={false}>
-                <DropdownTrigger>
-                    <Link role='button' href="#"
-                        className={`button-hollow tag cursor-pointer ${isLoading ? 'disabled' : ''}`}
-                    >
-                        <IoFilter />
-                    </Link>
-                </DropdownTrigger>
-                <DropdownMenu onAction={handleAction}>
-                    <DropdownSection showDivider title="Sort By">
-                        <DropdownItem key="title" endContent={sortOption.sortBy === SortBy.TITLE ? checkIcon : null}>Title</DropdownItem>
-                        <DropdownItem key="year" endContent={sortOption.sortBy === SortBy.YEAR ? checkIcon : null}>Year</DropdownItem>
-                    </DropdownSection>
-                    <DropdownSection showDivider title="Sort Order">
-                        <DropdownItem key="sortOrder" isReadOnly textValue="Sort Order">
-                            <Switch
-                                size="sm"
-                                color="secondary"
-                                isSelected={sortOption.sortOrder === SortOrder.ASC}
-                                onValueChange={(checked) => handleAction(checked ? 'asc' : 'desc')}
-                            >
-                                <span className='text-primary'>{sortOption.sortOrder === SortOrder.ASC ? 'Ascending' : 'Descending'}</span>
-                            </Switch>
-                        </DropdownItem>
-                    </DropdownSection>
-                    <DropdownSection title="Options">
-                        <DropdownItem key="ignoreArticles" isReadOnly textValue="Ignore Articles">
-                            <Switch
-                                size="sm"
-                                color="secondary"
-                                isSelected={sortOption.ignoreArticles}
-                                onValueChange={(checked) => handleIgnoreArticlesChange(checked)}
-                            ><span className='text-primary'>Ignore Articles (A, An, The)</span>
-                            </Switch>
-                        </DropdownItem>
-                    </DropdownSection>
-                </DropdownMenu>
-            </Dropdown>
-            {console.log(sortOption)}
-        </>
+        <Dropdown className='text-primary'>
+            <DropdownTrigger>
+                <Link role='button' href="#"
+                    className={`button-hollow tag cursor-pointer ${isLoading ? 'disabled' : ''}`}
+                >
+                    <GrFilter />
+                </Link>
+            </DropdownTrigger>
+            <DropdownMenu selectionMode='multiple' selectedKeys={filterOptions} onSelectionChange={setFilterOptions}>
+                <DropdownSection showDivider title="Media Format">
+                    {allFormats
+                        .filter((format: string) => movies?.some(movie => movie.disks?.some(disk => disk.format.name === format)))
+                        .map((format: string) => (
+                            <DropdownItem key={format} textValue={format}>
+                                {format}
+                            </DropdownItem>
+                        ))
+                    }
+                </DropdownSection>
+                <DropdownSection showDivider title="Regions">
+                    {allRegions
+                        .filter((region: string) => movies?.some(movie => movie.disks?.some(disk => disk.regions?.some(r => r.name === region))))
+                        .map((region: string) => (
+                            <DropdownItem key={region} textValue={region}>
+                                {region}
+                            </DropdownItem>
+                        ))
+                    }
+                </DropdownSection>
+                <DropdownItem key="no-disks" textValue="No Disks">
+                    No Disks
+                </DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
     );
 }

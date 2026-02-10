@@ -21,7 +21,7 @@ export default function EditModal({ movie, isOpen, setIsOpen, onRefresh }: EditM
     const [movieState, setMovieState] = useState<Movie>(movie);
     const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
 
-    const handleChange = (field: keyof Movie, value: any) => {
+    const handleChange = (field: keyof Movie, value: string | number | undefined) => {
         setMovieState(prev => ({ ...prev, [field]: value }));
     };
 
