@@ -21,7 +21,7 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
     const [isEditModalOpen, setEditModalOpen] = useState(false);
 
     return (
-        <article key={movie.id} className="movie-card relative group">
+        <article key={movie.id} className="movie-card relative group grow">
             <div className="px-5 py-3 flex flex-col gap-3">
                 <div className="flex justify-between items-start">
                     <h2 className="movie-title">
