@@ -22,8 +22,8 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
 
     return (
         <article key={movie.id} className="movie-card relative group">
-            <div className="p-5 flex-1">
-                <div className="flex justify-between items-start mb-2">
+            <div className="px-5 py-3 flex flex-col gap-3">
+                <div className="flex justify-between items-start">
                     <h2 className="movie-title">
                         {movie.title}
                     </h2>
@@ -31,16 +31,12 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                         {movie.year}
                     </span>
                 </div>
-                <div className="flex justify-center pb-4">
+                <div className="flex justify-center">
                     <MoviePoster movieId={movie.id} />
                 </div>
-                <div className="text-sm text-secondary mb-4 flex flex-wrap gap-2 items-center">
-                    {movie.runtime_min && <span>Runtime: {movie.runtime_min} min</span>}
-                    <span className="grow">
-                        <DiskView movie={movie} onRefresh={onRefresh} />
-                    </span>
-                </div>
-
+                <span className="grow">
+                    <DiskView movie={movie} onRefresh={onRefresh} />
+                </span>
                 <p className="text-primary text-sm line-clamp-3 mb-4">
                     {movie.description || 'No description available.'}
                 </p>
@@ -50,6 +46,7 @@ export default function MovieCard({ movie, onRefresh }: MovieCardProps) {
                     <p><strong className="text-primary">Starring:</strong> {movie.actors.slice(0, 3).map(a =>
                         a.name + (a.character != null ? ` (${a.character})` : ''),
                     ).join(', ')}{movie.actors.length > 3 ? '...' : ''}</p>
+                    {movie.runtime_min && <p><strong className="text-primary">Runtime:</strong> {movie.runtime_min} min</p>}
                 </div>
             </div>
             {<>
