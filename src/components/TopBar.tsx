@@ -59,25 +59,27 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                         </>
                     )}
                 </div>
-                {!loading && <div className='flex gap-1 flex-wrap'>
-                    {Alphabet.map(letter => seenLetters.has(letter) ?
-                            <Tooltip key={letter} color='foreground' content={`Jump to movies starting with ${letter}`} placement='top' closeDelay={0}>
-                                <Link key={letter} onClick={() => document.getElementById(`letter-${letter}`)?.scrollIntoView({ behavior: 'smooth' })}>{letter}</Link>
-                            </Tooltip> : <span key={letter} className='text-secondary opacity-50'>{letter}</span>)
-                    }
+                {<div className='flex gap-1 flex-wrap'>
+                    {Alphabet.map(letter =>
+                        loading ? <Skeleton key={letter} className="w-3 h-6" /> :
+                            (seenLetters.has(letter) ?
+                                <Tooltip key={letter} color='foreground' content={`Jump to movies starting with ${letter}`} placement='top' closeDelay={0}>
+                                    <Link key={letter} className='cursor-pointer' onClick={() => document.getElementById(`letter-${letter}`)?.scrollIntoView({ behavior: 'smooth' })}>{letter}</Link>
+                                </Tooltip> : <span key={letter} className='text-secondary opacity-50'>{letter}</span>)
+                    )}
                 </div>}
                 <div className="w-full sm:w-auto">
-                  <Input
-                    type="text"
-                    placeholder="Search movies..."
-                    radius="full"
-                    className='w-full text-primary sm:w-64'
-                    value={filterQuery}
-                    isClearable
-                    startContent={<IoSearch className='text-secondary' />}
-                    onChange={(e) => setFilterQuery(e.target.value)}
-                    onClear={() => setFilterQuery('')}
-                  />
+                    <Input
+                        type="text"
+                        placeholder="Search movies..."
+                        radius="full"
+                        className='w-full text-primary sm:w-64'
+                        value={filterQuery}
+                        isClearable
+                        startContent={<IoSearch className='text-secondary' />}
+                        onChange={(e) => setFilterQuery(e.target.value)}
+                        onClear={() => setFilterQuery('')}
+                    />
                 </div>
             </div>
             <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} refreshMovies={refreshMovies} />
