@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import BussardLogo from '../assets/Bussard.svg';
-import SettingsMenu from './SettingsMenu';
+import SettingsMenu from './top-bar/SettingsMenu';
 
 export default function Header({ refreshMovies }: { refreshMovies: () => Promise<void> }) {
     return (

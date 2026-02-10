@@ -1,7 +1,7 @@
 'use client';
 
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link, Switch } from '@heroui/react';
-import { SortBy, SortOption, SortOrder } from '../lib/sorting';
+import { SortBy, SortOption, SortOrder } from '../../lib/sorting';
 import { IoFilter } from 'react-icons/io5';
 import { FaCheck } from 'react-icons/fa';
 

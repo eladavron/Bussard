@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Movie } from '../types/movie';
 import { getMovies } from './actions/movies';
 import MovieCard from '../components/movie-card/MovieCard';
-import TopBar from '../components/TopBar';
+import TopBar from '../components/top-bar/TopBar';
 import MovieCardSkeleton from '../components/movie-card/MovieCardSkeleton';
 import { SortBy, sortMovies as sortedMovies, sortedName, SortOption, SortOrder } from '../lib/sorting';
 import { BiSolidToTop } from 'react-icons/bi';

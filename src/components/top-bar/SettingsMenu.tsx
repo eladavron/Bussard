@@ -2,19 +2,19 @@
 
 import { Menu, MenuButton, MenuItem, MenuItems, MenuSeparator } from '@headlessui/react'
 import { useState } from 'react';
-import { getImportProgress, ImportProgress, startImport } from '../app/actions/metadata';
+import { getImportProgress, ImportProgress, startImport } from '../../app/actions/metadata';
 import { IoSettingsOutline, IoSunnySharp } from 'react-icons/io5';
-import UploadModal from './modals/UploadModal';
+import UploadModal from '../modals/UploadModal';
 import { Switch } from '@heroui/switch';
 import { FaMoon } from 'react-icons/fa';
 import { useTheme } from 'next-themes';
 import { Tooltip } from '@heroui/react';
-import { MimeType } from '../types/mime';
-import ProgressModal from './modals/ProgressModal';
-import { clearMetadata } from '../app/actions/debug';
-import { ImportError } from '../types/import_error';
-import { downloadData } from '../lib/global';
-import { getMovies } from '../app/actions/movies';
+import { MimeType } from '../../types/mime';
+import ProgressModal from '../modals/ProgressModal';
+import { clearMetadata } from '../../app/actions/debug';
+import { ImportError } from '../../types/import_error';
+import { downloadData } from '../../lib/global';
+import { getMovies } from '../../app/actions/movies';
 
 interface SettingsMenuProps {
     refreshMovies: () => Promise<void>;

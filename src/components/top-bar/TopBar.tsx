@@ -3,11 +3,11 @@
 import { Input, Link, Skeleton, Tooltip } from '@heroui/react';
 import { useState } from 'react';
 import { IoAddCircleOutline, IoReload, IoSearch } from 'react-icons/io5';
-import SearchModal from './modals/SearchModal';
-import { Movie } from '../types/movie';
-import { SortOption } from '../lib/sorting';
+import SearchModal from '../modals/SearchModal';
+import { Movie } from '../../types/movie';
+import { SortOption } from '../../lib/sorting';
 import SortMenu from './SortMenu';
-import { Alphabet } from '../lib/global';
+import { Alphabet } from '../../lib/global';
 
 
 interface TopBarProps {
