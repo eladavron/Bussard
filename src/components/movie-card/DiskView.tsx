@@ -81,7 +81,7 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
     return (
         <>
             {editMode ? (
-                <span className="flex items-center gap-2 w-full">
+                <span className="flex items-center flex-wrap gap-2 w-full">
                     <Select placeholder="Format" size="sm" variant="bordered" value={format} onSelectionChange={value => setFormat(value.anchorKey || '')} classNames={{ trigger: 'min-w-fit px-2', value: '!overflow-visible !text-ellipsis-[unset] !truncate-none pr-5', selectorIcon: 'right-1 shrink-0' }} popoverProps={{ classNames: { content: 'w-fit min-w-0' } }} listboxProps={{ itemClasses: { title: 'whitespace-nowrap' } }}>
                         {allFormats.map(format => (
                             <SelectItem className="text-primary" key={format}>{format}</SelectItem>
@@ -103,7 +103,14 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
                             <SelectItem className="text-primary" key={region}>{region}</SelectItem>
                         ))}
                     </Select>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 w-full justify-end">
+                        {movie.disks?.length > 0 && (
+                            <Tooltip color='foreground' content="Cancel" placement='top' closeDelay={0}>
+                                <button className="button-hollow h-8" onClick={() => setEditMode(false)}>
+                                    <IoCloseSharp />
+                                </button>
+                            </Tooltip>
+                        )}
                         <Tooltip color='foreground' content="Save" placement='top' closeDelay={0}>
                             <button
                                 className={`button-hollow h-8 ${!format || (!isDigital && regions.size === 0) ? 'disabled' : ''}`}
@@ -118,13 +125,6 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
                                 <IoCheckmark />
                             </button>
                         </Tooltip>
-                        {movie.disks?.length > 0 && (
-                            <Tooltip color='foreground' content="Cancel" placement='top' closeDelay={0}>
-                                <button className="button-hollow h-8" onClick={() => setEditMode(false)}>
-                                    <IoCloseSharp />
-                                </button>
-                            </Tooltip>
-                        )}
                     </div>
                 </span>
             ) : (
@@ -136,7 +136,7 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
                             <Tooltip color='foreground' content="Remove Disk" placement='top' closeDelay={0}>
                                 <Link role="button" className="button-link-secondary"
                                     onClick={async () => {
-                                        await removeDisk(movie.id, d.format.name);
+                                        await removeDisk(d.id);
                                         onRefresh();
                                     }}
                                 >

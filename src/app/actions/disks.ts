@@ -22,18 +22,13 @@ export async function addDisk(movieId: string, format: string, regions: string[]
     return disk_id[0].id;
 }
 
-export async function removeDisk(movieId: string, format: string): Promise<void> {
+export async function removeDisk(disk_id: string): Promise<void> {
     await db`
         DELETE FROM movie_disks
-        WHERE movie_id = ${movieId}
-        AND disk_format = (SELECT id FROM formats WHERE name = ${format});
+        WHERE id = ${disk_id}
     `;
     await db`
         DELETE FROM movie_disk_regions
-        WHERE movie_disk_id IN (
-            SELECT id FROM movie_disks
-            WHERE movie_id = ${movieId}
-            AND disk_format = (SELECT id FROM formats WHERE name = ${format})
-        );
+        WHERE movie_disk_id = ${disk_id}
     `;
 }

@@ -9,6 +9,7 @@
 ## Big Features
 
 - [ ] Add proper logging
+- [ ] Add Alphabetical categories
 - [x] Add Search
 - [x] Add "Delete Movie" option
 - [x] Add Letter anchors
