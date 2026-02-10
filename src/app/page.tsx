@@ -61,7 +61,7 @@ export default function Home() {
 
   return (
     <>
-      <div id="top" />Hi, call
+      <div id="top" />
       <Header refreshMovies={refreshMovies} />
       <TopBar
         movies={allMovies}
