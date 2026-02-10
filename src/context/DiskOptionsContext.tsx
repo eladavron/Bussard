@@ -8,7 +8,7 @@ export const DiskOptionsContext = createContext<
 >(undefined);
 
 export function DiskOptionsProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState({ allFormats: [], allRegions: [], loading: true });
+  const [state, setState] = useState<{ allFormats: string[]; allRegions: string[]; loading: boolean }>({ allFormats: [], allRegions: [], loading: true });
 
   useEffect(() => {
     getDiskOptions().then(({ formats, regions }) =>
