@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useDiskOptions } from './DiskOptionsContext';
 import { Movie } from '../../types/movie';
 import { addDisk, removeDisk } from '@/src/app/actions/disks';
 import { Select, SelectItem, Tooltip } from '@heroui/react';
@@ -11,15 +12,6 @@ import { IoCloseCircleOutline } from 'react-icons/io5';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { Link } from '@heroui/react';
 
-// Cache the promise so all DiskSpan instances share a single fetch
-let diskOptionsPromise: ReturnType<typeof getDiskOptions> | null = null;
-function getCachedDiskOptions() {
-    if (!diskOptionsPromise) {
-        diskOptionsPromise = getDiskOptions();
-    }
-    return diskOptionsPromise;
-}
-
 export interface DiskViewProps {
     movie: Movie;
     onRefresh: () => void;
@@ -29,10 +21,9 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
     const [editMode, setEditMode] = useState(movie.disks?.length === 0);
     const [format, setFormat] = useState('');
     const [regions, setRegions] = useState<Set<string>>(new Set([]));
-    const [allFormats, setAllFormats] = useState<string[]>([]);
-    const [allRegions, setAllRegions] = useState<string[]>([]);
     const [filteredRegions, setFilteredRegions] = useState<string[]>([]);
 
+    const { allFormats, allRegions, loading } = useDiskOptions();
     const isDigital = format === 'Digital';
 
     useEffect(() => {
@@ -61,13 +52,6 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
     }, [format])
 
     useEffect(() => {
-        getCachedDiskOptions().then(({ formats, regions }) => {
-            setAllFormats(formats);
-            setAllRegions(regions);
-        });
-    }, []);
-
-    useEffect(() => {
         // Clear region when format changes and current selection is no longer valid
         if (isDigital || (regions.size > 0 && !filteredRegions.some(r => regions.has(r)))) {
             setRegions(new Set());
@@ -77,6 +61,10 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
     useEffect(() => {
         setEditMode(movie.disks?.length === 0);
     }, [movie.disks]);
+
+    if (loading) {
+        return null;
+    }
 
     return (
         <>

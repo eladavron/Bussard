@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes'
 import './globals.css';
+import { DiskOptionsProvider } from '@/src/components/movie-card/DiskOptionsContext';
 
 export const metadata: Metadata = {
   title: 'Codename "Bussard"',
@@ -16,11 +17,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <main className="main-page">
-            <div className="mx-auto">
-              {children}
-            </div>
-          </main>
+          <DiskOptionsProvider>
+            <main className="main-page">
+              <div className="mx-auto">
+                {children}
+              </div>
+            </main>
+          </DiskOptionsProvider>
         </ThemeProvider>
       </body>
     </html>
