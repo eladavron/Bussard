@@ -16,6 +16,10 @@ export interface SortOption{
     ignoreArticles: boolean;
 }
 
+export function sortedName(movie: Movie, ignoreArticles: boolean): string {
+    return ignoreArticles ? movie.title.replace(/^(a|an|the)\s+/i, '') : movie.title;
+}
+
 export function sortMovies(movies: Movie[], option: SortOption): Movie[] {
     const sortedMovies = [...movies].sort((a, b) => {
         let aValue: string | number = '';
@@ -23,8 +27,8 @@ export function sortMovies(movies: Movie[], option: SortOption): Movie[] {
 
         switch (option.sortBy) {
             case SortBy.TITLE:
-                aValue = option.ignoreArticles ? a.title.replace(/^(a|an|the)\s+/i, '') : a.title;
-                bValue = option.ignoreArticles ? b.title.replace(/^(a|an|the)\s+/i, '') : b.title;
+                aValue = sortedName(a, option.ignoreArticles);
+                bValue = sortedName(b, option.ignoreArticles);
                 return option.sortOrder === SortOrder.ASC
                     ? aValue.localeCompare(bValue)
                     : bValue.localeCompare(aValue);

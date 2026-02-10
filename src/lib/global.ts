@@ -12,3 +12,5 @@ export async function downloadData(data: object, name: string) {
     a.remove();
     URL.revokeObjectURL(url);
 }
+
+export const Alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');

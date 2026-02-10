@@ -7,7 +7,8 @@ import SearchModal from './modals/SearchModal';
 import { Movie } from '../types/movie';
 import { SortOption } from '../lib/sorting';
 import SortMenu from './SortMenu';
-import SettingsMenu from './SettingsMenu';
+import { Alphabet } from '../lib/global';
+
 
 interface TopBarProps {
     movies: Movie[];
@@ -59,10 +60,9 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                     )}
                 </div>
                 {!loading && <div className='flex gap-1 flex-wrap'>
-                    {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-                        .map(letter => seenLetters.has(letter) ?
+                    {Alphabet.map(letter => seenLetters.has(letter) ?
                             <Tooltip key={letter} color='foreground' content={`Jump to movies starting with ${letter}`} placement='top' closeDelay={0}>
-                                <Link key={letter} href={`#letter-${letter}`}>{letter}</Link>
+                                <Link key={letter} onClick={() => document.getElementById(`letter-${letter}`)?.scrollIntoView({ behavior: 'smooth' })}>{letter}</Link>
                             </Tooltip> : <span key={letter} className='text-secondary opacity-50'>{letter}</span>)
                     }
                 </div>}

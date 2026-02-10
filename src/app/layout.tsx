@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes'
 import './globals.css';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
   title: 'Codename "Bussard"',
@@ -21,7 +19,6 @@ export default function RootLayout({
           <main className="main-page">
             <div className="mx-auto">
               {children}
-              <Footer />
             </div>
           </main>
         </ThemeProvider>

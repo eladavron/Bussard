@@ -6,9 +6,10 @@ import { getMovies } from './actions/movies';
 import MovieCard from '../components/movie-card/MovieCard';
 import TopBar from '../components/TopBar';
 import MovieCardSkeleton from '../components/movie-card/MovieCardSkeleton';
-import { SortBy, sortMovies as sortedMovies, SortOption, SortOrder } from '../lib/sorting';
-// import SettingsMenu from '../components/SettingsMenu';
+import { SortBy, sortMovies as sortedMovies, sortedName, SortOption, SortOrder } from '../lib/sorting';
+import { BiSolidToTop } from 'react-icons/bi';
 import Header from '../components/Header';
+import { Link, Tooltip } from '@heroui/react';
 
 export default function Home() {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
@@ -60,6 +61,7 @@ export default function Home() {
 
   return (
     <>
+      <div id="top" />Hi, call
       <Header refreshMovies={refreshMovies} />
       <TopBar
         movies={allMovies}
@@ -74,10 +76,10 @@ export default function Home() {
 
       <div className="main-grid">
         {loading
-          ? Array.from({length: 10}).map((_, i) => i+1).map(i => <MovieCardSkeleton key={i} />)
+          ? Array.from({ length: 10 }).map((_, i) => i + 1).map(i => <MovieCardSkeleton key={i} />)
           : filteredMovies.length === 0
             ? (
-              <div className="empty-state" key="empty-state">
+              <div className="empty-state">
                 <h2 className="text-2xl font-semibold mb-2">No movies found</h2>
                 <p className="text-secondary">Start by adding some movies to your collection.</p>
               </div>
@@ -85,15 +87,26 @@ export default function Home() {
             : (
               sortedMovies(filteredMovies, sortOption)
                 .map((movie) => {
-                  const firstLetter = movie.title[0].toUpperCase();
+                  const firstLetter = sortedName(movie, sortOption.ignoreArticles)[0].toUpperCase();
                   const isFirst = !seenLetters.has(firstLetter);
                   if (isFirst) {
                     seenLetters.add(firstLetter);
                   }
                   return (
-                    <div id={isFirst ? `letter-${firstLetter}` : undefined} key={movie.id} className='flex items-stretch'>
-                      <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />
-                    </div>
+                    <>
+                      {isFirst && <div key={`header-${firstLetter}`} className="col-span-full mt-6 mb-2">
+                        <h2 className="border-b-1 border-gray-500 flex justify-between" id={`letter-${firstLetter}`}>
+                          <span className='text-xl font-bold'>{firstLetter}</span>
+                          <Tooltip color='foreground' content={'Back to top'} placement='top' closeDelay={0}>
+                            <Link onClick={() => document.getElementById('top')?.scrollIntoView({ behavior: 'smooth' })}
+                              className="flex items-center cursor-pointer text-xl text-secondary"><BiSolidToTop /></Link>
+                          </Tooltip>
+                        </h2>
+                      </div>}
+                      <div key={movie.id} className='flex items-stretch'>
+                        <MovieCard key={movie.id} movie={movie} onRefresh={refreshMovies} />
+                      </div>
+                    </>
                   );
                 })
             )
@@ -102,3 +115,6 @@ export default function Home() {
     </>
   );
 }
+/*
+
+                    */
