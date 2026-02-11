@@ -62,6 +62,7 @@ export default function SettingsMenu({ refreshMovies }: SettingsMenuProps) {
                             Export...
                         </a>
                     </MenuItem>
+                    {process.env.NODE_ENV === 'development' && <>
                     <MenuSeparator className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
                     <MenuItem>
                         <a href="#" className="menu-item-link" onClick={async () => {
@@ -71,6 +72,7 @@ export default function SettingsMenu({ refreshMovies }: SettingsMenuProps) {
                             Clear Local Data
                         </a>
                     </MenuItem>
+                    </>}
                 </MenuItems>
             </Menu>
             <UploadModal
