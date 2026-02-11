@@ -26,8 +26,7 @@ interface TopBarProps {
 }
 
 export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQuery, filterOptions, setFilterOptions, sortOption, setSortOption, loading, seenLetters, filteredMovieCount }: TopBarProps) {
-    const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
-
+    
     return (
         <>
             <div className='flex justify-between items-center mb-3 flex-wrap gap-2'>
@@ -64,11 +63,6 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                                     <FilterMenu isLoading={loading} filterOptions={filterOptions} setFilterOptions={setFilterOptions} movies={movies} />
                                 </div>
                             </Tooltip>
-                            <Tooltip color='foreground' content="Add Movie" placement='top' closeDelay={0}>
-                                <Link role='button' href="#" onClick={() => setIsSearchModalOpen(true)} className={`button-hollow tag cursor-pointer ${loading ? 'disabled' : ''}`}>
-                                    <IoAddCircleOutline />
-                                </Link>
-                            </Tooltip>
                         </>
                     )}
                 </div>
@@ -95,7 +89,6 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                     />
                 </div>
             </div>
-            <SearchModal isOpen={isSearchModalOpen} setIsOpen={setIsSearchModalOpen} refreshMovies={refreshMovies} />
         </>
     );
 }

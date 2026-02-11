@@ -31,7 +31,7 @@ export default function SettingsMenu({ refreshMovies }: SettingsMenuProps) {
 
     return (
         <>
-            <Menu as="div" className="inline-block ml-8 h-full">
+            <Menu as="div">
                 <Tooltip color='foreground' content="Settings" placement='top' closeDelay={0}>
                     <MenuButton className="button-hollow cursor-pointer">
                         <IoSettingsOutline />

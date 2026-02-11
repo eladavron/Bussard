@@ -9,7 +9,7 @@ import MovieCardSkeleton from '../components/movie-card/MovieCardSkeleton';
 import { SortBy, sortMovies as sortedMovies, sortedName, SortOption, SortOrder } from '../lib/sorting';
 import { BiSolidToTop } from 'react-icons/bi';
 import Header from '../components/Header';
-import { Alert, Link, SharedSelection, Skeleton, Tooltip } from '@heroui/react';
+import { Alert, Code, Link, SharedSelection, Skeleton, Textarea, Tooltip } from '@heroui/react';
 
 export default function Home() {
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
@@ -52,10 +52,10 @@ export default function Home() {
       const matchesText = filterQuery === ''
         ? true
         : movie.title.toLowerCase().includes(filterQuery.toLowerCase())
-          || movie.description?.toLowerCase().includes(filterQuery.toLowerCase())
-          || movie.actors.some(actor => actor.name.toLowerCase().includes(filterQuery.toLowerCase()))
-          || movie.directors.some(director => director.name.toLowerCase().includes(filterQuery.toLowerCase()))
-          || (movie.year && movie.year.toString().includes(filterQuery));
+        || movie.description?.toLowerCase().includes(filterQuery.toLowerCase())
+        || movie.actors.some(actor => actor.name.toLowerCase().includes(filterQuery.toLowerCase()))
+        || movie.directors.some(director => director.name.toLowerCase().includes(filterQuery.toLowerCase()))
+        || (movie.year && movie.year.toString().includes(filterQuery));
       // If no filterOptions are selected, show all movies (matchesText only)
       const hasAnyFilter = (filterOptions as Set<string>).size > 0;
       return hasAnyFilter
@@ -82,16 +82,6 @@ export default function Home() {
         setFilterOptions={setFilterOptions}
         filteredMovieCount={filteredMovies.length}
       />
-      {process.env.NODE_ENV === 'development' && <Alert color='warning' className='mb-3'>DEVELOPMENT
-        <pre>
-          {JSON.stringify({
-            filterQuery,
-            filterOptions: Array.from(filterOptions),
-            sortOption,
-            filteredMoviesCount: filteredMovies.length,
-          }, null, 2)}
-        </pre>
-      </Alert>}
       <div className="main-grid">
         {loading && (
           <>
@@ -148,6 +138,22 @@ export default function Home() {
         )
         }
       </div >
+      {process.env.NODE_ENV === 'development' &&
+        <div className="flex flex-col gap-2 mt-6">
+          <Alert color='warning'>DEBUG DATA!</Alert>
+
+          <Code className='text-primary p-3'>
+            <pre>
+              {JSON.stringify({
+                filterQuery,
+                filterOptions: Array.from(filterOptions),
+                sortOption,
+                filteredMoviesCount: filteredMovies.length,
+              }, null, 2)}
+            </pre>
+          </Code>
+        </div>
+      }
     </>
   );
 }
