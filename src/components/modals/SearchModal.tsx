@@ -111,10 +111,10 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
                 </span>
             }
             isOpen={isOpen} onClose={() => setIsOpen(false)}
-            className='max-w-1/2'
+                className="w-full max-w-full sm:max-w-2xl"
             body={<>
                 <div className="flex justify-center">
-                    <div className='w-full mb-0'>
+                    <div className='w-full mb-0 flex flex-col gap-1 items-end'>
                         <Tooltip color='foreground' content='Add multiple movies from search results without closing the modal' placement='top' closeDelay={0}>
                             <label className="text-sm text-secondary cursor-pointer flex items-center gap-2 float-end">
                                 Add Multiple

@@ -44,7 +44,7 @@ export default function BaseModal({ title, isOpen, onClose, body, footer, classN
                     onClick={onClose ? () => onClose() : undefined}
                 >
                     <div
-                        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 relative w-full flex flex-col max-h-[calc(100vh-6rem)] my-auto ${className || 'max-w-md'}`}
+                        className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 relative flex flex-col max-h-[calc(100vh-6rem)] my-auto ${className || 'max-w-md'}`}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {onClose && (
