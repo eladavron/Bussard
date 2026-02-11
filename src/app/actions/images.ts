@@ -1,6 +1,6 @@
 'use server';
 
-import ExifReader from 'exifreader';
+import sharp from 'sharp';
 import { db } from '../../lib/db';
 import { DBImage } from '@/src/types/db_image';
 
@@ -78,11 +78,10 @@ async function addImage(formData?: FormData, imageUrl?: string): Promise<string>
         throw new Error('No image source provided');
     }
 
-    const tags = ExifReader.load(buffer);
-
-    const width = Number(tags['Image Width']?.value ?? tags.ImageWidth?.value ?? 0);
-    const height = Number(tags['Image Height']?.value ?? tags.ImageHeight?.value ?? 0);
-    const mime_type = `image/${tags.FileType?.value || 'UNKNOWN'}`;
+    const metadata = await sharp(buffer).metadata();
+    const mime_type =`image/${metadata.format}`;
+    const width = metadata.width;
+    const height = metadata.height;
 
     return await addImageFromBuffer(buffer, mime_type, width, height);
 }

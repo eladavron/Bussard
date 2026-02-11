@@ -3,7 +3,7 @@
 ## Bugs
 
 - [x] Fix scrolling to top when saving data
-- [ ] Fix webp support for images
+- [x] Fix webp support for images
 - [x] Fix mobile layout
 - [x] On small screens (one column) the cards don't all take full width.
 
@@ -26,4 +26,4 @@
 - [x] Auto-Select "Region Free" for 4K UHD disks
 - [x] Make the filter button light up when filters are active
 - [x] Add "Clear Filters" option to filter menu
-- [ ] Find a better place for the "Add Movie" button.
+- [x] Find a better place for the "Add Movie" button
