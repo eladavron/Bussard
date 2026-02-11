@@ -22,9 +22,10 @@ interface TopBarProps {
     setSortOption: (option: SortOption) => void;
     loading: boolean;
     seenLetters: Set<string>;
+    filteredMovieCount: number;
 }
 
-export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQuery, filterOptions, setFilterOptions, sortOption, setSortOption, loading, seenLetters }: TopBarProps) {
+export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQuery, filterOptions, setFilterOptions, sortOption, setSortOption, loading, seenLetters, filteredMovieCount }: TopBarProps) {
     const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
 
     return (
@@ -40,9 +41,11 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                         </>
                     ) : (
                         <>
-                            <span className="tag tag-blue">
-                                {movies.length} Movies
-                            </span>
+                            <Tooltip color='foreground' content={`${filteredMovieCount} ${filteredMovieCount !== movies.length ? `out of ${movies.length} ` : ''}movies match the current filters`} placement='top' closeDelay={0}>
+                                <span className="tag tag-blue">
+                                    {filteredMovieCount} {filteredMovieCount !== movies.length ? <small>(/{movies.length})</small> : ''} Movies
+                                </span>
+                            </Tooltip>
                             <Tooltip color='foreground' content='Refresh' placement='top' closeDelay={0}>
                                 <Link role='button' href="#" onClick={async () => {
                                     await refreshMovies();

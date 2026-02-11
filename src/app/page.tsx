@@ -80,6 +80,7 @@ export default function Home() {
         seenLetters={seenLetters}
         filterOptions={filterOptions}
         setFilterOptions={setFilterOptions}
+        filteredMovieCount={filteredMovies.length}
       />
       {process.env.NODE_ENV === 'development' && <Alert color='warning' className='mb-3'>DEVELOPMENT
         <pre>
