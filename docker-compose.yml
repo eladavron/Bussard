@@ -22,12 +22,20 @@ services:
       - postgres
     networks:
       - appnet
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    depends_on:
+      - app
     ports:
-      - "0.0.0.0:3000:3000"
-    # Uncomment the following lines for development hot-reloading
-    # volumes:
-    #   - ./:/app
-    #   - /app/node_modules
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ~/certs:/etc/nginx/ssl:ro
+    networks:
+      - appnet
 
 volumes:
   db_data:
