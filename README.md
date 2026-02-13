@@ -16,6 +16,8 @@ Create a `.env` file with your desired settings (see the [Development](#prostege
 docker-compose up -d
 ```
 
+Also make sure to change the paths to your SSL certificate and private key in `docker-compose.yml` if you want to use HTTPS (recommended for production). For local development, you can use self-signed certificates or skip SSL altogether.
+
 ## Development
 
 These are all *recommended* settings, you don't *need* to follow those, but that's what I used.
@@ -42,9 +44,10 @@ To configure ProstegeSQL, follow these steps:
     POSTGRES_PASSWORD=changeme
     POSTGRES_DB=bussard_db
     OMDB_API_KEY=your_omdb_api_key_here
+    BARCODE_LOOKUP_API_KEY=your_barcode_lookup_api_key_here
     ```
 
-    Replace `changeme` with a strong password and `your_omdb_api_key_here` with your actual OMDB API key.
+    Replace `changeme` with a strong password, `your_omdb_api_key_here` with your actual [OMDB API](https://www.omdbapi.com/) key, and `your_barcode_lookup_api_key_here` with your actual [Barcode Lookup API](https://barcodelookup.com/) key.
 
 1. Run the database with:
 
