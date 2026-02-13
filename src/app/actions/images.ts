@@ -3,6 +3,7 @@
 import sharp from 'sharp';
 import { db } from '../../lib/db';
 import { DBImage } from '@/src/types/db_image';
+import logger from '@/src/lib/logger';
 
 export type MoviePosterMeta = {
     src: string;
@@ -41,6 +42,7 @@ export type ImageInput = {
 async function getImageFromURL(url: string): Promise<Buffer> {
     const response = await fetch(url);
     if (!response.ok) {
+        logger.error(`Failed to fetch image from URL ${url}: ${response.statusText}`);
         throw new Error('Failed to fetch image from URL');
     }
     const arrayBuffer = await response.arrayBuffer();
@@ -50,6 +52,7 @@ async function getImageFromURL(url: string): Promise<Buffer> {
 async function getImageFromForm(formData: FormData): Promise<Buffer> {
     const file = formData.get('file') as File;
     if (!file || file.size === 0) {
+        logger.error('No file uploaded');
         throw new Error('No file uploaded');
     }
     const arrayBuffer = await file.arrayBuffer();
@@ -64,6 +67,7 @@ export async function addImageFromBuffer(buffer: Buffer, mime_type: string, widt
         ${height},
         ${buffer.length}
     ) RETURNING id`
+    logger.info(`Added image with id ${newID[0].id} to the database`);
     return newID[0].id;
 }
 
@@ -75,11 +79,13 @@ async function addImage(formData?: FormData, imageUrl?: string): Promise<string>
     } else if (formData) {
         buffer = await getImageFromForm(formData);
     } else {
+        logger.error('No image source provided');
         throw new Error('No image source provided');
     }
+    logger.info(`Got image buffer of size ${buffer.length} bytes`);
 
     const metadata = await sharp(buffer).metadata();
-    const mime_type =`image/${metadata.format}`;
+    const mime_type = `image/${metadata.format}`;
     const width = metadata.width;
     const height = metadata.height;
 
@@ -88,12 +94,14 @@ async function addImage(formData?: FormData, imageUrl?: string): Promise<string>
 
 export async function uploadMovieImage(movieId: string, formData: FormData) {
     const imageID = await addImage(formData);
+    logger.info(`Uploaded image for movie ${movieId} with image ID ${imageID}`);
     await setMoviePoster(movieId, imageID);
 }
 
 export async function addMovieImageFromURL(movieId: string, imageUrl: string) {
     //Check if movie already has a poster
     const imageID = await addImage(undefined, imageUrl);
+    logger.info(`Added image for movie ${movieId} from URL ${imageUrl} with image ID ${imageID}`);
     await setMoviePoster(movieId, imageID);
 }
 
@@ -105,6 +113,7 @@ export async function setMoviePoster(movieId: string, imageId: string) {
 
     //Delete old poster
     if (old_poster.length > 0) {
+        logger.warn(`Deleting old poster for movie ${movieId} with image ID ${old_poster[0].poster_image_id}`);
         await db`DELETE FROM images WHERE id = ${old_poster[0].poster_image_id}`;
     }
 }
@@ -112,9 +121,11 @@ export async function setMoviePoster(movieId: string, imageId: string) {
 export async function deleteImage(movieId: string) {
     const image = await db<{ id: string }[]>`SELECT poster_image_id AS id FROM movies WHERE id = ${movieId} LIMIT 1`;
     if (image.length === 0) {
+        logger.error(`No image found for movie ${movieId}`);
         throw new Error('No image found for this movie');
     }
     const imageId = image[0].id;
     await db`UPDATE movies SET poster_image_id = NULL WHERE id = ${movieId}`;
+    logger.info(`Deleted image for movie ${movieId} with image ID ${imageId}`);
     return await db`DELETE FROM images WHERE id = ${imageId}`;
 }

@@ -1,6 +1,7 @@
 'use server';
 
 import { db } from '@/src/lib/db';
+import logger from '@/src/lib/logger';
 
 export async function clearMetadata() {
     await db`DELETE FROM people`;
@@ -10,4 +11,5 @@ export async function clearMetadata() {
     await db`DELETE FROM movie_writers`;
     await db`DELETE FROM movie_disks`;
     await db`DELETE FROM images`;
+    logger.debug('Cleared all metadata from the database');
 };
