@@ -1,12 +1,14 @@
 'use client';
 
 import { Input, Link, SharedSelection, Skeleton, Tooltip } from '@heroui/react';
-import { IoReload, IoSearch } from 'react-icons/io5';
+import { IoAddCircleOutline, IoReload, IoSearch } from 'react-icons/io5';
 import { Movie } from '../../types/movie';
 import { SortOption } from '../../lib/sorting';
 import SortMenu from './SortMenu';
 import { Alphabet } from '../../lib/global';
 import FilterMenu from './FilterMenu';
+import { useState } from 'react';
+import SearchModal from '../modals/SearchModal';
 
 
 interface TopBarProps {
@@ -24,6 +26,8 @@ interface TopBarProps {
 }
 
 export default function TopBar({ allMovies, refreshMovies, setFilterQuery, filterQuery, filterOptions, setFilterOptions, sortOption, setSortOption, loading, seenLetters, filteredMovieCount }: TopBarProps) {
+
+    const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
 
     return (
         <>
@@ -44,10 +48,8 @@ export default function TopBar({ allMovies, refreshMovies, setFilterQuery, filte
                                 </span>
                             </Tooltip>
                             <Tooltip color='foreground' content='Refresh' placement='top' closeDelay={0}>
-                                <Link role='button' href='#' onClick={async () => {
-                                    await refreshMovies();
-                                }}
-                                className={`button-hollow tag cursor-pointer ${loading ? 'disabled' : ''}`}>
+                                <Link role='button' href='#' onClick={async () => await refreshMovies()}
+                                    className={`button-hollow tag cursor-pointer ${loading ? 'disabled' : ''}`}>
                                     <IoReload />
                                 </Link>
                             </Tooltip>
@@ -73,7 +75,7 @@ export default function TopBar({ allMovies, refreshMovies, setFilterQuery, filte
                                 </Tooltip> : <span key={letter} className='text-secondary opacity-50'>{letter}</span>),
                     )}
                 </div>}
-                <div className='w-full sm:w-auto'>
+                <div className='w-full sm:w-auto flex gap-2 items-stretch'>
                     <Input
                         type='text'
                         placeholder='Search movies...'
@@ -85,8 +87,16 @@ export default function TopBar({ allMovies, refreshMovies, setFilterQuery, filte
                         onChange={(e) => setFilterQuery(e.target.value)}
                         onClear={() => setFilterQuery('')}
                     />
+                    <Tooltip content='Add Movie' color='foreground'>
+                        <button className='button-secondary rounded-full! cursor-pointer tag-blue' onClick={() => setIsSearchModalOpen(true)}><IoAddCircleOutline /></button>
+                    </Tooltip>
                 </div>
             </div>
+            <SearchModal
+                isOpen={isSearchModalOpen}
+                setIsOpen={setIsSearchModalOpen}
+                refreshMovies={refreshMovies}
+            />
         </>
     );
 }
