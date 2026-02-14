@@ -4,24 +4,26 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger,
 import { IoClose, IoFilter } from 'react-icons/io5';
 import { DiskOptionsContext } from '@/src/context/DiskOptionsContext';
 import { useContext } from 'react';
+import { Movie } from '@/src/types/movie';
 
 interface SortMenuProps {
     isLoading?: boolean;
     filterOptions: SharedSelection;
     setFilterOptions: (keys: SharedSelection) => void;
+    allMovies: Movie[];
 }
 
 
-export default function FilterMenu({ isLoading, filterOptions, setFilterOptions }: SortMenuProps) {
+export default function FilterMenu({ isLoading, filterOptions, setFilterOptions, allMovies }: SortMenuProps) {
     const { allFormats, allRegions } = useContext(DiskOptionsContext)!;
 
-    const filteredCount = (filterOptions as Set<string>).size;
-    const filteredRegions = allRegions.filter(region => (filterOptions as Set<string>).has(region));
-    const filteredFormats = allFormats.filter(format => (filterOptions as Set<string>).has(format));
+    const isFiltered = (filterOptions as Set<string>).size > 0;
+    const filteredRegions = allRegions.filter(region => allMovies.some(movie => movie.disks?.some(disk => disk.regions?.some(r => r.name === region))));
+    const filteredFormats = allFormats.filter(format => allMovies.some(movie => movie.disks?.some(disk => disk.format.name === format)));
 
     return (
         <div className='relative flex'>
-            {filteredCount > 0 &&
+            {isFiltered &&
                 <Tooltip color='foreground' content={'Clear Filters'} placement='top' closeDelay={0}>
                     <button
                         className='absolute -top-0.75 -right-0.75 size-3 rounded bg-blue-200 z-100 text-xs cursor-pointer'
@@ -52,10 +54,10 @@ export default function FilterMenu({ isLoading, filterOptions, setFilterOptions 
                         <>
                             {filteredRegions.length === 0 && <DropdownItem key='no-regions' textValue='No Regions'>No Movies in view have disks with region information.</DropdownItem>}
                             {filteredRegions.length > 0 && filteredRegions.map((region: string) => (
-                                    <DropdownItem key={region} textValue={region}>
-                                        {region}
-                                    </DropdownItem>
-                                ))
+                                <DropdownItem key={region} textValue={region}>
+                                    {region}
+                                </DropdownItem>
+                            ))
                             }
                         </>
                     </DropdownSection>

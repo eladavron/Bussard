@@ -10,7 +10,7 @@ import FilterMenu from './FilterMenu';
 
 
 interface TopBarProps {
-    movies: Movie[];
+    allMovies: Movie[];
     refreshMovies: () => Promise<void>;
     setFilterQuery: (query: string) => void;
     filterOptions: SharedSelection;
@@ -23,7 +23,7 @@ interface TopBarProps {
     filteredMovieCount: number;
 }
 
-export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQuery, filterOptions, setFilterOptions, sortOption, setSortOption, loading, seenLetters, filteredMovieCount }: TopBarProps) {
+export default function TopBar({ allMovies, refreshMovies, setFilterQuery, filterQuery, filterOptions, setFilterOptions, sortOption, setSortOption, loading, seenLetters, filteredMovieCount }: TopBarProps) {
 
     return (
         <>
@@ -38,9 +38,9 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                         </>
                     ) : (
                         <>
-                            <Tooltip color='foreground' content={`${filteredMovieCount} ${filteredMovieCount !== movies.length ? `out of ${movies.length} ` : ''}movies match the current filters`} placement='top' closeDelay={0}>
+                            <Tooltip color='foreground' content={`${filteredMovieCount} ${filteredMovieCount !== allMovies.length ? `out of ${allMovies.length} ` : ''}movies match the current filters`} placement='top' closeDelay={0}>
                                 <span className='tag tag-blue'>
-                                    {filteredMovieCount} {filteredMovieCount !== movies.length ? <small>(/{movies.length})</small> : ''} Movies
+                                    {filteredMovieCount} {filteredMovieCount !== allMovies.length ? <small>(/{allMovies.length})</small> : ''} Movies
                                 </span>
                             </Tooltip>
                             <Tooltip color='foreground' content='Refresh' placement='top' closeDelay={0}>
@@ -53,7 +53,7 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                             </Tooltip>
                             <Tooltip color='foreground' content='Filter Options' placement='top' closeDelay={0}>
                                 <div className='flex'>
-                                    <FilterMenu isLoading={loading} filterOptions={filterOptions} setFilterOptions={setFilterOptions} movies={movies} />
+                                    <FilterMenu isLoading={loading} filterOptions={filterOptions} setFilterOptions={setFilterOptions} allMovies={allMovies} />
                                 </div>
                             </Tooltip>
                             <Tooltip color='foreground' content='Sort Options' placement='top' closeDelay={0}>

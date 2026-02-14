@@ -75,7 +75,7 @@ export default function Home() {
       <div id='top' />
       <Header refreshMovies={refreshMovies} />
       <TopBar
-        movies={allMovies}
+        allMovies={allMovies}
         refreshMovies={refreshMovies}
         setFilterQuery={setFilterQuery}
         filterQuery={filterQuery}
