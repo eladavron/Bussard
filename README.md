@@ -4,23 +4,34 @@
 
 A self-hosted [free and open source](https://en.wikipedia.org/wiki/Free_and_open-source_software) physical collection management software.
 
-"Bussard" is a temporary code-name, named after the "[Bussard Collectors](https://memory-alpha.fandom.com/wiki/Bussard_collector)" at the front of Star Trek federation ship warp nacelles. 
+"Bussard" is a temporary code-name, named after the "[Bussard Collectors](https://memory-alpha.fandom.com/wiki/Bussard_collector)" at the front of Star Trek federation ship warp nacelles.
 
 Logo created by [Noel Rupenthal](https://ca.linkedin.com/in/noel-ruppenthal-4217628).
 
+## Features
+
+- Add movies by title or barcode, with metadata automatically fetched from the OMDB API
+- Manage which formats you own (DVD, Blu-Ray, 4K UHD, etc.) and which regions they are compatible with
+- Search and filter your collection by title, format, region, etc.
+- Edit metadata manually (title, year, format, region, etc.)
+- Backup and restore your collection data
+- Select a poster image for each movie, either from the OMDB API or by uploading your own
+
 ## Deployment
 
-Create a `.env` file with your desired settings (see the [Development](#prostegesql) section below for details), then run the following command:
+Create a `.env` file with your desired settings (you can use the `.env.example` file as a template), then run the following command:
 
 ```bash
 docker-compose up -d
 ```
 
-Also make sure to change the paths to your SSL certificate and private key in `docker-compose.yml` if you want to use HTTPS (recommended for production). For local development, you can use self-signed certificates or skip SSL altogether.
+Also if you care about SSL, make sure to change the paths to your SSL certificate and private key in `docker-compose.yml`.  
+Note that the barcode scanner will not work on mobile phones without SSL, everything else should work fine.
 
 ## Development
 
-These are all *recommended* settings, you don't *need* to follow those, but that's what I used.
+These are all *recommended* settings if you want to contribute to the project.  
+You don't *need* to follow those, but that's what I used.
 
 ### Prerequisites
 
