@@ -10,7 +10,7 @@ import { OMDBMovieExtended } from '@/src/types/omdb';
 import { ImportError } from '@/src/types/import_error';
 import { addImageFromBuffer, setMoviePoster } from './images';
 import { addDisk } from './disks';
-import logger from '@/src/lib/logger';
+import { serverLogger as logger } from '@/src/lib/serverLogger';
 
 export async function startImport(formData: FormData): Promise<string> {
     // Generate UUID

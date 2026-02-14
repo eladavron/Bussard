@@ -16,6 +16,8 @@ services:
     build: .
     image: eladavron/bussard:latest
     restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
     env_file:
       - .env
     depends_on:
@@ -40,6 +42,7 @@ services:
 
 volumes:
   db_data:
+
 
 networks:
   appnet:

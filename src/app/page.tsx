@@ -10,7 +10,7 @@ import { SortBy, sortMovies as sortedMovies, sortedName, SortOption, SortOrder }
 import { BiSolidToTop } from 'react-icons/bi';
 import Header from '../components/Header';
 import { Alert, Code, Link, SharedSelection, Skeleton, Tooltip } from '@heroui/react';
-import { logClientEvent } from './actions/log';
+import { clientLogger as logger } from '@/src/lib/clientLogger';
 
 export default function Home() {
     const [allMovies, setAllMovies] = useState<Movie[]>([]);
@@ -27,12 +27,12 @@ export default function Home() {
     const seenLetters = new Set<string>();
 
     const refreshMovies = async () => {
-        logClientEvent('info', 'Refreshing movie list');
+        await logger.info('Refreshing movie list');
         const data = await getMovies();
         setAllMovies(data);
         setFilteredMovies(data);
         setLoading(false);
-        logClientEvent('info', `Loaded ${data.length} movies from the database`);
+        await logger.info(`Loaded ${data.length} movies from the database`);
     };
 
     useEffect(() => {
@@ -48,7 +48,7 @@ export default function Home() {
     }, [filterQuery, Array.from(filterOptions).join(','), allMovies]);
 
     async function handleSearch() {
-        logClientEvent('info', 'Starting movie search');
+        await logger.info('Starting movie search');
         setFilteredMovies(allMovies.filter((movie) => {
             const hasFormat = (filterOptions as Set<string>).has(movie.disks?.[0]?.format.name || '');
             const hasRegion = movie.disks?.some(disk => disk.regions?.some(r => (filterOptions as Set<string>).has(r.name)));
@@ -67,7 +67,7 @@ export default function Home() {
                 : matchesText;
         }));
         setLoading(false);
-        logClientEvent('info', `Filtered movies count: ${filteredMovies.length}`);
+        await logger.info(`Filtered movies count: ${filteredMovies.length}`);
     }
 
     return (

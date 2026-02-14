@@ -1,6 +1,6 @@
 'use server';
 
-import logger from '@/src/lib/logger';
+import { serverLogger as logger } from '@/src/lib/serverLogger';
 import { IMDBPattern, OMDBMovieExtended, OMDBResult } from '@/src/types/omdb';
 
 export async function searchOMDB(query: string): Promise<OMDBResult | OMDBMovieExtended> {
