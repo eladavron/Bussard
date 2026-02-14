@@ -10,6 +10,10 @@ Logo created by [Noel Rupenthal](https://ca.linkedin.com/in/noel-ruppenthal-4217
 
 ## Features
 
+<img width="1870" height="862" alt="image" src="https://github.com/user-attachments/assets/67fa2aca-583d-4eba-b24c-f53e6bae098c" />
+<img width="1892" height="1020" alt="image" src="https://github.com/user-attachments/assets/2bb8f1bd-4d1b-4471-ace9-8914cbe31904" />
+
+
 - Add movies by title or barcode, with metadata automatically fetched from the OMDB API
 - Manage which formats you own (DVD, Blu-Ray, 4K UHD, etc.) and which regions they are compatible with
 - Search and filter your collection by title, format, region, etc.
