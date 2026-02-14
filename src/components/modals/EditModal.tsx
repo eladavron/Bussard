@@ -49,9 +49,9 @@ export default function EditModal({ movie, isOpen, setIsOpen, onRefresh }: EditM
                             setIsOpen(false);
                         }}
                     >
-                            <MoviePoster
-                                movieId={movieState.id}
-                            />
+                        <MoviePoster
+                            movieId={movieState.id}
+                        />
                         <div className='flex gap-2 w-full'>
                             <Input
                                 label='Title'

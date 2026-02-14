@@ -51,7 +51,7 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
     }, [format])
 
     useEffect(() => {
-        // Clear region when format changes and current selection is no longer valid
+    // Clear region when format changes and current selection is no longer valid
         if (isDigital || (regions.size > 0 && !filteredRegions.some(r => regions.has(r)))) {
             setRegions(new Set());
         }

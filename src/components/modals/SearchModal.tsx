@@ -129,7 +129,7 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
     }
 
     async function search(query: string): Promise<void> {
-        //Only search if query is at least 3 characters
+    //Only search if query is at least 3 characters
         if (query.length < 3) {
             setOmdbResults([]);
             setErrorMessage(['', '']);

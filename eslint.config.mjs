@@ -4,22 +4,24 @@ import { globalIgnores } from 'eslint/config';
 
 
 export default [
-  nextPlugin.configs['core-web-vitals'],
-  ...tseslint.configs.recommended,
-  {
-    rules: {
-      quotes: ['error', 'single'],
-      curly: ['error', 'all'],
-      'comma-dangle': ['error', 'always-multiline'],
-      'jsx-quotes': ['error', 'prefer-single'],
+    nextPlugin.configs['core-web-vitals'],
+    ...tseslint.configs.recommended,
+    {
+        rules: {
+            quotes: ['error', 'single'],
+            curly: ['error', 'all'],
+            'comma-dangle': ['error', 'always-multiline'],
+            'jsx-quotes': ['error', 'prefer-single'],
+            'no-trailing-spaces': 'error',
+            'indent': ['error', 4],
+        },
     },
-  },
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
+    // Override default ignores of eslint-config-next.
+    globalIgnores([
     // Default ignores of eslint-config-next:
-    '.next/**',
-    'out/**',
-    'build/**',
-    'next-env.d.ts',
-  ]),
+        '.next/**',
+        'out/**',
+        'build/**',
+        'next-env.d.ts',
+    ]),
 ];

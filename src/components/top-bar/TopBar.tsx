@@ -47,7 +47,7 @@ export default function TopBar({ allMovies, refreshMovies, setFilterQuery, filte
                                 <Link role='button' href='#' onClick={async () => {
                                     await refreshMovies();
                                 }}
-                                    className={`button-hollow tag cursor-pointer ${loading ? 'disabled' : ''}`}>
+                                className={`button-hollow tag cursor-pointer ${loading ? 'disabled' : ''}`}>
                                     <IoReload />
                                 </Link>
                             </Tooltip>

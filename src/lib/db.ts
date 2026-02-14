@@ -12,7 +12,7 @@ const SQL_PORT = process.env.POSTGRES_PORT || '5432';
 const connectionString = `postgresql://${SQL_USER}:${SQL_PASS}@${SQL_HOST}:${SQL_PORT}/${SQL_DB}`
 
 if (!connectionString) {
-  throw new Error('DATABASE_URL is not set');
+    throw new Error('DATABASE_URL is not set');
 }
 
 // Prevent multiple connections during development hot-reloading
@@ -22,5 +22,5 @@ const globalForDb = global as unknown as { conn: ReturnType<typeof postgres> | u
 export const db = globalForDb.conn ?? postgres(connectionString.trim(), { prepare: false });
 
 if (process.env.NODE_ENV !== 'production') {
-globalForDb.conn = db;
+    globalForDb.conn = db;
 }

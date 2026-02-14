@@ -84,7 +84,7 @@ export async function addMovie(movie: MovieInput): Promise<string> {
         }
     }
     if (movie.poster_image_url) {
-        //Upload poster image
+    //Upload poster image
         try {
             await addMovieImageFromURL(newID, movie.poster_image_url);
         } catch (error) {

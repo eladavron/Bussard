@@ -48,9 +48,9 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
     }
 
     useEffect(() => {
-    loadImage();
-    setImageLoaded(false);
-}, [movieId]);
+        loadImage();
+        setImageLoaded(false);
+    }, [movieId]);
 
     if (loading || !imageMeta) {
         return <Skeleton className='movie-poster' style={{ width: 200, height: 300 }} />;

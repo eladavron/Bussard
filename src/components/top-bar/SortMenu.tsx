@@ -15,18 +15,18 @@ export default function SortMenu({ isLoading, sortOption, setSortOption }: SortM
 
     function handleAction(key: React.Key) {
         switch (key) {
-            case 'title':
-                setSortOption({ ...sortOption, sortBy: SortBy.TITLE });
-                break;
-            case 'year':
-                setSortOption({ ...sortOption, sortBy: SortBy.YEAR });
-                break;
-            case 'asc':
-                setSortOption({ ...sortOption, sortOrder: SortOrder.ASC });
-                break;
-            case 'desc':
-                setSortOption({ ...sortOption, sortOrder: SortOrder.DESC });
-                break;
+        case 'title':
+            setSortOption({ ...sortOption, sortBy: SortBy.TITLE });
+            break;
+        case 'year':
+            setSortOption({ ...sortOption, sortBy: SortBy.YEAR });
+            break;
+        case 'asc':
+            setSortOption({ ...sortOption, sortOrder: SortOrder.ASC });
+            break;
+        case 'desc':
+            setSortOption({ ...sortOption, sortOrder: SortOrder.DESC });
+            break;
         }
     }
 

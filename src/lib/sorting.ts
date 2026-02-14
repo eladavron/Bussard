@@ -26,20 +26,20 @@ export function sortMovies(movies: Movie[], option: SortOption): Movie[] {
         let bValue: string | number = '';
 
         switch (option.sortBy) {
-            case SortBy.TITLE:
-                aValue = sortedName(a, option.ignoreArticles);
-                bValue = sortedName(b, option.ignoreArticles);
-                return option.sortOrder === SortOrder.ASC
-                    ? aValue.localeCompare(bValue)
-                    : bValue.localeCompare(aValue);
-            case SortBy.YEAR:
-                aValue = a.year || 0;
-                bValue = b.year || 0;
-                return option.sortOrder === SortOrder.ASC
-                    ? (aValue as number) - (bValue as number)
-                    : (bValue as number) - (aValue as number);
-            default:
-                return 0;
+        case SortBy.TITLE:
+            aValue = sortedName(a, option.ignoreArticles);
+            bValue = sortedName(b, option.ignoreArticles);
+            return option.sortOrder === SortOrder.ASC
+                ? aValue.localeCompare(bValue)
+                : bValue.localeCompare(aValue);
+        case SortBy.YEAR:
+            aValue = a.year || 0;
+            bValue = b.year || 0;
+            return option.sortOrder === SortOrder.ASC
+                ? (aValue as number) - (bValue as number)
+                : (bValue as number) - (aValue as number);
+        default:
+            return 0;
         }
     });
 
