@@ -20,8 +20,8 @@ export default function MovieResultRow({ movie, isLoading = false, extendedDataL
 
     useEffect(() => {
         if (!movie?.imdbID) {
-return;
-}
+            return;
+        }
         setDoesMovieExist(DoesMovieExist.Loading);
         getMovieByIMDBID(movie.imdbID)
             .then((movie) => movie == null ? setDoesMovieExist(DoesMovieExist.No) : setDoesMovieExist(DoesMovieExist.Yes))
@@ -49,25 +49,23 @@ return;
     }
 
     return (
-        <li className="mb-2 p-2 border border-default rounded">
-            <div className="flex">
+        <li className="mb-2 p-2 border border-default rounded relative">
+            <a href={`https://www.imdb.com/title/${movie.imdbID}`} className="text-sm text-secondary absolute top-2 right-2" target="_blank" rel="noopener noreferrer"><code>{movie.imdbID}</code></a>
+            <div className="flex items-stretch justify-stretch gap-2">
                 {movie.Poster !== 'N/A' && !imageError ? (
                     <Image
                         src={movie.Poster}
                         alt={`${movie.Title} Poster`}
-                        className="w-16 h-auto mr-4"
+                        className="w-16 h-auto rounded-none"
                         onError={() => setImageError(true)}
                     />
                 ) : (
-                    <div className="w-16 h-24 bg-gray-200 flex items-center justify-center mr-4">
+                    <div className="w-16 h-24 bg-gray-200 flex items-center justify-center">
                         <span className="text-gray-500 text-sm">No Image</span>
                     </div>
                 )}
-                <div className="grow">
-                    <div className='flex items-start justify-between'>
-                        <h3 className="text-primary text-lg font-semibold">{movie.Title}</h3>
-                        <a href={`https://www.imdb.com/title/${movie.imdbID}`} className="text-sm text-secondary" target="_blank" rel="noopener noreferrer"><code>{movie.imdbID}</code></a>
-                    </div>
+                <div className="grow flex flex-col items-start">
+                    <h3 className="text-primary text-lg font-semibold">{movie.Title}</h3>
                     <p className="text-sm text-secondary">{movie.Year}</p>
                     <div className="text-sm text-secondary flex items-center">
                         Director: {movie.Director ? movie.Director : <Skeleton className="h-4 w-20 rounded inline-block ml-2" />}
@@ -76,7 +74,7 @@ return;
                         Actors: {movie.Actors ? movie.Actors : <Skeleton className="h-4 w-3/4 rounded" />}
                     </div>
                 </div>
-                <div className="flex items-center ml-4 text-primary">
+                <div className="text-primary flex items-center">
                     {doesMovieExist === DoesMovieExist.No && extendedDataLoaded && <IoAddCircleOutline className="cursor-pointer" title="Add Movie" onClick={async () => {
                         //replace with spinner
                         setDoesMovieExist(DoesMovieExist.Adding);
