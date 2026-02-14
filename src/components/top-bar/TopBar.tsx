@@ -1,9 +1,7 @@
 'use client';
 
 import { Input, Link, SharedSelection, Skeleton, Tooltip } from '@heroui/react';
-import { useState } from 'react';
-import { IoAddCircleOutline, IoReload, IoSearch } from 'react-icons/io5';
-import SearchModal from '../modals/SearchModal';
+import { IoReload, IoSearch } from 'react-icons/io5';
 import { Movie } from '../../types/movie';
 import { SortOption } from '../../lib/sorting';
 import SortMenu from './SortMenu';
@@ -26,7 +24,7 @@ interface TopBarProps {
 }
 
 export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQuery, filterOptions, setFilterOptions, sortOption, setSortOption, loading, seenLetters, filteredMovieCount }: TopBarProps) {
-    
+
     return (
         <>
             <div className='flex justify-between items-center mb-3 flex-wrap gap-2'>
@@ -53,14 +51,14 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                                     <IoReload />
                                 </Link>
                             </Tooltip>
-                            <Tooltip color='foreground' content="Sort Options" placement='top' closeDelay={0}>
-                                <div className="flex">
-                                    <SortMenu isLoading={loading} sortOption={sortOption} setSortOption={setSortOption} />
-                                </div>
-                            </Tooltip>
                             <Tooltip color='foreground' content="Filter Options" placement='top' closeDelay={0}>
                                 <div className="flex">
                                     <FilterMenu isLoading={loading} filterOptions={filterOptions} setFilterOptions={setFilterOptions} movies={movies} />
+                                </div>
+                            </Tooltip>
+                            <Tooltip color='foreground' content="Sort Options" placement='top' closeDelay={0}>
+                                <div className="flex">
+                                    <SortMenu isLoading={loading} sortOption={sortOption} setSortOption={setSortOption} />
                                 </div>
                             </Tooltip>
                         </>

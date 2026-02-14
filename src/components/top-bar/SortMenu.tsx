@@ -2,7 +2,7 @@
 
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link, Switch } from '@heroui/react';
 import { SortBy, SortOption, SortOrder } from '../../lib/sorting';
-import { IoFilter } from 'react-icons/io5';
+import { FaSortAmountDown } from "react-icons/fa";
 import { FaCheck } from 'react-icons/fa';
 
 interface SortMenuProps {
@@ -42,10 +42,8 @@ export default function SortMenu({ isLoading, sortOption, setSortOption }: SortM
     return (
         <Dropdown className='text-primary' closeOnSelect={false}>
             <DropdownTrigger>
-                <Link role='button' href="#"
-                    className={`button-hollow tag cursor-pointer ${isLoading ? 'disabled' : ''}`}
-                >
-                    <IoFilter />
+                <Link role='button' href="#" className={`button-hollow tag cursor-pointer ${isLoading ? 'disabled' : ''}`}>
+                    <FaSortAmountDown />
                 </Link>
             </DropdownTrigger>
             <DropdownMenu onAction={handleAction}>
