@@ -10,6 +10,7 @@
 ## Big Features
 
 - [ ] Add proper logging
+= [x] Added a barcode scanner
 - [x] Add Alphabetical categories
 - [x] Add Search
 - [x] Add Disk / Region filters
