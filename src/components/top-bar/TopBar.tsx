@@ -28,36 +28,36 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
     return (
         <>
             <div className='flex justify-between items-center mb-3 flex-wrap gap-2'>
-                <div className="flex gap-2">
+                <div className='flex gap-2'>
                     {loading ? (
                         <>
-                            <Skeleton className="w-22 h-7 tag" />
-                            <Skeleton className="w-11 h-7 tag" />
-                            <Skeleton className="w-11 h-7 tag" />
-                            <Skeleton className="w-11 h-7 tag" />
+                            <Skeleton className='w-22 h-7 tag' />
+                            <Skeleton className='w-11 h-7 tag' />
+                            <Skeleton className='w-11 h-7 tag' />
+                            <Skeleton className='w-11 h-7 tag' />
                         </>
                     ) : (
                         <>
                             <Tooltip color='foreground' content={`${filteredMovieCount} ${filteredMovieCount !== movies.length ? `out of ${movies.length} ` : ''}movies match the current filters`} placement='top' closeDelay={0}>
-                                <span className="tag tag-blue">
+                                <span className='tag tag-blue'>
                                     {filteredMovieCount} {filteredMovieCount !== movies.length ? <small>(/{movies.length})</small> : ''} Movies
                                 </span>
                             </Tooltip>
                             <Tooltip color='foreground' content='Refresh' placement='top' closeDelay={0}>
-                                <Link role='button' href="#" onClick={async () => {
+                                <Link role='button' href='#' onClick={async () => {
                                     await refreshMovies();
                                 }}
                                     className={`button-hollow tag cursor-pointer ${loading ? 'disabled' : ''}`}>
                                     <IoReload />
                                 </Link>
                             </Tooltip>
-                            <Tooltip color='foreground' content="Filter Options" placement='top' closeDelay={0}>
-                                <div className="flex">
+                            <Tooltip color='foreground' content='Filter Options' placement='top' closeDelay={0}>
+                                <div className='flex'>
                                     <FilterMenu isLoading={loading} filterOptions={filterOptions} setFilterOptions={setFilterOptions} movies={movies} />
                                 </div>
                             </Tooltip>
-                            <Tooltip color='foreground' content="Sort Options" placement='top' closeDelay={0}>
-                                <div className="flex">
+                            <Tooltip color='foreground' content='Sort Options' placement='top' closeDelay={0}>
+                                <div className='flex'>
                                     <SortMenu isLoading={loading} sortOption={sortOption} setSortOption={setSortOption} />
                                 </div>
                             </Tooltip>
@@ -66,18 +66,18 @@ export default function TopBar({ movies, refreshMovies, setFilterQuery, filterQu
                 </div>
                 {<div className='flex gap-1 flex-wrap'>
                     {Alphabet.map(letter =>
-                        loading ? <Skeleton key={letter} className="w-3 h-6" /> :
+                        loading ? <Skeleton key={letter} className='w-3 h-6' /> :
                             (seenLetters.has(letter) ?
                                 <Tooltip key={letter} color='foreground' content={`Jump to movies starting with ${letter}`} placement='top' closeDelay={0}>
                                     <Link key={letter} className='cursor-pointer' onClick={() => document.getElementById(`letter-${letter}`)?.scrollIntoView({ behavior: 'smooth' })}>{letter}</Link>
                                 </Tooltip> : <span key={letter} className='text-secondary opacity-50'>{letter}</span>),
                     )}
                 </div>}
-                <div className="w-full sm:w-auto">
+                <div className='w-full sm:w-auto'>
                     <Input
-                        type="text"
-                        placeholder="Search movies..."
-                        radius="full"
+                        type='text'
+                        placeholder='Search movies...'
+                        radius='full'
                         className='w-full text-primary sm:w-64'
                         value={filterQuery}
                         isClearable

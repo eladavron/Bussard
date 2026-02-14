@@ -30,18 +30,18 @@ export default function EditModal({ movie, isOpen, setIsOpen, onRefresh }: EditM
     return (<>
         <BaseModal
             title={
-                <div className="flex items-center gap-2">
+                <div className='flex items-center gap-2'>
                     <span>Edit Movie</span>
                 </div>
             }
             isOpen={isOpen}
-            className="max-w-1/2"
+            className='max-w-1/2'
             onClose={() => setIsOpen(false)}
             body={(
                 <>
                     <Form
-                        id="edit-form"
-                        className="flex flex-col gap-4 items-center"
+                        id='edit-form'
+                        className='flex flex-col gap-4 items-center'
                         onSubmit={async (e) => {
                             e.preventDefault();
                             await editMovie(movieState);
@@ -52,23 +52,23 @@ export default function EditModal({ movie, isOpen, setIsOpen, onRefresh }: EditM
                             <MoviePoster
                                 movieId={movieState.id}
                             />
-                        <div className="flex gap-2 w-full">
+                        <div className='flex gap-2 w-full'>
                             <Input
-                                label="Title"
-                                className="grow"
+                                label='Title'
+                                className='grow'
                                 value={movieState.title}
                                 onChange={(e) => handleChange('title', e.target.value)}
                                 required
                             />
                             <Input
-                                label="Year"
-                                type="number"
-                                className="w-auto"
+                                label='Year'
+                                type='number'
+                                className='w-auto'
                                 value={movieState.year?.toString() || ''}
                                 onChange={(e) => handleChange('year', parseInt(e.target.value) || undefined)}
                             />
                             <Input
-                                label="IMDB ID"
+                                label='IMDB ID'
                                 className='w-auto'
                                 classNames={{
                                     input: ['font-mono'],
@@ -78,15 +78,15 @@ export default function EditModal({ movie, isOpen, setIsOpen, onRefresh }: EditM
                                 onChange={(e) => handleChange('imdb_id', e.target.value)}
                             />
                         </div>
-                        <div className="w-full">
-                            <Textarea className="w-full" label="Description" value={movieState.description || ''} onChange={(e) => handleChange('description', e.target.value)} />
+                        <div className='w-full'>
+                            <Textarea className='w-full' label='Description' value={movieState.description || ''} onChange={(e) => handleChange('description', e.target.value)} />
                         </div>
                     </Form>
                 </>
             )}
             footer={(
-                <div className="flex justify-end gap-2">
-                    <button className="button-secondary" onClick={() => {
+                <div className='flex justify-end gap-2'>
+                    <button className='button-secondary' onClick={() => {
                         {
                             if (isDirty) {
                                 setIsDiscardModalOpen(true);
@@ -97,7 +97,7 @@ export default function EditModal({ movie, isOpen, setIsOpen, onRefresh }: EditM
                     }}>
                         Cancel
                     </button>
-                    <button className={`button-primary ${isDirty ? '' : 'disabled'}`} type="submit" form="edit-form" disabled={!isDirty}>
+                    <button className={`button-primary ${isDirty ? '' : 'disabled'}`} type='submit' form='edit-form' disabled={!isDirty}>
                         Save
                     </button>
                 </div>
@@ -105,14 +105,14 @@ export default function EditModal({ movie, isOpen, setIsOpen, onRefresh }: EditM
         />
         <YesNoModal
             isOpen={isDiscardModalOpen}
-            title="Discard Changes"
+            title='Discard Changes'
             onConfirm={() => {
                 setMovieState(originalMovie.current);
                 setIsDiscardModalOpen(false);
                 setIsOpen(false);
             }}
             onCancel={() => setIsDiscardModalOpen(false)}
-            message="You have unsaved changes. Are you sure you want to discard them?"
+            message='You have unsaved changes. Are you sure you want to discard them?'
         />
     </>
     )

@@ -2,7 +2,6 @@
 
 import logger from '@/src/lib/logger';
 import { IMDBPattern, OMDBMovieExtended, OMDBResult } from '@/src/types/omdb';
-import { log } from 'node:console';
 
 export async function searchOMDB(query: string): Promise<OMDBResult | OMDBMovieExtended> {
     if (!query) {

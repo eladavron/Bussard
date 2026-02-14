@@ -6,9 +6,8 @@ import { OMDBMovieExtended, OMDBResult } from '../../types/omdb';
 import MovieResultRow from './MovieResultRow';
 import { searchByBarcode, searchOMDB, searchOMDBByParameter } from '../../app/actions/omdb';
 import { Tab, Tabs, Tooltip } from '@heroui/react';
-import { IoBarcodeOutline, IoSearch } from "react-icons/io5";
+import { IoBarcodeOutline, IoSearch } from 'react-icons/io5';
 import { BrowserMultiFormatReader } from '@zxing/browser';
-import { CgSpinner } from 'react-icons/cg';
 
 interface SearchModalProps {
     isOpen: boolean;
@@ -153,30 +152,30 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
 
     return (
         <BaseModal
-            title="Search by IMDB ID or Title"
+            title='Search by IMDB ID or Title'
             isOpen={isOpen} onClose={() => {
                 stopCamera();
                 setIsOpen(false);
             }
             }
-            className="w-full max-w-full sm:max-w-2xl"
+            className='w-full max-w-full sm:max-w-2xl'
             body={
 
-                <Tabs selectedKey={selectedTab} onSelectionChange={(key: React.Key) => setSelectedTab(key.toString())} className="w-full">
-                    <Tab key="search" title={<div className='flex items-center gap-2'><IoSearch /> Search</div>}>
-                        <div className="flex justify-center">
+                <Tabs selectedKey={selectedTab} onSelectionChange={(key: React.Key) => setSelectedTab(key.toString())} className='w-full'>
+                    <Tab key='search' title={<div className='flex items-center gap-2'><IoSearch /> Search</div>}>
+                        <div className='flex justify-center'>
                             <div className='w-full mb-0 flex flex-col gap-1 items-end'>
                                 <Tooltip color='foreground' content='Add multiple movies from search results without closing the modal' placement='top' closeDelay={0}>
-                                    <label className="text-sm text-secondary cursor-pointer flex items-center gap-2 float-end">
+                                    <label className='text-sm text-secondary cursor-pointer flex items-center gap-2 float-end'>
                                         Add Multiple
-                                        <input id="addMultiple" type="checkbox" checked={addMultiple} onChange={(e) => setAddMultiple(e.target.checked)} />
+                                        <input id='addMultiple' type='checkbox' checked={addMultiple} onChange={(e) => setAddMultiple(e.target.checked)} />
                                     </label>
                                 </Tooltip>
                                 <input
                                     className='input-default w-full'
                                     name='search'
                                     placeholder='tt1234567 or "Interstellar"...'
-                                    autoComplete="off"
+                                    autoComplete='off'
                                     value={searchQuery}
                                     onChange={(e) => {
                                         setSearchQuery(e.target.value);
@@ -184,12 +183,12 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
                                 />
                             </div>
                         </div>
-                        {errorMessage && <div className="text-danger">{errorMessage[0]}<br /><pre>{errorMessage[1]}</pre></div>}
+                        {errorMessage && <div className='text-danger'>{errorMessage[0]}<br /><pre>{errorMessage[1]}</pre></div>}
                         {loading && (
                             <ul>
-                                <MovieResultRow key="skeleton1" isLoading={true} />
-                                <MovieResultRow key="skeleton2" isLoading={true} />
-                                <MovieResultRow key="skeleton3" isLoading={true} />
+                                <MovieResultRow key='skeleton1' isLoading={true} />
+                                <MovieResultRow key='skeleton2' isLoading={true} />
+                                <MovieResultRow key='skeleton3' isLoading={true} />
                             </ul>
                         )}
                         {!loading && !errorMessage[0] && searchQuery && <div>
@@ -204,28 +203,28 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
                                         }} />
                                     ))}
                                 </ul>
-                            ) : (!loading && <p className="text-primary">No results found.</p>)
+                            ) : (!loading && <p className='text-primary'>No results found.</p>)
                             }
                         </div>
                         }
                     </Tab>
-                    <Tab key="barcode" title={<div className='flex items-center gap-2'><IoBarcodeOutline /> Barcode</div>}>
+                    <Tab key='barcode' title={<div className='flex items-center gap-2'><IoBarcodeOutline /> Barcode</div>}>
                         {!scanResults && !scanResultLoading && <video ref={videoRef} style={{ width: '100%' }} />}
-                        {!scanResults && scanResultLoading && (<div className="flex flex-col items-center gap-4">
-                            <div className="w-full">
+                        {!scanResults && scanResultLoading && (<div className='flex flex-col items-center gap-4'>
+                            <div className='w-full'>
                                 <MovieResultRow isLoading={true} />
                             </div>
                         </div>
                         )}
                         {scanResults &&
                             <div>
-                                <h2 className="text-lg font-bold mb-4">Scan Results:</h2>
+                                <h2 className='text-lg font-bold mb-4'>Scan Results:</h2>
                                 <MovieResultRow isLoading={scanResultLoading} movie={scanResults} extendedDataLoaded={true} onAdd={async () => {
                                     await refreshMovies();
                                     setScanResults(null);
                                 }} />
-                                <button className="button-secondary float-end flex gap-2 items-stretch" onClick={() => setScanResults(null)}>
-                                    <IoBarcodeOutline className="size-auto" />
+                                <button className='button-secondary float-end flex gap-2 items-stretch' onClick={() => setScanResults(null)}>
+                                    <IoBarcodeOutline className='size-auto' />
                                     Scan Again
                                 </button>
                             </div>

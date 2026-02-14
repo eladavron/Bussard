@@ -79,9 +79,9 @@ export default function InputWithValidation({
 
     return (
         <div className={`${disabled ? 'label-muted' : ''} mb-4 ${disabled ? 'disabled' : ''}`}>
-            {label && <label className="label-secondary">{label}</label>}
+            {label && <label className='label-secondary'>{label}</label>}
             <input
-                type="url"
+                type='url'
                 name={name}
                 placeholder={placeholder}
                 className={error ? 'input-error' : isValid ? 'input-valid' : 'input-default'}
@@ -90,8 +90,8 @@ export default function InputWithValidation({
                 onChange={handleChange}
                 onBlur={handleBlur}
             />
-            {checking && <p className="input-message-info">Checking...</p>}
-            {error && <p className="input-message-error">{error}</p>}
+            {checking && <p className='input-message-info'>Checking...</p>}
+            {error && <p className='input-message-error'>{error}</p>}
         </div>
     );
 }

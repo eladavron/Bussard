@@ -16,13 +16,13 @@ export default function YesNoModal({ title, message, onConfirm, onCancel, isOpen
             title={title}
             isOpen={isOpen}
             onClose={onCancel}
-            body={<p className="text-primary">{message}</p>}
+            body={<p className='text-primary'>{message}</p>}
             footer={
                 <>
-                    <button type="button" onClick={onCancel} className="button-secondary">
+                    <button type='button' onClick={onCancel} className='button-secondary'>
                         No
                     </button>
-                    <button type="button" onClick={onConfirm} className="button-primary">
+                    <button type='button' onClick={onConfirm} className='button-primary'>
                         Yes
                     </button>
                 </>

@@ -53,43 +53,43 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
 }, [movieId]);
 
     if (loading || !imageMeta) {
-        return <Skeleton className="movie-poster" style={{ width: 200, height: 300 }} />;
+        return <Skeleton className='movie-poster' style={{ width: 200, height: 300 }} />;
     }
 
     return (
         <>
             {imageMeta.isPlaceholder && (
-                <div className="relative group" onClick={() => setUploadModalOpen(true)} title="Click to upload image">
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded cursor-pointer">
-                        <span className="text-white font-semibold bg-black/50 px-3 py-1 rounded backdrop-blur-sm">
+                <div className='relative group' onClick={() => setUploadModalOpen(true)} title='Click to upload image'>
+                    <div className='absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded cursor-pointer'>
+                        <span className='text-white font-semibold bg-black/50 px-3 py-1 rounded backdrop-blur-sm'>
                             Upload Image
                         </span>
                     </div>
-                    {!imageLoaded && <Skeleton className="movie-poster" style={{ width: imageMeta.width, height: imageMeta.height }} />}
-                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' width={imageMeta.width} height={imageMeta.height} onLoad={() => setImageLoaded(true)} style={{ display: imageLoaded ? 'block' : 'none' }} />
+                    {!imageLoaded && <Skeleton className='movie-poster' style={{ width: imageMeta.width, height: imageMeta.height }} />}
+                    <Image src={imageMeta.src} alt='Movie Poster' className='movie-poster' width={imageMeta.width} height={imageMeta.height} onLoad={() => setImageLoaded(true)} style={{ display: imageLoaded ? 'block' : 'none' }} />
                 </div>
             )}
             {!imageMeta.isPlaceholder && (
-                <div className="relative group">
-                    <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex justify-end gap-2 items-end">
+                <div className='relative group'>
+                    <div className='absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex justify-end gap-2 items-end'>
                         <Tooltip color='foreground' content='Delete Image' placement='top' closeDelay={0}>
-                            <button className="button-hover" role='button' title="Delete Image">
-                                <IoTrashBinOutline className="hover-icon text-white" onClick={async () => setYesNoModalOpen(true)} />
+                            <button className='button-hover' role='button' title='Delete Image'>
+                                <IoTrashBinOutline className='hover-icon text-white' onClick={async () => setYesNoModalOpen(true)} />
                             </button>
                         </Tooltip>
                         <Tooltip color='foreground' content='Edit Image' placement='top' closeDelay={0}>
-                            <button className="button-hover" role='button' onClick={() => setUploadModalOpen(true)} title="Edit Image">
-                                <FiEdit3 className="hover-icon text-white" />
+                            <button className='button-hover' role='button' onClick={() => setUploadModalOpen(true)} title='Edit Image'>
+                                <FiEdit3 className='hover-icon text-white' />
                             </button>
                         </Tooltip>
                     </div>
-                    {!imageLoaded && <Skeleton className="movie-poster" style={{ width: 300, height: 200 }} />}
-                    <Image src={imageMeta.src} alt="Movie Poster" className='movie-poster' width={300} height={200} onLoad={() => setImageLoaded(true)} style={{ display: imageLoaded ? 'block' : 'none' }} />
+                    {!imageLoaded && <Skeleton className='movie-poster' style={{ width: 300, height: 200 }} />}
+                    <Image src={imageMeta.src} alt='Movie Poster' className='movie-poster' width={300} height={200} onLoad={() => setImageLoaded(true)} style={{ display: imageLoaded ? 'block' : 'none' }} />
                 </div>
             )}
             <UploadModal
-                title="Upload Movie Poster"
-                message="Select an image to upload as the movie poster."
+                title='Upload Movie Poster'
+                message='Select an image to upload as the movie poster.'
                 isOpen={isUploadModalOpen}
                 onUpload={async (formData) => {
                     await uploadMovieImage(movieId, formData);
@@ -108,8 +108,8 @@ export default function MoviePoster({ movieId }: MoviePosterProps) {
             />
             <YesNoModal
                 isOpen={isYesNoModalOpen}
-                title="Delete Image"
-                message="Are you sure you want to delete this image?"
+                title='Delete Image'
+                message='Are you sure you want to delete this image?'
                 onConfirm={async () => {
                     await deleteImage(movieId);
                     const fallback = { src: '/movie_poster.jpg', isPlaceholder: true, width: 200, height: 300 };

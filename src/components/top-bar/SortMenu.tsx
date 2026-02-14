@@ -2,7 +2,7 @@
 
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link, Switch } from '@heroui/react';
 import { SortBy, SortOption, SortOrder } from '../../lib/sorting';
-import { FaSortAmountDown } from "react-icons/fa";
+import { FaSortAmountDown } from 'react-icons/fa';
 import { FaCheck } from 'react-icons/fa';
 
 interface SortMenuProps {
@@ -37,25 +37,25 @@ export default function SortMenu({ isLoading, sortOption, setSortOption }: SortM
         });
     }
 
-    const checkIcon = <FaCheck className="text-secondary" size={12} />;
+    const checkIcon = <FaCheck className='text-secondary' size={12} />;
 
     return (
         <Dropdown className='text-primary' closeOnSelect={false}>
             <DropdownTrigger>
-                <Link role='button' href="#" className={`button-hollow tag cursor-pointer ${isLoading ? 'disabled' : ''}`}>
+                <Link role='button' href='#' className={`button-hollow tag cursor-pointer ${isLoading ? 'disabled' : ''}`}>
                     <FaSortAmountDown />
                 </Link>
             </DropdownTrigger>
             <DropdownMenu onAction={handleAction}>
-                <DropdownSection showDivider title="Sort By">
-                    <DropdownItem key="title" endContent={sortOption.sortBy === SortBy.TITLE ? checkIcon : null}>Title</DropdownItem>
-                    <DropdownItem key="year" endContent={sortOption.sortBy === SortBy.YEAR ? checkIcon : null}>Year</DropdownItem>
+                <DropdownSection showDivider title='Sort By'>
+                    <DropdownItem key='title' endContent={sortOption.sortBy === SortBy.TITLE ? checkIcon : null}>Title</DropdownItem>
+                    <DropdownItem key='year' endContent={sortOption.sortBy === SortBy.YEAR ? checkIcon : null}>Year</DropdownItem>
                 </DropdownSection>
-                <DropdownSection showDivider title="Sort Order">
-                    <DropdownItem key="sortOrder" isReadOnly textValue="Sort Order">
+                <DropdownSection showDivider title='Sort Order'>
+                    <DropdownItem key='sortOrder' isReadOnly textValue='Sort Order'>
                         <Switch
-                            size="sm"
-                            color="secondary"
+                            size='sm'
+                            color='secondary'
                             isSelected={sortOption.sortOrder === SortOrder.ASC}
                             onValueChange={(checked) => handleAction(checked ? 'asc' : 'desc')}
                         >
@@ -63,11 +63,11 @@ export default function SortMenu({ isLoading, sortOption, setSortOption }: SortM
                         </Switch>
                     </DropdownItem>
                 </DropdownSection>
-                <DropdownSection title="Options">
-                    <DropdownItem key="ignoreArticles" isReadOnly textValue="Ignore Articles">
+                <DropdownSection title='Options'>
+                    <DropdownItem key='ignoreArticles' isReadOnly textValue='Ignore Articles'>
                         <Switch
-                            size="sm"
-                            color="secondary"
+                            size='sm'
+                            color='secondary'
                             isSelected={sortOption.ignoreArticles}
                             onValueChange={(checked) => handleIgnoreArticlesChange(checked)}
                         ><span className='text-primary'>Ignore Articles (A, An, The)</span>

@@ -68,16 +68,16 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
     return (
         <>
             {editMode ? (
-                <span className="flex items-center flex-wrap gap-2 w-full">
-                    <Select placeholder="Format" size="sm" variant="bordered" value={format} onSelectionChange={value => setFormat(value.anchorKey || '')} classNames={{ trigger: 'min-w-fit px-2', value: '!overflow-visible !text-ellipsis-[unset] !truncate-none pr-5', selectorIcon: 'right-1 shrink-0' }} popoverProps={{ classNames: { content: 'w-fit min-w-0' } }} listboxProps={{ itemClasses: { title: 'whitespace-nowrap' } }}>
+                <span className='flex items-center flex-wrap gap-2 w-full'>
+                    <Select placeholder='Format' size='sm' variant='bordered' value={format} onSelectionChange={value => setFormat(value.anchorKey || '')} classNames={{ trigger: 'min-w-fit px-2', value: '!overflow-visible !text-ellipsis-[unset] !truncate-none pr-5', selectorIcon: 'right-1 shrink-0' }} popoverProps={{ classNames: { content: 'w-fit min-w-0' } }} listboxProps={{ itemClasses: { title: 'whitespace-nowrap' } }}>
                         {allFormats.map(format => (
-                            <SelectItem className="text-primary" key={format}>{format}</SelectItem>
+                            <SelectItem className='text-primary' key={format}>{format}</SelectItem>
                         ))}
                     </Select>
                     <Select
-                        placeholder="Region"
-                        size="sm"
-                        variant="bordered"
+                        placeholder='Region'
+                        size='sm'
+                        variant='bordered'
                         selectionMode='multiple'
                         selectedKeys={regions}
                         isDisabled={!format || isDigital}
@@ -87,18 +87,18 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
                         listboxProps={{ itemClasses: { title: 'whitespace-nowrap' } }}
                     >
                         {filteredRegions.map(region => (
-                            <SelectItem className="text-primary" key={region}>{region}</SelectItem>
+                            <SelectItem className='text-primary' key={region}>{region}</SelectItem>
                         ))}
                     </Select>
-                    <div className="flex items-center gap-1 w-full justify-end">
+                    <div className='flex items-center gap-1 w-full justify-end'>
                         {movie.disks?.length > 0 && (
-                            <Tooltip color='foreground' content="Cancel" placement='top' closeDelay={0}>
-                                <button className="button-hollow h-8" onClick={() => setEditMode(false)}>
+                            <Tooltip color='foreground' content='Cancel' placement='top' closeDelay={0}>
+                                <button className='button-hollow h-8' onClick={() => setEditMode(false)}>
                                     <IoCloseSharp />
                                 </button>
                             </Tooltip>
                         )}
-                        <Tooltip color='foreground' content="Save" placement='top' closeDelay={0}>
+                        <Tooltip color='foreground' content='Save' placement='top' closeDelay={0}>
                             <button
                                 className={`button-hollow h-8 ${!format || (!isDigital && regions.size === 0) ? 'disabled' : ''}`}
                                 disabled={!format || (!isDigital && regions.size === 0)}
@@ -115,13 +115,13 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
                     </div>
                 </span>
             ) : (
-                <span className="flex items-stretch gap-1 flex-wrap">
+                <span className='flex items-stretch gap-1 flex-wrap'>
                     {movie.disks?.map(d =>
-                        <span className="tag tag-gray font-mono p-0 flex items-center gap-1"
+                        <span className='tag tag-gray font-mono p-0 flex items-center gap-1'
                             key={d.format.name + (d.regions?.map(r => r.name).join(',') ?? '')}>
                             {d.format.name} {d.regions?.length ? `(${d.regions.map((r, i) => i > 0 ? r.name.replace('Region ', '') : r.name).join(', ')})` : ''}
-                            <Tooltip color='foreground' content="Remove Disk" placement='top' closeDelay={0}>
-                                <Link role="button" className="button-link-secondary"
+                            <Tooltip color='foreground' content='Remove Disk' placement='top' closeDelay={0}>
+                                <Link role='button' className='button-link-secondary'
                                     onClick={async () => {
                                         await removeDisk(d.id);
                                         onRefresh();
@@ -131,8 +131,8 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
                                 </Link>
                             </Tooltip>
                         </span>)}
-                    <Tooltip color='foreground' content="Add Disk" placement='top' closeDelay={0}>
-                        <button className="button-hollow tag py-1 cursor-pointer" onClick={() => setEditMode(true)}>
+                    <Tooltip color='foreground' content='Add Disk' placement='top' closeDelay={0}>
+                        <button className='button-hollow tag py-1 cursor-pointer' onClick={() => setEditMode(true)}>
                             <IoAddCircleOutline />
                         </button>
                     </Tooltip>

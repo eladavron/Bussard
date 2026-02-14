@@ -40,7 +40,7 @@ export default function BaseModal({ title, isOpen, onClose, body, footer, classN
         <>
             {isOpen && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm overflow-auto"
+                    className='fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm overflow-auto'
                     onClick={onClose ? () => onClose() : undefined}
                 >
                     <div
@@ -50,21 +50,21 @@ export default function BaseModal({ title, isOpen, onClose, body, footer, classN
                         {onClose && (
                             <button
                                 onClick={onClose}
-                                className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
-                                aria-label="Close modal"
+                                className='absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer'
+                                aria-label='Close modal'
                             >
                                 ✕
                             </button>
                         )}
 
-                        <h2 className="text-xl font-bold mb-4 text-primary">{title}</h2>
+                        <h2 className='text-xl font-bold mb-4 text-primary'>{title}</h2>
 
-                        <div className="flex-1 overflow-y-auto min-h-0">
+                        <div className='flex-1 overflow-y-auto min-h-0'>
                             {body}
                         </div>
 
                         {footer && (
-                            <div className="flex justify-end gap-3 mt-6">
+                            <div className='flex justify-end gap-3 mt-6'>
                                 {footer}
                             </div>
                         )}

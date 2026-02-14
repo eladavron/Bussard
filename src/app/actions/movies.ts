@@ -5,7 +5,6 @@ import { db } from '@/src/lib/db';
 import { addMovieImageFromURL } from './images';
 import { OMDBMovieExtended } from '@/src/types/omdb';
 import logger from '@/src/lib/logger';
-import { GiLogging } from 'react-icons/gi';
 
 export async function getMovies(): Promise<Movie[]> {
     const movies = await db<Movie[]>`SELECT * FROM movie_overview ORDER BY title ASC`;

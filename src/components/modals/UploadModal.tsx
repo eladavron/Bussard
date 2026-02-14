@@ -50,10 +50,10 @@ export default function UploadModal({ title, message, onUpload, onURL, onClose, 
             onClose={onClose}
             body={
                 <>
-                    <div className="mb-6">
-                        <p className="mb-4 text-primary">{message}</p>
+                    <div className='mb-6'>
+                        <p className='mb-4 text-primary'>{message}</p>
                     </div>
-                    <form id="upload-form" onSubmit={async (e) => {
+                    <form id='upload-form' onSubmit={async (e) => {
                         e.preventDefault();
                         const formData = new FormData(e.currentTarget);
                         const file = formData?.get('file') as File;
@@ -83,13 +83,13 @@ export default function UploadModal({ title, message, onUpload, onURL, onClose, 
                         onClose();
                     }}>
 
-                        <div className="mb-6">
-                            <label className="label-primary">
+                        <div className='mb-6'>
+                            <label className='label-primary'>
                                 Upload:
                             </label>
                             <input
-                                type="file"
-                                name="file"
+                                type='file'
+                                name='file'
                                 accept={fileTypes ? fileTypes.join(',') : '*/*'}
                                 className={`file-input-upload ${urlInput ? 'disabled' : ''}`}
                                 onChange={(e) => {
@@ -101,9 +101,9 @@ export default function UploadModal({ title, message, onUpload, onURL, onClose, 
                         </div>
                         {onURL && (
                             <InputWithValidation
-                                name="imageUrl"
-                                placeholder="https://example.com/image.jpg"
-                                label="Or enter URL:"
+                                name='imageUrl'
+                                placeholder='https://example.com/image.jpg'
+                                label='Or enter URL:'
                                 disabled={uploadedFile ? true : false}
                                 validate={validateImageUrl}
                                 onValueChange={setUrlInput}
@@ -115,9 +115,9 @@ export default function UploadModal({ title, message, onUpload, onURL, onClose, 
             }
             footer={
                 <>
-                    <button type="button" onClick={onClose} className="button-secondary">Cancel</button>
-                    <button type="submit"
-                        form="upload-form"
+                    <button type='button' onClick={onClose} className='button-secondary'>Cancel</button>
+                    <button type='submit'
+                        form='upload-form'
                         className={`button-primary ${(!uploadedFile && !urlInput) || (urlInput && !urlValid) ? 'disabled' : ''}`}
                         disabled={((!uploadedFile && !urlInput) || (urlInput && !urlValid)) as boolean}
                     >

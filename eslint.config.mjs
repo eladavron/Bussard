@@ -11,6 +11,7 @@ export default [
       quotes: ['error', 'single'],
       curly: ['error', 'all'],
       'comma-dangle': ['error', 'always-multiline'],
+      'jsx-quotes': ['error', 'prefer-single'],
     },
   },
   // Override default ignores of eslint-config-next.

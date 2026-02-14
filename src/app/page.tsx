@@ -9,8 +9,7 @@ import MovieCardSkeleton from '../components/movie-card/MovieCardSkeleton';
 import { SortBy, sortMovies as sortedMovies, sortedName, SortOption, SortOrder } from '../lib/sorting';
 import { BiSolidToTop } from 'react-icons/bi';
 import Header from '../components/Header';
-import { Alert, Code, Link, SharedSelection, Skeleton, Textarea, Tooltip } from '@heroui/react';
-import logger from '../lib/logger';
+import { Alert, Code, Link, SharedSelection, Skeleton, Tooltip } from '@heroui/react';
 import { logClientEvent } from './actions/log';
 
 export default function Home() {
@@ -73,7 +72,7 @@ export default function Home() {
 
   return (
     <>
-      <div id="top" />
+      <div id='top' />
       <Header refreshMovies={refreshMovies} />
       <TopBar
         movies={allMovies}
@@ -88,22 +87,22 @@ export default function Home() {
         setFilterOptions={setFilterOptions}
         filteredMovieCount={filteredMovies.length}
       />
-      <div className="main-grid">
+      <div className='main-grid'>
         {loading && (
           <>
-            <div className="col-span-full mt-6 mb-2">
+            <div className='col-span-full mt-6 mb-2'>
               <h2>
-                <span className='text-xl font-bold'><Skeleton className="w-5 h-6 mb-1" /></span>
+                <span className='text-xl font-bold'><Skeleton className='w-5 h-6 mb-1' /></span>
               </h2>
-              <Skeleton className="w-full h-0.5" />
+              <Skeleton className='w-full h-0.5' />
             </div>
             <MovieCardSkeleton />
             <MovieCardSkeleton />
-            <div className="col-span-full mt-6 mb-2">
+            <div className='col-span-full mt-6 mb-2'>
               <h2>
-                <span className='text-xl font-bold'><Skeleton className="w-5 h-6 mb-1" /></span>
+                <span className='text-xl font-bold'><Skeleton className='w-5 h-6 mb-1' /></span>
               </h2>
-              <Skeleton className="w-full h-0.5" />
+              <Skeleton className='w-full h-0.5' />
             </div>
             <MovieCardSkeleton />
             <MovieCardSkeleton />
@@ -112,9 +111,9 @@ export default function Home() {
         )
         }
         {filteredMovies.length === 0 && !loading && (
-          <div className="empty-state">
-            <h2 className="text-2xl font-semibold mb-2">No movies found</h2>
-            <p className="text-secondary">Start by adding some movies to your collection.</p>
+          <div className='empty-state'>
+            <h2 className='text-2xl font-semibold mb-2'>No movies found</h2>
+            <p className='text-secondary'>Start by adding some movies to your collection.</p>
           </div>
         )}
         {!loading && filteredMovies.length > 0 && (
@@ -126,12 +125,12 @@ export default function Home() {
             }
             return (
               <React.Fragment key={movie.id}>
-                {isFirst && <div key={`header-${firstLetter}`} className="col-span-full mt-6 mb-2">
-                  <h2 className="border-b-1 border-gray-500 flex justify-between" id={`letter-${firstLetter}`}>
+                {isFirst && <div key={`header-${firstLetter}`} className='col-span-full mt-6 mb-2'>
+                  <h2 className='border-b-1 border-gray-500 flex justify-between' id={`letter-${firstLetter}`}>
                     <span className='text-xl font-bold'>{firstLetter}</span>
                     <Tooltip color='foreground' content={'Back to top'} placement='top' closeDelay={0}>
                       <Link onClick={() => document.getElementById('top')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="flex items-center cursor-pointer text-xl text-secondary"><BiSolidToTop /></Link>
+                        className='flex items-center cursor-pointer text-xl text-secondary'><BiSolidToTop /></Link>
                     </Tooltip>
                   </h2>
                 </div>}
@@ -145,7 +144,7 @@ export default function Home() {
         }
       </div >
       {process.env.NODE_ENV === 'development' &&
-        <div className="flex flex-col gap-2 mt-6">
+        <div className='flex flex-col gap-2 mt-6'>
           <Alert color='warning'>DEBUG DATA!</Alert>
 
           <Code className='text-primary p-3'>
