@@ -17,6 +17,7 @@ export default function ProgressModal({ title, message, isOpen, progress, errors
         <BaseModal
             title={title}
             isOpen={isOpen}
+            className='w-full max-w-full sm:max-w-2xl'
             onClose={progress < 100 ? undefined : onClose}
             footer={progress >= 100 ? (
                 <div className='flex flex-row gap-2 justify-end'>
@@ -39,7 +40,6 @@ export default function ProgressModal({ title, message, isOpen, progress, errors
                     </button>
                 </div>
             ) : undefined}
-            className={(warnings && warnings.length > 0) || (errors && errors.length > 0) ? 'max-w-3/4' : 'max-w-1/2'}
             body={
                 <>
                     <div className='mb-6'>

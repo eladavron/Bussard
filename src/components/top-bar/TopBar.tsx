@@ -1,7 +1,7 @@
 'use client';
 
 import { Input, Link, SharedSelection, Skeleton, Tooltip } from '@heroui/react';
-import { IoAddCircleOutline, IoReload, IoSearch } from 'react-icons/io5';
+import { IoAddCircleSharp, IoReload, IoSearch } from 'react-icons/io5';
 import { Movie } from '../../types/movie';
 import { SortOption } from '../../lib/sorting';
 import SortMenu from './SortMenu';
@@ -66,7 +66,7 @@ export default function TopBar({ allMovies, refreshMovies, setFilterQuery, filte
                         </>
                     )}
                 </div>
-                {<div className='flex gap-1 flex-wrap'>
+                {<div className='flex gap-1 flex-wrap m-1'>
                     {Alphabet.map(letter =>
                         loading ? <Skeleton key={letter} className='w-3 h-6' /> :
                             (seenLetters.has(letter) ?
@@ -88,7 +88,9 @@ export default function TopBar({ allMovies, refreshMovies, setFilterQuery, filte
                         onClear={() => setFilterQuery('')}
                     />
                     <Tooltip content='Add Movie' color='foreground'>
-                        <button className='button-secondary rounded-full! cursor-pointer tag-blue' onClick={() => setIsSearchModalOpen(true)}><IoAddCircleOutline /></button>
+                        <button className='button-hollow  rounded-full! cursor-pointer w-12 flex justify-center items-center text-xl!' onClick={() => setIsSearchModalOpen(true)}>
+                            <IoAddCircleSharp />
+                        </button>
                     </Tooltip>
                 </div>
             </div>
