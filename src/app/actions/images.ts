@@ -27,6 +27,9 @@ export async function getMoviePoster(movieId: string): Promise<MoviePosterMeta> 
         src = `data:${img.mime_type};base64,${base64String}`;
         isPlaceholder = false;
     }
+    else {
+        logger.warn(`No poster image found for movie ${movieId}, using placeholder`);
+    }
 
     return { src, isPlaceholder, width, height };
 }
@@ -42,8 +45,9 @@ export type ImageInput = {
 async function getImageFromURL(url: string): Promise<Buffer> {
     const response = await fetch(url);
     if (!response.ok) {
-        logger.error(`Failed to fetch image from URL ${url}: ${response.statusText}`);
-        throw new Error('Failed to fetch image from URL');
+        const error = new Error(`Failed to fetch image from URL ${url}: ${response.statusText}`);
+        logger.error(error.message);
+        throw error;
     }
     const arrayBuffer = await response.arrayBuffer();
     return Buffer.from(arrayBuffer);
@@ -52,8 +56,9 @@ async function getImageFromURL(url: string): Promise<Buffer> {
 async function getImageFromForm(formData: FormData): Promise<Buffer> {
     const file = formData.get('file') as File;
     if (!file || file.size === 0) {
-        logger.error('No file uploaded');
-        throw new Error('No file uploaded');
+        const error = new Error('No file uploaded');
+        logger.error(error.message);
+        throw error;
     }
     const arrayBuffer = await file.arrayBuffer();
     return Buffer.from(arrayBuffer);
@@ -79,8 +84,9 @@ async function addImage(formData?: FormData, imageUrl?: string): Promise<string>
     } else if (formData) {
         buffer = await getImageFromForm(formData);
     } else {
-        logger.error('No image source provided');
-        throw new Error('No image source provided');
+        const error = new Error('No image source provided');
+        logger.error(error.message);
+        throw error;
     }
     logger.info(`Got image buffer of size ${buffer.length} bytes`);
 
@@ -121,8 +127,9 @@ export async function setMoviePoster(movieId: string, imageId: string) {
 export async function deleteImage(movieId: string) {
     const image = await db<{ id: string }[]>`SELECT poster_image_id AS id FROM movies WHERE id = ${movieId} LIMIT 1`;
     if (image.length === 0) {
-        logger.error(`No image found for movie ${movieId}`);
-        throw new Error('No image found for this movie');
+        const error = new Error(`No image found for movie ${movieId}`);
+        logger.error(error.message);
+        throw error;
     }
     const imageId = image[0].id;
     await db`UPDATE movies SET poster_image_id = NULL WHERE id = ${movieId}`;
