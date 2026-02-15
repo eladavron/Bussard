@@ -26,7 +26,7 @@ export default function FilterMenu({ isLoading, filterOptions, setFilterOptions,
             {isFiltered &&
                 <Tooltip color='foreground' content={'Clear Filters'} placement='top' closeDelay={0}>
                     <button
-                        className='absolute -top-0.75 -right-0.75 size-3 rounded bg-blue-200 z-100 text-xs cursor-pointer'
+                        className='absolute -top-1.5 -right-1.5 size-4 rounded-full tag-blue z-100 text-xs cursor-pointer foreground flex items-center justify-center'
                         onClick={() => setFilterOptions(new Set())}
                     >
                         <IoClose />
