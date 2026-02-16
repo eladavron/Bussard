@@ -5,7 +5,7 @@ import BaseModal from './BaseModal';
 import { OMDBMovieExtended, OMDBResult } from '../../types/omdb';
 import MovieResultRow from './MovieResultRow';
 import { searchByBarcode, searchOMDB, searchOMDBByParameter } from '../../app/actions/omdb';
-import { Tab, Tabs, Tooltip } from '@heroui/react';
+import { Alert, Skeleton, Tab, Tabs, Tooltip } from '@heroui/react';
 import { IoBarcodeOutline, IoSearch } from 'react-icons/io5';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 
@@ -24,7 +24,9 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
     const [omdbResults, setOmdbResults] = useState<OMDBMovieExtended[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [errorMessage, setErrorMessage] = useState<[string, string]>(['', '']);
+    const [searchErrorMessage, setSearchErrorMessage] = useState<[string, string]>(['', '']);
+    const [scanErrorMessage, setScanErrorMessage] = useState<[string, string]>(['', '']);
+    const [isCameraReady, setIsCameraReady] = useState<boolean>(false);
     const [loadedMovieIDs, setLoadedMovieIDs] = useState<Set<string>>(new Set());
     const [addMultiple, setAddMultiple] = useState<boolean>(false);
     const [selectedTab, setSelectedTab] = useState<string>('search');
@@ -33,6 +35,19 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
     const streamRef = useRef<MediaStream>(null);
     const [scanResults, setScanResults] = useState<OMDBMovieExtended | null>(null);
     const [scanResultLoading, setScanResultLoading] = useState<boolean>(false);
+
+    function resetScanner() {
+        setScanResults(null);
+        setScanErrorMessage(['', '']);
+        stopCamera();
+    }
+
+    function resetSearch() {
+        setOmdbResults([]);
+        setSearchQuery('');
+        setSearchErrorMessage(['', '']);
+        setLoadedMovieIDs(new Set());
+    }
 
     // Debounce timer reference
     useEffect(() => {
@@ -62,28 +77,27 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
 
     useEffect(() => {
         if (!isOpen) {
-            setOmdbResults([]);
-            setSearchQuery('');
-            setErrorMessage(['', '']);
-            setLoadedMovieIDs(new Set());
+            resetSearch();
+            resetScanner();
         }
     }, [isOpen]);
 
     const stopCamera = () => {
-
         if (streamRef.current) {
             streamRef.current.getTracks().forEach(track => track.stop());
             streamRef.current = null;
         }
     }
 
-    useEffect(() => {
+    function setUpCamera() {
         const codeReader = new BrowserMultiFormatReader();
-        if (selectedTab !== 'barcode' || scanResults) {
-            stopCamera();
-            return;
-        }
+        let cleanup = () => { };
+
         if (videoRef.current) {
+            // Handler for when the camera is ready
+            const handleLoadedMetadata = () => setIsCameraReady(true);
+            videoRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+
             codeReader.decodeFromVideoDevice(
                 undefined, // use default camera
                 videoRef.current,
@@ -92,20 +106,39 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
                         streamRef.current = videoRef.current.srcObject as MediaStream;
                     }
                     if (result) {
-                        controls.stop(); // stop scanning if you want
+                        stopCamera();
                         const barcode = result.getText();
                         setScanResultLoading(true);
                         const results = await searchByBarcode(barcode);
+                        if (results instanceof Error) {
+                            setScanErrorMessage(['Error scanning barcode', results.message]);
+                            setScanResultLoading(false);
+                            return;
+                        }
                         setScanResults(results);
                         setScanResultLoading(false);
                     }
-                    // handle error if needed
                 },
             );
+
+            // Cleanup function to remove event listener and stop camera
+            cleanup = () => {
+                videoRef.current?.removeEventListener('loadedmetadata', handleLoadedMetadata);
+                stopCamera();
+                setIsCameraReady(false);
+            };
         }
 
-        return () => {
-            stopCamera();
+        return cleanup;
+    }
+
+    useEffect(() => {
+
+        if (selectedTab === 'search') {
+            resetScanner();
+        } else if (selectedTab === 'barcode') {
+            resetSearch();
+            return setUpCamera();
         }
     }, [selectedTab, scanResults]);
 
@@ -122,29 +155,29 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
             )));
             setLoadedMovieIDs((prev) => new Set(prev).add(imdbID));
         } catch (error) {
-            setErrorMessage(['Error', error instanceof Error ? error.message : 'Failed to fetch details']);
+            setSearchErrorMessage(['Error', error instanceof Error ? error.message : 'Failed to fetch details']);
         } finally {
             movieIDsBeingFetched.current.delete(imdbID);
         }
     }
 
     async function search(query: string): Promise<void> {
-    //Only search if query is at least 3 characters
+        //Only search if query is at least 3 characters
         if (query.length < 3) {
             setOmdbResults([]);
-            setErrorMessage(['', '']);
+            setSearchErrorMessage(['', '']);
             return;
         }
 
         setLoading(true);
         try {
             const data = await searchOMDB(query) as OMDBResult;
-            setErrorMessage(['', '']);
+            setSearchErrorMessage(['', '']);
             setOmdbResults(data.Search ?? []);
             setLoadedMovieIDs(new Set());
         } catch (error) {
             setOmdbResults([]);
-            setErrorMessage(['Error', error instanceof Error ? error.message : 'Failed to search']);
+            setSearchErrorMessage(['Error', error instanceof Error ? error.message : 'Failed to search']);
         } finally {
             setLoading(false);
         }
@@ -160,77 +193,82 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
             }
             className='w-full max-w-full sm:max-w-2xl'
             body={
-
-                <Tabs selectedKey={selectedTab} onSelectionChange={(key: React.Key) => setSelectedTab(key.toString())} className='w-full'>
-                    <Tab key='search' title={<div className='flex items-center gap-2'><IoSearch /> Search</div>}>
-                        <div className='flex justify-center'>
-                            <div className='w-full mb-0 flex flex-col gap-1 items-end'>
-                                <Tooltip color='foreground' content='Add multiple movies from search results without closing the modal' placement='top' closeDelay={0}>
-                                    <label className='text-sm text-secondary cursor-pointer flex items-center gap-2 float-end'>
-                                        Add Multiple
-                                        <input id='addMultiple' type='checkbox' checked={addMultiple} onChange={(e) => setAddMultiple(e.target.checked)} />
-                                    </label>
-                                </Tooltip>
-                                <input
-                                    className='input-default w-full'
-                                    name='search'
-                                    placeholder='tt1234567 or "Interstellar"...'
-                                    autoComplete='off'
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value);
-                                    }}
-                                />
+                <>
+                    <Tabs selectedKey={selectedTab} onSelectionChange={(key: React.Key) => setSelectedTab(key.toString())} className='w-full'>
+                        <Tab key='search' title={<div className='flex items-center gap-2'><IoSearch /> Search</div>}>
+                            <div className='flex justify-center'>
+                                <div className='w-full mb-0 flex flex-col gap-1 items-end'>
+                                    <Tooltip color='foreground' content='Add multiple movies from search results without closing the modal' placement='top' closeDelay={0}>
+                                        <label className='text-sm text-secondary cursor-pointer flex items-center gap-2 float-end'>
+                                            Add Multiple
+                                            <input id='addMultiple' type='checkbox' checked={addMultiple} onChange={(e) => setAddMultiple(e.target.checked)} />
+                                        </label>
+                                    </Tooltip>
+                                    <input
+                                        className='input-default w-full'
+                                        name='search'
+                                        placeholder='tt1234567 or "Interstellar"...'
+                                        autoComplete='off'
+                                        value={searchQuery}
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value);
+                                        }}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        {errorMessage && <div className='text-danger'>{errorMessage[0]}<br /><pre>{errorMessage[1]}</pre></div>}
-                        {loading && (
-                            <ul>
-                                <MovieResultRow key='skeleton1' isLoading={true} />
-                                <MovieResultRow key='skeleton2' isLoading={true} />
-                                <MovieResultRow key='skeleton3' isLoading={true} />
-                            </ul>
-                        )}
-                        {!loading && !errorMessage[0] && searchQuery && <div>
-                            {omdbResults && omdbResults.length > 0 ? (
+                            {searchErrorMessage[0] && <Alert color='danger'>{searchErrorMessage[0]}<br /><pre>{searchErrorMessage[1]}</pre></Alert>}
+                            {loading && (
                                 <ul>
-                                    {omdbResults.map((movie) => (
-                                        <MovieResultRow key={movie.imdbID} movie={movie} extendedDataLoaded={loadedMovieIDs.has(movie.imdbID)} onAdd={async () => {
-                                            await refreshMovies();
-                                            if (!addMultiple) {
-                                                setIsOpen(false);
-                                            }
-                                        }} />
-                                    ))}
+                                    <MovieResultRow key='skeleton1' isLoading={true} />
+                                    <MovieResultRow key='skeleton2' isLoading={true} />
+                                    <MovieResultRow key='skeleton3' isLoading={true} />
                                 </ul>
-                            ) : (!loading && <p className='text-primary'>No results found.</p>)
+                            )}
+                            {!loading && !searchErrorMessage[0] && searchQuery && <div>
+                                {omdbResults && omdbResults.length > 0 ? (
+                                    <ul>
+                                        {omdbResults.map((movie) => (
+                                            <MovieResultRow key={movie.imdbID} movie={movie} extendedDataLoaded={loadedMovieIDs.has(movie.imdbID)} onAdd={async () => {
+                                                await refreshMovies();
+                                                if (!addMultiple) {
+                                                    setIsOpen(false);
+                                                }
+                                            }} />
+                                        ))}
+                                    </ul>
+                                ) : (!loading && <p className='text-primary'>No results found.</p>)
+                                }
+                            </div>
                             }
-                        </div>
-                        }
-                    </Tab>
-                    <Tab key='barcode' title={<div className='flex items-center gap-2'><IoBarcodeOutline /> Barcode</div>}>
-                        {!scanResults && !scanResultLoading && <video ref={videoRef} style={{ width: '100%' }} />}
-                        {!scanResults && scanResultLoading && (<div className='flex flex-col items-center gap-4'>
-                            <div className='w-full'>
-                                <MovieResultRow isLoading={true} />
+                        </Tab>
+                        <Tab key='barcode' title={<div className='flex items-center gap-2'><IoBarcodeOutline /> Barcode</div>}>
+                            <div className='flex flex-col'>
+                                {!isCameraReady && <Skeleton className='w-full h-96 rounded-xl' />}
+                                {!scanResults && !scanResultLoading && !scanErrorMessage[0] && <video ref={videoRef} className={`w-full rounded-xl ${isCameraReady ? '' : 'h-0'}`} />}
+                                {!scanResults && scanResultLoading && (<div className='flex flex-col items-center gap-4'>
+                                    <div className='w-full'>
+                                        <MovieResultRow isLoading={true} />
+                                    </div>
+                                </div>
+                                )}
+                                {scanErrorMessage[0] && <Alert color='danger'>{scanErrorMessage[0]}<br /><pre>{scanErrorMessage[1]}</pre></Alert>}
+                                {scanResults &&
+                                    <div>
+                                        <h2 className='text-lg font-bold mb-4'>Scan Results:</h2>
+                                        <MovieResultRow isLoading={scanResultLoading} movie={scanResults} extendedDataLoaded={true} onAdd={async () => {
+                                            await refreshMovies();
+                                            setScanResults(null);
+                                        }} />
+                                        <button className='button-secondary float-end flex gap-2 items-stretch' onClick={() => setScanResults(null)}>
+                                            <IoBarcodeOutline className='size-auto' />
+                                            Scan Again
+                                        </button>
+                                    </div>
+                                }
                             </div>
-                        </div>
-                        )}
-                        {scanResults &&
-                            <div>
-                                <h2 className='text-lg font-bold mb-4'>Scan Results:</h2>
-                                <MovieResultRow isLoading={scanResultLoading} movie={scanResults} extendedDataLoaded={true} onAdd={async () => {
-                                    await refreshMovies();
-                                    setScanResults(null);
-                                }} />
-                                <button className='button-secondary float-end flex gap-2 items-stretch' onClick={() => setScanResults(null)}>
-                                    <IoBarcodeOutline className='size-auto' />
-                                    Scan Again
-                                </button>
-                            </div>
-                        }
-                    </Tab>
-                </Tabs>
+                        </Tab>
+                    </Tabs>
+                </>
             }
         />
     );

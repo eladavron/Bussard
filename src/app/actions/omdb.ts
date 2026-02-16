@@ -63,11 +63,11 @@ export async function searchOMDBByParameter(params: searchParameters): Promise<O
 }
 
 
-export async function searchByBarcode(barcode: string): Promise<OMDBMovieExtended> {
+export async function searchByBarcode(barcode: string): Promise<OMDBMovieExtended | Error> {
     if (!barcode) {
         const error = new Error('Barcode parameter is required');
         logger.error(error.message);
-        throw error;
+        return error;
     }
     logger.info(`Searching for product with barcode "${barcode}" using Barcode Lookup API`);
     const params = new URLSearchParams();
@@ -77,19 +77,19 @@ export async function searchByBarcode(barcode: string): Promise<OMDBMovieExtende
     if (!response.ok) {
         const error = new Error(`Barcode Lookup API error: ${response.statusText}`);
         logger.error(error.message);
-        throw error;
+        return error;
     }
     const data = await response.json();
     if (!data.products || data.products.length === 0) {
         const error = new Error('No product found for the given barcode');
         logger.error(error.message);
-        throw error;
+        return error;
     }
     const product = data.products[0];
     if (!product.title) {
         const error = new Error('Product does not have a title');
         logger.error(error.message);
-        throw error;
+        return error;
     }
 
     if (product.release_date) {
@@ -98,7 +98,7 @@ export async function searchByBarcode(barcode: string): Promise<OMDBMovieExtende
         if ('Search' in omdbData) {
             const error = new Error('No exact match found for the given product');
             logger.error(error.message);
-            throw error;
+            return error;
         }
         return omdbData as OMDBMovieExtended;
     }
