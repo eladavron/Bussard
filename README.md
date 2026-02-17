@@ -8,6 +8,19 @@ A self-hosted [free and open source](https://en.wikipedia.org/wiki/Free_and_open
 
 Logo created by [Noel Rupenthal](https://ca.linkedin.com/in/noel-ruppenthal-4217628).
 
+## AI Usage Disclaimer
+
+While AI usage is a complicated issue, I do believe it has its uses - especially in software development.  
+I also believe transparency it key, so here's how AI was involved in this project.
+
+If I'm being quite honest, AI did a lot of the heavy lifting here: project structure, complicated database views, debugging and bug-fixing, etc.  
+While I did do some coding myself (and almost all of the design decisions), this was more of an experiment in "vibe coding" than anything else.
+
+I admit that without AI this same project would have taken me months, not weeks, but I also don't think I couldn't have done it without AI at all.  
+That said - while working on this project, I did notice how diminished my mental capacities were becoming - finding myself asking the AI to solve problems for me both in analysis and in implementation.
+
+I don't like this feeling at all, and I will see how I can adjust my usage in the future to avoid losing my own skills.
+
 ## Features
 
 <img width="1870" height="862" alt="image" src="https://github.com/user-attachments/assets/67fa2aca-583d-4eba-b24c-f53e6bae098c" />
