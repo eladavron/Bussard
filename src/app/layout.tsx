@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes'
 import './globals.css';
-import { DiskOptionsProvider } from '@/src/context/DiskOptionsContext';
+import { OptionsProvider } from '@/src/context/OptionsContext';
 
 export const metadata: Metadata = {
     title: 'Codename "Bussard"',
@@ -17,13 +17,13 @@ export default function RootLayout({
         <html lang='en' suppressHydrationWarning>
             <body>
                 <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-                    <DiskOptionsProvider>
+                    <OptionsProvider>
                         <main className='main-page'>
                             <div className='mx-auto'>
                                 {children}
                             </div>
                         </main>
-                    </DiskOptionsProvider>
+                    </OptionsProvider>
                 </ThemeProvider>
             </body>
         </html>

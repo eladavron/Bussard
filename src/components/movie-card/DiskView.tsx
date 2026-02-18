@@ -9,7 +9,7 @@ import { IoCloseSharp } from 'react-icons/io5';
 import { IoCloseCircleOutline } from 'react-icons/io5';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { Link } from '@heroui/react';
-import { DiskOptionsContext } from '@/src/context/DiskOptionsContext';
+import { OptionsContext } from '@/src/context/OptionsContext';
 
 export interface DiskViewProps {
     movie: Movie;
@@ -22,7 +22,7 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
     const [regions, setRegions] = useState<Set<string>>(new Set([]));
     const [filteredRegions, setFilteredRegions] = useState<string[]>([]);
 
-    const { allFormats, allRegions, loading } = useContext(DiskOptionsContext)!;
+    const { allFormats, allRegions, isScanningSupported } = useContext(OptionsContext)!;
     const isDigital = format === 'Digital';
 
     useEffect(() => {
@@ -61,7 +61,7 @@ export default function DiskView({ movie, onRefresh }: DiskViewProps) {
         setEditMode(movie.disks?.length === 0);
     }, [movie.disks]);
 
-    if (loading) {
+    if (!allFormats || !allRegions) {
         return null;
     }
 

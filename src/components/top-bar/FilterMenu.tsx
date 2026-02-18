@@ -2,7 +2,7 @@
 
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link, SharedSelection, Tooltip } from '@heroui/react';
 import { IoClose, IoFilter } from 'react-icons/io5';
-import { DiskOptionsContext } from '@/src/context/DiskOptionsContext';
+import { OptionsContext } from '@/src/context/OptionsContext';
 import { useContext } from 'react';
 import { Movie } from '@/src/types/movie';
 
@@ -15,7 +15,7 @@ interface SortMenuProps {
 
 
 export default function FilterMenu({ isLoading, filterOptions, setFilterOptions, allMovies }: SortMenuProps) {
-    const { allFormats, allRegions } = useContext(DiskOptionsContext)!;
+    const { allFormats, allRegions } = useContext(OptionsContext)!;
 
     const isFiltered = (filterOptions as Set<string>).size > 0;
     const filteredRegions = allRegions.filter(region => allMovies.some(movie => movie.disks?.some(disk => disk.regions?.some(r => r.name === region))));

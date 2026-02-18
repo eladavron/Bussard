@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import BaseModal from './BaseModal';
 import { OMDBMovieExtended, OMDBResult } from '../../types/omdb';
 import MovieResultRow from './MovieResultRow';
@@ -8,6 +8,7 @@ import { searchByBarcode, searchOMDB, searchOMDBByParameter } from '../../app/ac
 import { Alert, Skeleton, Tab, Tabs, Tooltip } from '@heroui/react';
 import { IoBarcodeOutline, IoSearch } from 'react-icons/io5';
 import { BrowserMultiFormatReader } from '@zxing/browser';
+import { OptionsContext } from '@/src/context/OptionsContext';
 
 interface SearchModalProps {
     isOpen: boolean;
@@ -101,7 +102,7 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
             codeReader.decodeFromVideoDevice(
                 undefined, // use default camera
                 videoRef.current,
-                async (result, error, controls) => {
+                async (result) => {
                     if (videoRef.current && videoRef.current.srcObject) {
                         streamRef.current = videoRef.current.srcObject as MediaStream;
                     }
@@ -183,6 +184,8 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
         }
     }
 
+    const { isScanningSupported } = useContext(OptionsContext)!;
+
     return (
         <BaseModal
             title='Search by IMDB ID or Title'
@@ -194,7 +197,12 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
             className='w-full max-w-full sm:max-w-2xl'
             body={
                 <>
-                    <Tabs selectedKey={selectedTab} onSelectionChange={(key: React.Key) => setSelectedTab(key.toString())} className='w-full'>
+                    <Tabs
+                        selectedKey={selectedTab}
+                        onSelectionChange={(key: React.Key) => setSelectedTab(key.toString())}
+                        className='w-full'
+                        disabledKeys={isScanningSupported ? [] : ['barcode']}
+                    >
                         <Tab key='search' title={<div className='flex items-center gap-2'><IoSearch /> Search</div>}>
                             <div className='flex justify-center'>
                                 <div className='w-full mb-0 flex flex-col gap-1 items-end'>
@@ -241,7 +249,14 @@ export default function SearchModal({ isOpen, setIsOpen, refreshMovies }: Search
                             </div>
                             }
                         </Tab>
-                        <Tab key='barcode' title={<div className='flex items-center gap-2'><IoBarcodeOutline /> Barcode</div>}>
+                        <Tab
+                            id='barcode-tab'
+                            key='barcode'
+                            title={
+                                <Tooltip color='danger' hidden={isScanningSupported} content={'Barcode scanning is not available. Please set up the Barcode Lookup API key in the .env file.'} placement='top' closeDelay={0}>
+                                    <div className='flex items-center gap-2'><IoBarcodeOutline /> Barcode</div>
+                                </Tooltip>}
+                        >
                             <div className='flex flex-col'>
                                 {!isCameraReady && <Skeleton className='w-full h-96 rounded-xl' />}
                                 {!scanResults && !scanResultLoading && !scanErrorMessage[0] && <video ref={videoRef} className={`w-full rounded-xl ${isCameraReady ? '' : 'h-0'}`} />}

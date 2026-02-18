@@ -62,7 +62,6 @@ export async function searchOMDBByParameter(params: searchParameters): Promise<O
     return data;
 }
 
-
 export async function searchByBarcode(barcode: string): Promise<OMDBMovieExtended | Error> {
     if (!barcode) {
         const error = new Error('Barcode parameter is required');
