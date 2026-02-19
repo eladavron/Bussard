@@ -26,7 +26,6 @@ I don't like this feeling at all, and I will see how I can adjust my usage in th
 <img width="1870" height="862" alt="image" src="https://github.com/user-attachments/assets/67fa2aca-583d-4eba-b24c-f53e6bae098c" />
 <img width="1892" height="1020" alt="image" src="https://github.com/user-attachments/assets/2bb8f1bd-4d1b-4471-ace9-8914cbe31904" />
 
-
 - Add movies by title or barcode, with metadata automatically fetched from the OMDB API
 - Manage which formats you own (DVD, Blu-Ray, 4K UHD, etc.) and which regions they are compatible with
 - Search and filter your collection by title, format, region, etc.
@@ -42,6 +41,9 @@ Create a `.env` file with your desired settings (you can use the `.env.example` 
 docker-compose up -d
 ```
 
+The [Barcode Lookup API](https://barcodelookup.com/) key is optional - but without it the barcode scanning feature will be disabled.  
+I know there are cheaper options than Barcode Lookup, but it gave me the best results and best trial-tier.
+
 Also if you care about SSL, make sure to change the paths to your SSL certificate and private key in `docker-compose.yml`.  
 Note that the barcode scanner will not work on mobile phones without SSL, everything else should work fine.
 
@@ -55,15 +57,15 @@ You don't *need* to follow those, but that's what I used.
 1. Linux (or WSL) with:
     1. Node 22.0 or above with NPM (install with [NVM](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating))
     1. Docker (see [this guide](https://daniel.es/blog/how-to-install-docker-in-wsl-without-docker-desktop/) for installation in WSL)
-1. VSCode with a ProstegeSQL extension
+1. VSCode with a PostgreSQL extension
 
-### ProstegeSQL
+### PostgreSQL
 
 > [!IMPORTANT]
 > Replace `changeme` with a strong password and replace all instances of it below!  
   For local development, avoid special characters (like `@` or `?`) to prevent connection string encoding issues.
 
-To configure ProstegeSQL, follow these steps:
+To configure PostgreSQL, follow these steps:
 
 1. Create a `.env` file in the root directory with the following content:
 
